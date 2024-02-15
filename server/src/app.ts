@@ -7,6 +7,7 @@ import routes from "./routes";
 import connect from "./utils/connect";
 import { initializeFirebase } from "./utils/firebase";
 import { logger } from "./utils/logger";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 
 initializeFirebase();
 
