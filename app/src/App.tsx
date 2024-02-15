@@ -11,6 +11,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import DefaultLayout from "./components/page_layout/DefaultLayout";
 import { HomePage } from "./pages/HomePage";
 import useUserStore from "./stores/user_store";
+import PageTitle from "./components/PageTitle";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -23,13 +24,13 @@ function App() {
     <AntdApp>
       <ConfigProvider
         theme={{
-          // algorithm: theme.darkAlgorithm,
-          algorithm: theme.defaultAlgorithm,
+          algorithm: theme.darkAlgorithm,
+          // algorithm: theme.defaultAlgorithm,
           token: {
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
-            // colorBgBase: "#131314",
+            colorBgBase: "#131314",
             fontSize: 16,
-            fontSizeHeading1: 56,
+            // fontSizeHeading1: 56,
           },
           components: {
             Typography: {
@@ -54,6 +55,7 @@ function App() {
           <FloatButton.BackTop />
         </Layout>
       </ConfigProvider>
+      <PageTitle />
     </AntdApp>
   );
 }

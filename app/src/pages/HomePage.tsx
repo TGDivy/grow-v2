@@ -1,52 +1,13 @@
 import { GoogleOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Grid, Row, Space, Typography, theme } from "antd";
-import { motion, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { onSignInWithGoogle } from "src/api/firebase/authentication";
 import useUserStore from "src/stores/user_store";
 const { useBreakpoint } = Grid;
 const { useToken } = theme;
 
-interface AnimatedTextProps {
-  text: string;
-}
-
-const AnimatedText = (props: AnimatedTextProps) => {
-  return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 1 },
-        visible: {
-          opacity: 1,
-          transition: {
-            delay: 0.5,
-            staggerChildren: 0.08,
-          },
-        },
-      }}
-    >
-      {props.text.split("").map((char, index) => {
-        return (
-          <motion.span
-            key={char + "-" + index}
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: {
-                opacity: 1,
-                y: 0,
-              },
-            }}
-          >
-            {char}
-          </motion.span>
-        );
-      })}
-    </motion.div>
-  );
-};
 export const HomePage = () => {
-  const { scrollYProgress } = useScroll();
+  // const { scrollYProgress } = useScroll();
   const screens = useBreakpoint();
   const isMobile = screens.xs;
   const user = useUserStore((state) => state.user);
@@ -54,7 +15,7 @@ export const HomePage = () => {
 
   return (
     <>
-      <motion.div
+      {/* <motion.div
         style={{
           scaleX: scrollYProgress,
           originX: 0,
@@ -69,7 +30,7 @@ export const HomePage = () => {
           zIndex: 1000,
           width: "100%",
         }}
-      />
+      /> */}
 
       <Row gutter={[16, 16]}>
         <Col xs={24}>
@@ -81,12 +42,10 @@ export const HomePage = () => {
             }}
           >
             <Typography.Title level={1}>
-              <div className="gradient-text">
-                <AnimatedText
-                  text={`Hello, ${user?.displayName}.`}
-                  key={user?.displayName}
-                />
-              </div>
+              <span key={user?.displayName} className="welcome-text">
+                Hello, {user?.displayName}.
+              </span>
+              <br />
               <span
                 style={{
                   color: token.colorTextDisabled,
