@@ -31,17 +31,24 @@ import Project from "../models/project";
 
 import data from "@emoji-mart/data";
 import { init, SearchIndex } from "emoji-mart";
+import { logger } from "../utils/logger";
 
 init({ data });
 
-// Global Config
 export const projectRouter = express.Router();
 
-projectRouter.use(express.json());
-// GET
-projectRouter.get("/", async (_req: Request, res: Response) => {
+projectRouter.get("", async (_req: Request, res: Response) => {
+    logger.debug("GET /projects", "Retrieving all projects");
     try {
-        const projects = (await collections.projects?.find({}).toArray()) as Project[];
+        const projects = (await collections.projects
+            ?.find(
+                {},
+                {
+                    timeout: true,
+                    maxTimeMS: 1000,
+                },
+            )
+            .toArray()) as Project[];
 
         res.status(200).send(projects);
     } catch (error) {

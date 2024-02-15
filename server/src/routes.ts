@@ -6,8 +6,19 @@ import { projectRouter } from "./routes/project.router";
 import { createGoalSchema, deleteGoalSchema, getGoalSchema, updateGoalSchema } from "./schema/goal.schema";
 
 const routes = (app: Express) => {
+    /**
+     * @swagger
+     * /healthcheck:
+     *  get:
+     *    tag:
+     *      - Healthcheck
+     *    description: Check if server is running
+     *    responses:
+     *      200:
+     *         description: Server is running!
+     */
     app.get("/healthcheck", (req, res) => {
-        res.status(200).send("Server is running");
+        res.status(200).send("Server is running!");
     });
 
     app.use("/project", requireUser, projectRouter);

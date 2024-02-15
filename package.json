@@ -1,0 +1,14 @@
+{
+  "name": "grow-v2",
+  "version": "1.0.0",
+  "description": "Absolutely, here's a summary of your project:",
+  "main": "index.js",
+  "scripts": {
+    "install": "cd app && npm install --dev && cd ../server && npm install --dev",
+    "build": "cd app && npm run build && cd ../server && npm run build",
+    "start": "cd server/dist && node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

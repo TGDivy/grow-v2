@@ -7,3 +7,5 @@ dist
 
 # Firebase
 src/serviceAccountKey.json
+
+stats.html

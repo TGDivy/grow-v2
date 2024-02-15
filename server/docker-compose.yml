@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+    server:
+        container_name: "server"
+        # restart: "unless-stopped"
+        environment:
+            - NODE_ENV=production
+            # Read environment variables from .env file
+            - $(cat .env | xargs)
+            - DB_CONN_STRING=mongodb+srv://me:gFfh9eum9G8SJZZ5@cluster0.lsgnfhq.mongodb.net/?retryWrites=true&w=majority
+        build:
+            context: ./
+            dockerfile: Dockerfile
+
+        ports:
+            - "8080:8080"

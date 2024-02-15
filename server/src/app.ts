@@ -4,10 +4,10 @@ import express from "express";
 import { PORT } from "./constants";
 import { deserializeUser } from "./middleware/deserialize_user";
 import routes from "./routes";
-import connect from "./utils/connect";
+import { connectToDatabase } from "./services/database.service";
 import { initializeFirebase } from "./utils/firebase";
 import { logger } from "./utils/logger";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { swaggerDocs } from "./utils/swagger";
 
 initializeFirebase();
 
@@ -20,22 +20,9 @@ app.use(deserializeUser);
 app.listen(PORT, async () => {
     logger.info(`Server started at http://localhost:${PORT}`);
 
-    await connect();
+    await connectToDatabase();
 
     routes(app);
+
+    swaggerDocs(app, PORT);
 });
-
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
-
-// connectToDatabase()
-//     .then(() => {
-//         app.use("/project", projectRouter);
-
-//         app.listen(PORT, () => {
-//             console.log(`Server started at http://localhost:${PORT}`);
-//         });
-//     })
-//     .catch((error: Error) => {
-//         console.error("Database connection failed", error);
-//         process.exit();
-//     });
