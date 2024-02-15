@@ -26,6 +26,7 @@ export const useAsync = <T>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const [refetch, setRefetch] = useState<boolean>(false);
 
   const execute = async () => {
     try {
@@ -37,13 +38,14 @@ export const useAsync = <T>(
       }
     } finally {
       setLoading(false);
+      setRefetch(false);
     }
   };
 
   useEffect(() => {
     execute();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [refetch, ...deps]);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch: () => setRefetch(true) };
 };

@@ -26,9 +26,9 @@
     // "baseUrl": ".",
     "paths": {
       "src/*": ["./src/*"],
-      "@server/*": ["../api/src/models/"]
+      "@server/*": ["../server/src/models/"]
     }
   },
-  "include": ["src", "../api/src/models/"],
+  "include": ["src", "../server/src/models/"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

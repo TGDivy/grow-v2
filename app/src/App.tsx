@@ -6,13 +6,13 @@ import {
   theme,
 } from "antd";
 import "antd/dist/reset.css";
-import "./global.css";
 import { Navigate, Route, Routes } from "react-router-dom";
-import DefaultLayout from "./components/page_layout/DefaultLayout";
-import { HomePage } from "./pages/HomePage";
-import useUserStore from "./stores/user_store";
 import PageTitle from "./components/PageTitle";
+import DefaultLayout from "./components/page_layout/DefaultLayout";
+import "./global.css";
+import { HomePage } from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
+import useUserStore from "./stores/user_store";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -27,6 +27,7 @@ function App() {
         theme={{
           algorithm: theme.darkAlgorithm,
           // algorithm: theme.defaultAlgorithm,
+          cssVar: true,
           token: {
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
             colorBgBase: "#131314",
@@ -51,6 +52,7 @@ function App() {
             <Route path="" element={<DefaultLayout />} key={"home_page"}>
               <Route path="" element={<HomePage />} />
               <Route path="projects" element={<ProjectsPage />} />
+              <Route path="project/:projectId/*" element={<div>Project</div>} />
               <Route path="settings" element={<div>Settings</div>} />
               <Route path="help" element={<div>Help</div>} />
               <Route path="*" element={<Navigate to="/" />} />

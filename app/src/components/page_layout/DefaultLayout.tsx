@@ -11,17 +11,10 @@ const DefaultLayout = () => {
     <>
       <Layout>
         {breaks.sm && <MainSideBar />}
-        <Layout
-          style={{
-            paddingBottom: "40px",
-          }}
-        >
+        <Layout style={{}}>
           <MainHeader />
           <Layout.Content
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
               padding: "20px 40px",
             }}
           >
