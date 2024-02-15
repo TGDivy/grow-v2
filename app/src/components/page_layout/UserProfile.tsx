@@ -42,28 +42,6 @@ const UserProfile = () => {
   ];
 
   const itemsUser: MenuProps["items"] = [
-    // {
-    //   key: "0",
-    //   label: (
-    //     <Link to="/user-area/orders/all">
-    //       <Typography.Text style={itemStyle}>
-    //         <ShopOutlined />
-    //         Orders
-    //       </Typography.Text>
-    //     </Link>
-    //   ),
-    // },
-    // {
-    //   key: "1",
-    //   label: (
-    //     <Link to="/user-area/payments">
-    //       <Typography.Text style={itemStyle}>
-    //         <AlipayOutlined />
-    //         Payments
-    //       </Typography.Text>
-    //     </Link>
-    //   ),
-    // },
     {
       key: "2",
       label: (
@@ -75,7 +53,6 @@ const UserProfile = () => {
         </Link>
       ),
     },
-
     {
       type: "divider",
     },

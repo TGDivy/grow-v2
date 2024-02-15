@@ -6,6 +6,45 @@ import useUserStore from "src/stores/user_store";
 const { useBreakpoint } = Grid;
 const { useToken } = theme;
 
+interface AnimatedTextProps {
+  text: string;
+}
+
+const AnimatedText = (props: AnimatedTextProps) => {
+  return (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 1 },
+        visible: {
+          opacity: 1,
+          transition: {
+            delay: 0.5,
+            staggerChildren: 0.08,
+          },
+        },
+      }}
+    >
+      {props.text.split("").map((char, index) => {
+        return (
+          <motion.span
+            key={char + "-" + index}
+            variants={{
+              hidden: { opacity: 0, y: 50 },
+              visible: {
+                opacity: 1,
+                y: 0,
+              },
+            }}
+          >
+            {char}
+          </motion.span>
+        );
+      })}
+    </motion.div>
+  );
+};
 export const HomePage = () => {
   const { scrollYProgress } = useScroll();
   const screens = useBreakpoint();
@@ -41,8 +80,20 @@ export const HomePage = () => {
               textAlign: isMobile ? "center" : "left",
             }}
           >
-            <Typography.Title level={isMobile ? 2 : 1} color="blue">
-              Grow App
+            <Typography.Title level={1}>
+              <div className="gradient-text">
+                <AnimatedText
+                  text={`Hello, ${user?.displayName}.`}
+                  key={user?.displayName}
+                />
+              </div>
+              <span
+                style={{
+                  color: token.colorTextDisabled,
+                }}
+              >
+                How can I help you today?
+              </span>
             </Typography.Title>
             <Typography.Title level={3}>
               App for managing your tasks, goals, habits, journalling, and more!

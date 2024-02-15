@@ -1,15 +1,7 @@
-import {
-  Button,
-  ConfigProvider,
-  Grid,
-  Space,
-  theme as antTheme,
-  Layout,
-} from "antd";
+import { ConfigProvider, Grid, Space, theme as antTheme, Layout } from "antd";
 
 import { Link } from "react-router-dom";
 import UserProfile from "./UserProfile";
-import useUserStore from "src/stores/user_store";
 
 const { useBreakpoint } = Grid;
 const { useToken } = antTheme;
@@ -19,7 +11,6 @@ const breakpoint = "md";
 const MainHeader = () => {
   const { token } = useToken();
   const desktop = useBreakpoint()[breakpoint];
-  const user = useUserStore((state) => state.user);
 
   if (desktop == null) {
     return null;
@@ -29,26 +20,6 @@ const MainHeader = () => {
   const padding = desktop === false ? "0px 10px" : "50px";
   const logoHeight = desktop ? "48px" : "32px";
   const logoPadding = desktop ? "0px 24px" : "0px 0px";
-
-  const OrderButton = () => {
-    // return null;
-    if (user) {
-      return (
-        <ConfigProvider
-          theme={{
-            algorithm: antTheme.darkAlgorithm,
-          }}
-        >
-          <Link to="/user-area/orders">
-            <Button type="text" size="small">
-              Orders
-            </Button>
-          </Link>
-        </ConfigProvider>
-      );
-    }
-    return null;
-  };
 
   const brandLogoUrl =
     "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png";
@@ -62,7 +33,7 @@ const MainHeader = () => {
         justifyContent: "space-between",
         alignItems: "right",
         width: "100%",
-        backgroundColor: "#252525",
+        backgroundColor: "#1e1f20",
         paddingInline: padding,
       }}
     >
@@ -95,17 +66,6 @@ const MainHeader = () => {
           >
             <img src={brandLogoUrl} alt="Logo" style={{ height: logoHeight }} />
           </Link>
-        </div>
-        <div
-          style={{
-            height: "100%",
-            justifyContent: "center",
-            display: "flex",
-            alignItems: "center",
-            marginTop: token.sizeStep * 2,
-          }}
-        >
-          <OrderButton />
         </div>
       </div>
       <ConfigProvider
