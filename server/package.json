@@ -2,29 +2,32 @@
     "name": "server",
     "version": "1.0.0",
     "description": "",
-    "main": "dist/app.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
         "prestart": "npm run build",
-        "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-        "start": "node dist/app.js",
+        "start": "ts-node-dev --respawn --transpile-only src/app.ts",
         "test": "echo \"Error: no test specified\" && exit 1",
         "format": "prettier . --write",
-        "heroku-postbuild": "npm run build"
+        "postinstall": "tsc"
     },
     "keywords": [],
-    "author": "",
+    "author": "Divy B",
     "license": "ISC",
     "dependencies": {
         "@emoji-mart/data": "^1.1.2",
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
+        "dayjs": "^1.11.10",
         "dotenv": "^16.4.4",
         "emoji-mart": "^5.5.2",
         "express": "^4.18.2",
         "firebase-admin": "^12.0.0",
         "mongodb": "^6.3.0",
-        "mongoose": "^8.1.2"
+        "mongoose": "^8.1.2",
+        "pino": "^8.18.0",
+        "pino-pretty": "^10.3.1",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
         "@types/cors": "^2.8.17",

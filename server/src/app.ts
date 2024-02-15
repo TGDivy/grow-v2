@@ -1,45 +1,40 @@
-import express from "express";
-import { projectRouter } from "./routes/project.router";
-import { connectToDatabase } from "./services/database.service";
-
 import { json, urlencoded } from "body-parser";
-import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json";
-import { PORT } from "./constants";
 import cors from "cors";
-import { decodeToken } from "./middleware/decode_token";
+import express from "express";
+import { PORT } from "./constants";
+import { deserializeUser } from "./middleware/deserialize_user";
+import routes from "./routes";
+import connect from "./utils/connect";
+import { initializeFirebase } from "./utils/firebase";
+import { logger } from "./utils/logger";
+
+initializeFirebase();
 
 const app = express();
+app.use(json());
+app.use(cors());
+app.use(urlencoded({ extended: true }));
+app.use(deserializeUser);
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+app.listen(PORT, async () => {
+    logger.info(`Server started at http://localhost:${PORT}`);
+
+    await connect();
+
+    routes(app);
 });
 
-app.use(json());
-app.use(urlencoded({ extended: true }));
-app.use(cors());
-app.use(decodeToken);
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
-// app.get("/", (req, res) => {
-//   res.send("Hello World");
-// });
+// connectToDatabase()
+//     .then(() => {
+//         app.use("/project", projectRouter);
 
-// // app.use("/todos", todoRoutes);
-// app.use("/project", projectRoutes);
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}, http://localhost:${PORT}`);
-// });
-
-connectToDatabase()
-    .then(() => {
-        app.use("/project", projectRouter);
-
-        app.listen(PORT, () => {
-            console.log(`Server started at http://localhost:${PORT}`);
-        });
-    })
-    .catch((error: Error) => {
-        console.error("Database connection failed", error);
-        process.exit();
-    });
+//         app.listen(PORT, () => {
+//             console.log(`Server started at http://localhost:${PORT}`);
+//         });
+//     })
+//     .catch((error: Error) => {
+//         console.error("Database connection failed", error);
+//         process.exit();
+//     });
