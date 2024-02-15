@@ -5,6 +5,7 @@ import { signOut } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { auth } from "src/api/firebase/firebase_init";
 import useUserStore from "src/stores/user_store";
+import { useBreakpoint } from "src/utils/antd_components";
 
 const UserProfile = () => {
   const [user, getUserName, getUserProfilePicture] = useUserStore((state) => [
@@ -21,6 +22,7 @@ const UserProfile = () => {
       .then(() => {})
       .catch(() => {});
   };
+  const breaks = useBreakpoint();
 
   const itemStyle = {
     display: "flex",
@@ -82,7 +84,7 @@ const UserProfile = () => {
         type="text"
         icon={<Avatar size="small" src={getUserProfilePicture()} />}
       >
-        {userName}
+        {!breaks.sm ? "" : userName}
       </Button>
     </Dropdown>
   );

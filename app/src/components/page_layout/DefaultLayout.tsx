@@ -3,12 +3,14 @@ import { Outlet } from "react-router-dom";
 import ErrorBoundary from "../ErrorBoundary";
 import MainHeader from "./MainHeader";
 import MainSideBar from "./MainSideBar";
+import { useBreakpoint } from "src/utils/antd_components";
 
 const DefaultLayout = () => {
+  const breaks = useBreakpoint();
   return (
     <>
       <Layout>
-        <MainSideBar />
+        {breaks.sm && <MainSideBar />}
         <Layout
           style={{
             paddingBottom: "40px",

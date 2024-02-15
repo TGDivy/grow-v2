@@ -47,6 +47,7 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 
     to {
         transform: translateX(100%);
+        display: none;
     }
 }
 

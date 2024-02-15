@@ -1,26 +1,8 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  QuestionOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Flex, Menu } from "antd";
-import { Link } from "react-router-dom";
 import { Sider, useToken } from "src/utils/antd_components";
 import { useLocalStorageState } from "src/utils/hooks";
-
-const settingsItems = [
-  {
-    key: "payments",
-    label: <Link to="/user-area/payments">Help</Link>,
-    icon: <QuestionOutlined />,
-  },
-  {
-    key: "settings",
-    label: <Link to="/user-area/settings">Settings</Link>,
-    icon: <SettingOutlined />,
-  },
-];
+import { settingsItems } from "./menu_items";
 
 const MainSideBar = () => {
   const [themeCollapsed, setThemeCollapsed] = useLocalStorageState(
