@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // replace state but everytime it's called, it will save to localStorage, and load from localStorage
 export const useLocalStorageState = (key: string, defaultValue: unknown) => {
@@ -16,4 +16,34 @@ export const useLocalStorageState = (key: string, defaultValue: unknown) => {
   };
 
   return [value, setValueAndSave];
+};
+
+// a custom hook to handle async data call, set loading and error state, and return the data
+export const useAsync = <T>(
+  asyncFunction: () => Promise<T>,
+  deps: React.DependencyList
+) => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const execute = async () => {
+    try {
+      setLoading(true);
+      setData(await asyncFunction());
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    execute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return { data, loading, error };
 };

@@ -12,6 +12,7 @@ import DefaultLayout from "./components/page_layout/DefaultLayout";
 import { HomePage } from "./pages/HomePage";
 import useUserStore from "./stores/user_store";
 import PageTitle from "./components/PageTitle";
+import ProjectsPage from "./pages/ProjectsPage";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -49,8 +50,11 @@ function App() {
           <Routes>
             <Route path="" element={<DefaultLayout />} key={"home_page"}>
               <Route path="" element={<HomePage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="settings" element={<div>Settings</div>} />
+              <Route path="help" element={<div>Help</div>} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Route>
-            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <FloatButton.BackTop />
         </Layout>

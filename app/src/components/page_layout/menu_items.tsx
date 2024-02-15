@@ -1,15 +1,24 @@
-import { QuestionOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  FileOutlined,
+  QuestionOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 export const settingsItems = [
   {
-    key: "payments",
-    label: <Link to="/user-area/payments">Help</Link>,
+    key: "projects",
+    label: <Link to="/projects">Projects</Link>,
+    icon: <FileOutlined />,
+  },
+  {
+    key: "help",
+    label: <Link to="/help">Help</Link>,
     icon: <QuestionOutlined />,
   },
   {
     key: "settings",
-    label: <Link to="/user-area/settings">Settings</Link>,
+    label: <Link to="/settings">Settings</Link>,
     icon: <SettingOutlined />,
   },
 ];

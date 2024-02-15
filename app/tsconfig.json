@@ -1,4 +1,7 @@
 {
+  // this project contains client and server code
+  // but this tsconfig is only for the client
+  // however, we want to reference the server code for type checking
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -20,10 +23,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    // "baseUrl": ".",
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "@server/*": ["../api/src/models/"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "../api/src/models/"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

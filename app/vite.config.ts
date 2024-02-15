@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       src: resolve(__dirname, "./src"),
+      "@server": resolve(__dirname, "../api/src/models/"),
     },
   },
 });
