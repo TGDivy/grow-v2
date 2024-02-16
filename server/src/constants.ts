@@ -17,7 +17,7 @@ export const FIREBASE_CONFIG: admin.ServiceAccount = {
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 };
 
-console.log(FIREBASE_CONFIG);
+console.log(JSON.stringify(FIREBASE_CONFIG, null, 2));
 
 export const PORT = Number(process.env.PORT) || 8080;
 export const DB_CONN_STRING = process.env.DB_CONN_STRING;
