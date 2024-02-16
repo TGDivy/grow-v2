@@ -36,7 +36,7 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     left: 0;
     width: 100%;
     height: 100%;
-    background: #131314;
+    background: var(--ant-layout-body-bg);
     animation: slide 2s forwards ease-out;
 }
 
@@ -92,4 +92,8 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 
 ::-webkit-scrollbar-thumb:hover {
     border: 4px solid var(--ant-color-bg-elevated);
+}
+
+.ant-switch.ant-switch-checked {
+    background-color: var(--ant-color-bg-elevated) !important;
 }

@@ -22,13 +22,20 @@ const CreateProject = ({ refetch }: { refetch: React.Dispatch<boolean> }) => {
   const [title, setTitle] = useState("");
 
   const handleCreateProject = async () => {
-    if (!title) {
-      return;
+    try {
+      if (!title) {
+        throw new Error("Title is required");
+      }
+      await createProject({ title, completed: false });
+      refetch(true);
+      setTitle("");
+      message.success("Project created");
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      }
+      console.error(error);
     }
-    await createProject({ title, completed: false });
-    refetch(true);
-    setTitle("");
-    message.success("Project created");
   };
 
   return (
@@ -97,6 +104,7 @@ const ProjectsPage = () => {
             height: "100%",
             padding: "16px 16px",
             maxWidth: "850px",
+            width: "100%",
           }}
           loading={loading}
           dataSource={data || []}

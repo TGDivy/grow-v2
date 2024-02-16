@@ -1,11 +1,11 @@
-import { Button, Drawer, Flex, Menu, Typography } from "antd";
+import { Button, Drawer, Flex, Typography } from "antd";
 
 import { MenuOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Header, useBreakpoint, useToken } from "src/utils/antd_components";
 import UserProfile from "./UserProfile";
-import { settingsItems } from "./menu_items";
+import { BottomMenu, TopMenu } from "./menu_items";
 
 const MainHeader = () => {
   const [drawer, setDrawer] = useState(false);
@@ -70,23 +70,30 @@ const MainHeader = () => {
           onClose={() => setDrawer(false)}
           // title="Settings"
           placement="left"
-          width={84}
+          width={"100%"}
           styles={{
             body: {
               padding: "0px",
               position: "relative",
             },
+            content: {
+              backgroundColor: token.colorBgLayout,
+            },
           }}
         >
-          <Flex vertical justify="space-between">
-            <Menu
-              items={settingsItems}
-              inlineCollapsed={true}
-              style={{
-                padding: "0px 12px",
-                backgroundColor: "transparent",
-                border: "none",
+          <Flex
+            vertical
+            style={{ height: "100%", padding: "12px 0px" }}
+            justify="space-between"
+          >
+            <TopMenu
+              themeCollapsed={false}
+              onSelect={() => {
+                setDrawer(false);
               }}
+            />
+            <BottomMenu
+              themeCollapsed={false}
               onSelect={() => {
                 setDrawer(false);
               }}

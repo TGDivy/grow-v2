@@ -49,3 +49,24 @@ export const useAsync = <T>(
 
   return { data, loading, error, refetch: () => setRefetch(true) };
 };
+
+// Use state with saving to localStorage
+export const useLocalStorage = <T>(
+  key: string,
+  defaultValue: T
+): [T, (newValue: T) => void] => {
+  const [value, setValue] = useState<T>(() => {
+    const savedValue = localStorage.getItem(key);
+    if (savedValue) {
+      return JSON.parse(savedValue);
+    }
+    return defaultValue;
+  });
+
+  const setValueAndSave = (newValue: T) => {
+    setValue(newValue);
+    localStorage.setItem(key, JSON.stringify(newValue));
+  };
+
+  return [value, setValueAndSave];
+};

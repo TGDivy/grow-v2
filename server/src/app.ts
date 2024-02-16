@@ -8,6 +8,7 @@ import { connectToDatabase } from "./services/database.service";
 import { initializeFirebase } from "./utils/firebase";
 import { logger } from "./utils/logger";
 import { swaggerDocs } from "./utils/swagger";
+import { connectDB } from "./utils/connect";
 
 initializeFirebase();
 
@@ -20,7 +21,7 @@ app.use(deserializeUser);
 app.listen(PORT, async () => {
     logger.info(`Server started at http://localhost:${PORT}`);
 
-    await connectToDatabase();
+    await connectDB();
 
     routes(app);
 

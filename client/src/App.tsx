@@ -1,10 +1,4 @@
-import {
-  App as AntdApp,
-  ConfigProvider,
-  FloatButton,
-  Layout,
-  theme,
-} from "antd";
+import { App as AntdApp, ConfigProvider, FloatButton, Layout } from "antd";
 import "antd/dist/reset.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 import PageTitle from "./components/PageTitle";
@@ -13,9 +7,11 @@ import "./global.css";
 import { HomePage } from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import useUserStore from "./stores/user_store";
+import { themes } from "./utils/themes";
 
 function App() {
   const user = useUserStore((state) => state.user);
+  const usertheme = useUserStore((state) => state.theme);
 
   if (user === undefined) {
     return null;
@@ -25,14 +21,12 @@ function App() {
     <AntdApp>
       <ConfigProvider
         theme={{
-          algorithm: theme.darkAlgorithm,
-          // algorithm: theme.defaultAlgorithm,
+          algorithm: themes[usertheme].algorithm,
           cssVar: true,
           token: {
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
-            colorBgBase: "#131314",
+            colorBgBase: themes[usertheme].colorBgBase,
             fontSize: 16,
-            // fontSizeHeading1: 56,
           },
           components: {
             Typography: {

@@ -8,13 +8,11 @@ import useUserStore from "src/stores/user_store";
 import { useBreakpoint } from "src/utils/antd_components";
 
 const UserProfile = () => {
-  const [user, getUserName, getUserProfilePicture] = useUserStore((state) => [
+  const [user, userInfo] = useUserStore((state) => [
     state.user,
-    state.getUserName,
-    state.getUserProfilePicture,
+    state.userInfo,
   ]);
 
-  const userName = getUserName();
   const setUser = useUserStore((state) => state.setUser);
   const signUserOut = () => {
     setUser(null);
@@ -82,9 +80,9 @@ const UserProfile = () => {
     >
       <Button
         type="text"
-        icon={<Avatar size="small" src={getUserProfilePicture()} />}
+        icon={<Avatar size="small" src={userInfo.profilePicture} />}
       >
-        {!breaks.sm ? "" : userName}
+        {!breaks.sm ? "" : userInfo.name}
       </Button>
     </Dropdown>
   );

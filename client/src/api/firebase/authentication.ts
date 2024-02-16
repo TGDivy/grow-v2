@@ -13,23 +13,10 @@ import {
 } from "firebase/auth";
 import useUserStore from "src/stores/user_store";
 import { auth } from "./firebase_init";
-//   import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const actionCodeSettings = {
-  // URL you want to redirect back to. The domain (www.example.com) for this
-  // URL must be in the authorized domains list in the Firebase Console.
   url: `${window.location.protocol}//${window.location.host}/`,
-  // This must be true.
   handleCodeInApp: false,
-  // iOS: {
-  //   bundleId: "com.example.ios",
-  // },
-  // android: {
-  //   packageName: "com.example.android",
-  //   installApp: true,
-  //   minimumVersion: "12",
-  // },
-  // dynamicLinkDomain: "example.page.link",
 };
 
 onAuthStateChanged(auth, (user) => {
@@ -55,39 +42,13 @@ onAuthStateChanged(auth, (user) => {
       return;
     }
 
-    // check if user exists in database, if not, create user
-    //   const userRef = doc(db, "users", user.uid);
-    //   const document = getDoc(userRef);
-    //   document.then((doc) => {
-    //     if (doc.exists()) {
-    //       console.log("Document data:", doc.data());
-    //       const data = doc.data();
-    //       useUserStore.getState().setUserInfo({
-    //         name: data?.name || "",
-    //         email: data?.email || "",
-    //         organization: data?.organization || "",
-    //         position: data?.position || "",
-    //         department: data?.department || "",
-    //         allowedAccess: data?.allowedAccess || false,
-    //       });
-    //     } else {
-    //       // doc.data() will be undefined in this case
-    //       // console.log("No such document!");
-    //       setDoc(userRef, {
-    //         name: user.displayName,
-    //         email: user.email,
-    //         allowedAccess: false,
-    //         organization: "",
-    //         position: "",
-    //         department: "",
-    //       }).then((data) => {
-    //         console.log("Document written: ", data);
-    //       });
-    //     }
-    //   });
+    useUserStore.getState().setUserInfo({
+      name: user.displayName || "",
+      email: user.email || "",
+      profilePicture: user.photoURL || "",
+    });
   } else {
-    useUserStore.getState().setUser(null);
-    useUserStore.getState().setUserInfo(null);
+    useUserStore.getState().resetUser();
   }
 });
 
@@ -131,9 +92,6 @@ export const updateUserProfile = (props: {
     photoURL: photoURL,
   })
     .then(() => {
-      // Profile updated!
-      // ...
-      //   refreshUser();
       auth.currentUser?.reload();
     })
     .catch(() => {});

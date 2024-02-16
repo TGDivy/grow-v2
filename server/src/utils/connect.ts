@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { DB_CONN_STRING } from "../constants";
 import { logger } from "./logger";
 
-const connect = async () => {
+export const connectDB = async () => {
     const uri = DB_CONN_STRING;
 
     try {
@@ -13,5 +13,3 @@ const connect = async () => {
         logger.error("Error connecting to database: ", error);
     }
 };
-
-export default connect;

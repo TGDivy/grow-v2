@@ -3,14 +3,23 @@ import { AxiosError } from "axios";
 export class APIError extends Error {
   status: number;
   data: unknown;
-  name: string;
   constructor(message: string, status: number, data: unknown) {
     super(message);
     this.status = status;
     this.data = data;
-    this.name = "APIError";
   }
 }
+
+type badRequestDataType = {
+  code: string;
+  message: string;
+  expected: string;
+  received: string;
+  path: {
+    key: string;
+    value: string;
+  };
+}[];
 
 //  API Errors
 
@@ -18,7 +27,6 @@ export class APIError extends Error {
 export class NetworkError extends APIError {
   constructor(message: string, data: unknown) {
     super(message, 0, data);
-    this.name = "NetworkError";
   }
 }
 
@@ -26,7 +34,6 @@ export class NetworkError extends APIError {
 export class NotFoundError extends APIError {
   constructor(message: string, data: unknown) {
     super(message, 404, data);
-    this.name = "NotFoundError";
   }
 }
 
@@ -34,7 +41,6 @@ export class NotFoundError extends APIError {
 export class NotAuthorizedError extends APIError {
   constructor(message: string, data: unknown) {
     super(message, 401, data);
-    this.name = "NotAuthorizedError";
   }
 
   redirect() {
@@ -44,17 +50,15 @@ export class NotAuthorizedError extends APIError {
 
 // 400 Bad Request Error
 export class BadRequestError extends APIError {
-  constructor(message: string, data: unknown) {
+  constructor(message: string, data: badRequestDataType) {
     super(message, 400, data);
-    this.name = "BadRequestError";
   }
 }
 
-//   422 Unprocessable Entity Error
+// 422 Unprocessable Entity Error
 export class UnprocessableEntityError extends APIError {
   constructor(message: string, data: unknown) {
     super(message, 422, data);
-    this.name = "UnprocessableEntityError";
   }
 }
 
@@ -62,7 +66,6 @@ export class UnprocessableEntityError extends APIError {
 export class MethodNotAllowedError extends APIError {
   constructor(message: string, data: unknown) {
     super(message, 405, data);
-    this.name = "MethodNotAllowedError";
   }
 }
 
@@ -70,7 +73,6 @@ export class MethodNotAllowedError extends APIError {
 export class ServerError extends APIError {
   constructor(message: string, status: number, data: unknown) {
     super(message, status, data);
-    this.name = "InternalServerError";
   }
 }
 
@@ -85,7 +87,9 @@ export const handleAxiosError = (error: AxiosError) => {
   if (error.response) {
     const { status, data } = error.response;
     if (status === 400) {
-      throw new BadRequestError("Bad request.", data);
+      const badRequestData = data as badRequestDataType;
+      const message = badRequestData.map((error) => error.message).join(", ");
+      throw new BadRequestError(message, badRequestData);
     }
     if (status === 401) {
       throw new NotAuthorizedError("Unauthorized.", data);

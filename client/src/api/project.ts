@@ -14,8 +14,6 @@ export const projectAPI = axios.create({
 projectAPI.interceptors.request.use(async (config) => {
   const auth_token = await useUserStore.getState().user?.getIdToken(false);
 
-  console.log("auth_token", auth_token);
-
   if (auth_token) {
     config.headers.Authorization = `Bearer ${auth_token}`;
   }
