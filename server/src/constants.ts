@@ -11,7 +11,9 @@ if (!process.env.DB_CONN_STRING) {
 
 export const FIREBASE_CONFIG: admin.ServiceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY,
+    // the private key is a single string with newlines escaped, however, the newlines escaped might be escaped again
+    // so replace all \\n with \n
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 };
 
