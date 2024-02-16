@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
-import serviceAccount from "./../serviceAccountKey.json";
+import { FIREBASE_CONFIG } from "../constants";
 
 export const initializeFirebase = () =>
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+        credential: admin.credential.cert(FIREBASE_CONFIG),
     });
