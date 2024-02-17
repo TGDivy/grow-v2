@@ -16,7 +16,7 @@ export interface PastSessionInput {
     };
 }
 
-interface PastSessionDocument extends PastSessionInput, Document {
+export interface PastSessionDocument extends PastSessionInput, Document {
     endTime: Date;
     completedAt: Date;
 }

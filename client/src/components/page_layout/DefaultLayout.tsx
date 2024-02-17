@@ -16,7 +16,6 @@ const DefaultLayout = () => {
           <Layout.Content
             style={{
               padding: breaks.sm ? "20px 40px" : "20px 20px",
-              overflowY: "scroll",
               overflowAnchor: "unset",
             }}
           >

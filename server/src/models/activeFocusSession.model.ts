@@ -16,7 +16,7 @@ export interface ActiveSessionInput {
     };
 }
 
-interface ActiveSessionDocument extends ActiveSessionInput, Document {
+export interface ActiveSessionDocument extends ActiveSessionInput, Document {
     endTime: Date;
 }
 
