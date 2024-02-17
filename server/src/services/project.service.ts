@@ -1,4 +1,4 @@
-import ProjectModel, { ProjectDocument, ProjectInput } from "../models/project.model";
+import ProjectModel, { ProjectInput } from "../models/project.model";
 
 export const createProject = async (input: ProjectInput) => {
     return ProjectModel.create(input);

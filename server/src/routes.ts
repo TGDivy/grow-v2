@@ -7,6 +7,15 @@ import {
     getProjectHandler,
     updateProjectHandler,
 } from "./controllers/project.controller";
+
+import {
+    createFocusSessionHandler,
+    updateFocusSessionHandler,
+    stopFocusSessionHandler,
+    getActiveSessionHandler,
+    getAllPastFocusSessionsHandler,
+} from "./controllers/focusSession.controller";
+
 import { requireUser } from "./middleware/require_user";
 import { validateResource } from "./middleware/validate_resource";
 import { createGoalSchema, deleteGoalSchema, getGoalSchema, updateGoalSchema } from "./schema/goal.schema";
@@ -17,6 +26,7 @@ import {
     getProjectSchema,
     updateProjectSchema,
 } from "./schema/project.schema";
+import { createActiveSessionSchema } from "./schema/focusSession.schema";
 
 const routes = (app: Express) => {
     /**
@@ -44,6 +54,20 @@ const routes = (app: Express) => {
     app.get("/project/:id", [requireUser, validateResource(getProjectSchema)], getProjectHandler);
     app.put("/project/:id", requireUser, validateResource(updateProjectSchema), updateProjectHandler);
     app.delete("/project/:id", [requireUser, validateResource(deleteProjectSchema)], deleteProjectHandler);
+
+    app.post(
+        "/focus-sessions/active",
+        [requireUser, validateResource(createActiveSessionSchema)],
+        createFocusSessionHandler,
+    );
+    app.get("/focus-sessions/active", requireUser, getActiveSessionHandler);
+    app.put(
+        "/focus-sessions/active",
+        [requireUser, validateResource(createActiveSessionSchema)],
+        updateFocusSessionHandler,
+    );
+    app.put("/focus-sessions/active/stop", requireUser, stopFocusSessionHandler);
+    app.get("/focus-sessions/past", requireUser, getAllPastFocusSessionsHandler);
 };
 
 export default routes;
