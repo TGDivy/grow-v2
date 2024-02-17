@@ -1,4 +1,10 @@
-import { App as AntdApp, ConfigProvider, FloatButton, Layout } from "antd";
+import {
+  App as AntdApp,
+  ConfigProvider,
+  Empty,
+  FloatButton,
+  Layout,
+} from "antd";
 import "antd/dist/reset.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 import PageTitle from "./components/PageTitle";
@@ -8,6 +14,15 @@ import { HomePage } from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import useUserStore from "./stores/user_store";
 import { themes } from "./utils/themes";
+
+const CustomizeRenderEmpty = () => {
+  return (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={`You have no data yet 😅`}
+    ></Empty>
+  );
+};
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -35,6 +50,7 @@ function App() {
             },
           },
         }}
+        renderEmpty={CustomizeRenderEmpty}
       >
         <Layout
           className="layout"

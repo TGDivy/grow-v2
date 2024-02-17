@@ -69,15 +69,6 @@ export const HomePage = () => {
             </motion.div>
           </Space>
         </Col>
-
-        <Col
-          md={24}
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <Typography.Title level={2}>Products and Services</Typography.Title>
-        </Col>
         {!user && (
           <Col
             md={24}

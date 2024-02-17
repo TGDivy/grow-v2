@@ -3,7 +3,7 @@ import { theme } from "antd";
 export const themes = {
   light: {
     algorithm: theme.defaultAlgorithm,
-    colorBgBase: undefined,
+    colorBgBase: "#ffffff",
   },
 
   dark: {

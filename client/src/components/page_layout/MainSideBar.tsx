@@ -21,6 +21,9 @@ const MainSideBar = () => {
       collapsed={themeCollapsed}
       style={{
         backgroundColor: token.colorBgBlur,
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
+        // blurring the background
+        backdropFilter: "blur(4px)",
       }}
     >
       <Flex

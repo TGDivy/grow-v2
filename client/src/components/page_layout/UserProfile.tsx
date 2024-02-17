@@ -1,8 +1,15 @@
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import { Avatar, Button, Dropdown, Typography, message } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Button,
+  Empty,
+  Flex,
+  Popover,
+  Tooltip,
+  Typography,
+  message,
+} from "antd";
 import { signOut } from "firebase/auth";
-import { Link } from "react-router-dom";
 import { auth } from "src/api/firebase/firebase_init";
 import useUserStore from "src/stores/user_store";
 import { useBreakpoint } from "src/utils/antd_components";
@@ -12,71 +19,42 @@ const UserProfile = () => {
     state.user,
     state.userInfo,
   ]);
-
-  const setUser = useUserStore((state) => state.setUser);
-  const signUserOut = () => {
-    setUser(null);
-    signOut(auth)
-      .then(() => {})
-      .catch(() => {});
-  };
   const breaks = useBreakpoint();
 
-  const itemStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "space-between",
-    gap: "16px",
-    width: "100%",
+  const signUserOut = async () => {
+    try {
+      await signOut(auth);
+      message.success("Signed out successfully");
+    } catch (error) {
+      message.error("Error signing out");
+    }
   };
 
-  const itemsGuest: MenuProps["items"] = [
-    {
-      key: "1",
-      label: <Link to="/login">Login</Link>,
-    },
-    {
-      key: "2",
-      label: <Link to="/join-waitlist">Register</Link>,
-    },
-  ];
-
-  const itemsUser: MenuProps["items"] = [
-    {
-      key: "2",
-      label: (
-        <Link to="/settings">
-          <Typography.Text style={itemStyle}>
-            <SettingOutlined />
-            Settings
-          </Typography.Text>
-        </Link>
-      ),
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: "3",
-      label: (
-        <div
-          onClick={() => {
-            signUserOut();
-            message.success("Signed out successfully");
-          }}
-          style={itemStyle}
-        >
-          <LogoutOutlined />
-          Sign Out
-        </div>
-      ),
-    },
-  ];
-
-  return (
-    <Dropdown
-      menu={{ items: !user ? itemsGuest : itemsUser }}
-      placement="bottom"
+  return user ? (
+    <Popover
+      placement="bottomLeft"
+      title={
+        <Flex justify="space-between" align="center">
+          <Typography.Text strong>Stats</Typography.Text>
+          <Tooltip title="Sign out">
+            <Button
+              type="primary"
+              shape="circle"
+              size="small"
+              onClick={signUserOut}
+              icon={<LogoutOutlined />}
+            />
+          </Tooltip>
+        </Flex>
+      }
+      content={
+        <>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="Feature coming soon!"
+          />
+        </>
+      }
     >
       <Button
         type="text"
@@ -84,8 +62,8 @@ const UserProfile = () => {
       >
         {!breaks.sm ? "" : userInfo.name}
       </Button>
-    </Dropdown>
-  );
+    </Popover>
+  ) : null;
 };
 
 export default UserProfile;
