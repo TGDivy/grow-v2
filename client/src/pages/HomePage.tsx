@@ -2,11 +2,9 @@ import {
   AimOutlined,
   CheckSquareOutlined,
   FolderOutlined,
-  GoogleOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
-import { onSignInWithGoogle } from "src/api/firebase/authentication";
+import { Col, Row, Typography } from "antd";
 import LinkCard from "src/components/basics/LinkCard";
 import useUserStore from "src/stores/user_store";
 import { useToken } from "src/utils/antd_components";
@@ -20,16 +18,16 @@ export const HomePage = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "calc(100svh - 102px)",
+        minHeight: "calc(100svh - 102px)",
         alignItems: "center",
       }}
     >
       <Row
-        gutter={[16, 16]}
+        gutter={[16, 32]}
         style={{
           maxWidth: "850px",
-          overflow: "hidden",
           width: "100%",
+          height: "100%",
         }}
       >
         <Col xs={24}>
@@ -43,16 +41,14 @@ export const HomePage = () => {
                 color: token.colorTextDisabled,
               }}
             >
-              Welcome to Odyssey App!
+              Welcome to Odyssey!
             </span>
           </Typography.Title>
         </Col>
         <Col span={24}>
-          <Divider
-            style={{
-              opacity: 0,
-            }}
-          />
+          <Typography.Title level={4}>
+            To help you get started, please choose from the services below.
+          </Typography.Title>
         </Col>
         <Col
           span={24}
@@ -62,7 +58,7 @@ export const HomePage = () => {
             gap: token.sizeSM,
             scrollbarWidth: "none",
             overflowX: "scroll",
-            whiteSpace: "nowrap",
+            padding: "10px",
           }}
         >
           <LinkCard to="/projects" title="Projects" icon={<FolderOutlined />} />
@@ -74,34 +70,21 @@ export const HomePage = () => {
             icon={<OrderedListOutlined />}
           />
         </Col>
-        {!user && (
-          <Col
-            md={24}
-            style={{
-              textAlign: "center",
-            }}
-          >
-            <Card>
-              <Typography.Title level={2}>
-                Join the waiting list
-              </Typography.Title>
-              <Typography.Paragraph>
-                We are currently in the process of developing our products and
-                services. Join our waiting list to be notified when we launch!
-              </Typography.Paragraph>
-              <Space direction="vertical">
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<GoogleOutlined />}
-                  onClick={onSignInWithGoogle}
-                >
-                  Join the waiting list
-                </Button>
-              </Space>
-            </Card>
-          </Col>
-        )}
+        <Col
+          md={24}
+          style={{
+            textAlign: "center",
+          }}
+        >
+          <Typography.Title level={5} disabled>
+            New Features Coming Soon
+          </Typography.Title>
+          <Typography.Paragraph disabled>
+            We are working on new features to help you manage your time, track
+            your progress, and stay focused on your goals. You will also be able
+            to reflect on your day and plan.
+          </Typography.Paragraph>
+        </Col>
       </Row>
     </div>
   );

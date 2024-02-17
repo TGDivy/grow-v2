@@ -15,6 +15,7 @@ import ProjectsPage from "./pages/ProjectsPage";
 import useUserStore from "./stores/user_store";
 import { themes } from "./utils/themes";
 import FocusPage from "./pages/FocusPage";
+import { SignUpPage } from "./pages/SignUpPage";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -58,11 +59,13 @@ function App() {
           className="layout"
           style={{
             minHeight: "100svh",
+            height: "100%",
           }}
         >
           <Routes>
             <Route path="" element={<DefaultLayout />} key={"home_page"}>
               <Route path="" element={<HomePage />} />
+              <Route path="signup" element={<SignUpPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="project/:projectId/*" element={<div>Project</div>} />
               <Route path="focus" element={<FocusPage />} />
