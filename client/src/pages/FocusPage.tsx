@@ -30,7 +30,7 @@ const Timer = () => {
   const [studyTime, setStudyTime] = useState<number>(
     active && startTime ? timeElapsed(startTime) : duration || 30 * 60
   );
-  const [sliderValue, setSliderValue] = useState(studyTime);
+  const [sliderValue, setSliderValue] = useState(active ? studyTime : duration);
 
   useEffect(() => {
     if (active && startTime) {
@@ -38,7 +38,7 @@ const Timer = () => {
         const elapsedTime = timeElapsed(startTime);
         setStudyTime(elapsedTime);
         setSliderValue(elapsedTime);
-      }, 200);
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [active, startTime]);

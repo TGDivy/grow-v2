@@ -29,7 +29,7 @@ const pastSessionSchema = new mongoose.Schema<PastSessionDocument>({
     completedAt: { type: Date, required: true, default: Date.now },
     endTime: { type: Date, computed: "startTime + duration * 1000" },
 
-    name: { type: String, required: true },
+    name: { type: String },
     notes: { type: String, trim: true },
     linkedEntities: {
         tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
@@ -40,7 +40,7 @@ const pastSessionSchema = new mongoose.Schema<PastSessionDocument>({
 pastSessionSchema.pre<PastSessionDocument>("save", function (next) {
     logger.info("Stop Focus Session Handler, step 2.1");
 
-    this.endTime = new Date(this.startTime.getTime() + this.duration * 60 * 1000);
+    this.endTime = new Date(this.startTime.getTime() + this.duration * 1000);
     this.completedAt = new Date(Date.now());
     logger.info("Stop Focus Session Handler, step 2.2");
 

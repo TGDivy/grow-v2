@@ -140,19 +140,21 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
             return res.status(400).send("Session has no start time");
         }
 
-        logger.info("Stop Focus Session Handler, step 2", userId);
+        logger.info(`Stop Focus Session Handler, step 2 ${JSON.stringify(focusSession)}`);
 
         const pastFocusSession = await createPastFocusSession({
             ...focusSession,
             startTime: focusSession.startTime,
+            duration: focusSession.duration,
+            userId: focusSession.userId,
         });
 
-        logger.info("Stop Focus Session Handler, step 3", userId);
+        logger.info("Stop Focus Session Handler, step 3", pastFocusSession);
 
-        return res.status(204).send(focusSession);
+        return res.send(focusSession);
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
-            return res.status(400).send;
+            return res.status(400).send(error);
         }
         if (error instanceof Error) {
             return res.status(500).send(error.message);

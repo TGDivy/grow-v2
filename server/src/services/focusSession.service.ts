@@ -1,5 +1,6 @@
 import ActiveSessionModel, { ActiveSessionInput } from "../models/activeFocusSession.model";
 import PastSessionModel, { PastSessionInput } from "../models/pastFocusSession.model";
+import { logger } from "../utils/logger";
 
 // Active Focus Sessions
 
@@ -16,7 +17,10 @@ export const updateFocusSession = async (userId: string, input: Partial<ActiveSe
     if (!session) {
         throw new Error("No active session found");
     }
-    return ActiveSessionModel.findByIdAndUpdate(session._id, input, { new: true });
+
+    logger.info(`Stop Focus Session Handler, step 2.001, input: ${JSON.stringify(input)}`);
+
+    return await ActiveSessionModel.findByIdAndUpdate(session._id, input, { new: true });
 };
 
 export const deleteFocusSession = async (userId: string) => {
@@ -24,15 +28,17 @@ export const deleteFocusSession = async (userId: string) => {
     if (!session) {
         throw new Error("No active session found");
     }
-    return ActiveSessionModel.findByIdAndDelete(session._id);
+    return await ActiveSessionModel.findByIdAndDelete(session._id);
 };
 
 // Past Focus Sessions
 
 export const createPastFocusSession = async (input: PastSessionInput) => {
-    return PastSessionModel.create(input);
+    logger.info(`Stop Focus Session Handler, step 2.01, input: ${JSON.stringify(input)}`);
+
+    return await PastSessionModel.create(input);
 };
 
 export const getAllPastFocusSessions = async (userId: string) => {
-    return PastSessionModel.find({ userId }).lean();
+    return await PastSessionModel.find({ userId }).lean();
 };

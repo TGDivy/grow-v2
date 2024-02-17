@@ -1,5 +1,6 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import mongoose, { ObjectId } from "mongoose";
+import { logger } from "../utils/logger";
 
 export interface ActiveSessionInput {
     userId: UserRecord["uid"];
@@ -35,10 +36,11 @@ const activeSessionSchema = new mongoose.Schema<ActiveSessionDocument>({
 });
 
 activeSessionSchema.pre<ActiveSessionDocument>("save", function (next) {
+    logger.info("ActiveSession pre save hook");
     if (!this.startTime) {
         this.startTime = new Date(Date.now());
     }
-    this.endTime = new Date(this.startTime.getTime() + this.duration * 60 * 1000);
+    this.endTime = new Date(this.startTime.getTime() + this.duration * 1000);
     next();
 });
 
