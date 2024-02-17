@@ -34,7 +34,7 @@ const LinkCard = (props: Props) => {
           <Avatar
             size="large"
             style={{
-              backgroundColor: token.colorBgLayout,
+              backgroundColor: token.colorFill,
             }}
           >
             {icon}

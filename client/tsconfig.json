@@ -23,12 +23,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    // "baseUrl": ".",
+    "baseUrl": ".",
     "paths": {
       "src/*": ["./src/*"],
-      "@server/*": ["../server/src/models/"]
+      "@server/*": ["../server/src/*"]
     }
   },
-  "include": ["src", "../server/src/models/"],
+  "include": ["src", "../server/"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

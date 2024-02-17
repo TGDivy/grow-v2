@@ -10,7 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       src: resolve(__dirname, "./src"),
-      "@server": resolve(__dirname, "../server/src/models/"),
+      "@server": resolve(__dirname, "../server/src/"),
     },
   },
 });

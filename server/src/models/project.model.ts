@@ -17,7 +17,7 @@ export interface ProjectDocument extends ProjectInput, mongoose.Document {
     createdAt: Date;
     updatedAt: Date;
 
-    _id: ObjectId;
+    _id: string;
 }
 
 const ProjectSchema = new mongoose.Schema(
