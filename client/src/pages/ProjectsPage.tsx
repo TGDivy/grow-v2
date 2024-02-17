@@ -86,7 +86,7 @@ const ProjectsPage = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "calc(100vh - 102px)",
+        height: "calc(100svh - 102px)",
       }}
     >
       <div
@@ -142,7 +142,6 @@ const ProjectsPage = () => {
                       padding: "14px",
                     }}
                   >
-                    {/* last updated */}
                     {item.emoji && (
                       <Avatar
                         size="large"

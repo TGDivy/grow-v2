@@ -15,7 +15,9 @@ const DefaultLayout = () => {
           <MainHeader />
           <Layout.Content
             style={{
-              padding: "20px 40px",
+              padding: breaks.sm ? "20px 40px" : "20px 20px",
+              overflowY: "scroll",
+              overflowAnchor: "unset",
             }}
           >
             <ErrorBoundary

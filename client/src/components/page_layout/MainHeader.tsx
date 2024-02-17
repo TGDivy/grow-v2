@@ -45,7 +45,7 @@ const MainHeader = () => {
             />
           )}
           <Link to="/" style={{}}>
-            <Typography.Title level={5}>Grow v2</Typography.Title>
+            <Typography.Title level={5}>Odyssey v2</Typography.Title>
           </Link>
         </div>
 

@@ -8,7 +8,7 @@ const PageTitle = () => {
 
   useEffect(() => {
     // set title by formating url and getting the last part of the url
-    const title = formatText(location.pathname.split("/")?.pop() || "Grow");
+    const title = formatText(location.pathname.split("/")?.pop() || "Odyssey");
     document.title = title;
   }, [location]);
 

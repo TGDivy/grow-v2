@@ -57,7 +57,7 @@ function App() {
         <Layout
           className="layout"
           style={{
-            minHeight: "100vh",
+            minHeight: "100svh",
           }}
         >
           <Routes>

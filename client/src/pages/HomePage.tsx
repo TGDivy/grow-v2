@@ -1,73 +1,78 @@
-import { GoogleOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Grid, Row, Space, Typography, theme } from "antd";
-import { motion } from "framer-motion";
+import {
+  AimOutlined,
+  CheckSquareOutlined,
+  FolderOutlined,
+  GoogleOutlined,
+  OrderedListOutlined,
+} from "@ant-design/icons";
+import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import { onSignInWithGoogle } from "src/api/firebase/authentication";
+import LinkCard from "src/components/basics/LinkCard";
 import useUserStore from "src/stores/user_store";
-const { useBreakpoint } = Grid;
-const { useToken } = theme;
+import { useToken } from "src/utils/antd_components";
 
 export const HomePage = () => {
-  // const { scrollYProgress } = useScroll();
-  const screens = useBreakpoint();
-  const isMobile = screens.xs;
   const user = useUserStore((state) => state.user);
   const { token } = useToken();
 
   return (
-    <>
-      {/* <motion.div
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "calc(100svh - 102px)",
+        alignItems: "center",
+      }}
+    >
+      <Row
+        gutter={[16, 16]}
         style={{
-          scaleX: scrollYProgress,
-          originX: 0,
-          transformOrigin: "left",
-          height: "12px",
-          backgroundColor: token.colorPrimary,
-          position: "fixed",
-          borderTopRightRadius: token.borderRadius,
-          borderBottomRightRadius: token.borderRadius,
-          bottom: 0,
-          left: 0,
-          zIndex: 1000,
+          maxWidth: "850px",
+          overflow: "hidden",
           width: "100%",
         }}
-      /> */}
-
-      <Row gutter={[16, 16]}>
+      >
         <Col xs={24}>
-          <Space
-            direction="vertical"
+          <Typography.Title level={1}>
+            <span key={user?.displayName} className="welcome-text">
+              Hello, {user?.displayName}.
+            </span>
+            <br />
+            <span
+              style={{
+                color: token.colorTextDisabled,
+              }}
+            >
+              Welcome to Odyssey App!
+            </span>
+          </Typography.Title>
+        </Col>
+        <Col span={24}>
+          <Divider
             style={{
-              alignItems: isMobile ? "center" : "flex-start",
-              textAlign: isMobile ? "center" : "left",
+              opacity: 0,
             }}
-          >
-            <Typography.Title level={1}>
-              <span key={user?.displayName} className="welcome-text">
-                Hello, {user?.displayName}.
-              </span>
-              <br />
-              <span
-                style={{
-                  color: token.colorTextDisabled,
-                }}
-              >
-                How can I help you today?
-              </span>
-            </Typography.Title>
-            <Typography.Title level={3}>
-              App for managing your tasks, goals, habits, journalling, and more!
-            </Typography.Title>
-            <Typography.Paragraph>
-              Grow App is a productivity app that helps you manage your tasks,
-              goals, habits, and journalling. It is designed to help you be more
-              productive and achieve your goals.
-            </Typography.Paragraph>
-            <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-              <Button type="primary" size="large">
-                Get Started
-              </Button>
-            </motion.div>
-          </Space>
+          />
+        </Col>
+        <Col
+          span={24}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: token.sizeSM,
+            scrollbarWidth: "none",
+            overflowX: "scroll",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <LinkCard to="/projects" title="Projects" icon={<FolderOutlined />} />
+          <LinkCard to="/tasks" title="Tasks" icon={<CheckSquareOutlined />} />
+          <LinkCard to="/focus" title="Focus" icon={<AimOutlined />} />
+          <LinkCard
+            to="/journal"
+            title="Journal"
+            icon={<OrderedListOutlined />}
+          />
         </Col>
         {!user && (
           <Col
@@ -98,6 +103,6 @@ export const HomePage = () => {
           </Col>
         )}
       </Row>
-    </>
+    </div>
   );
 };
