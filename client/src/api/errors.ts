@@ -10,16 +10,16 @@ export class APIError extends Error {
   }
 }
 
-type badRequestDataType = {
-  code: string;
-  message: string;
-  expected: string;
-  received: string;
-  path: {
-    key: string;
-    value: string;
-  };
-}[];
+// type badRequestDataType = {
+//   code: string;
+//   message: string;
+//   expected: string;
+//   received: string;
+//   path: {
+//     key: string;
+//     value: string;
+//   };
+// }[];
 
 //  API Errors
 
@@ -50,7 +50,7 @@ export class NotAuthorizedError extends APIError {
 
 // 400 Bad Request Error
 export class BadRequestError extends APIError {
-  constructor(message: string, data: badRequestDataType) {
+  constructor(message: string, data: unknown) {
     super(message, 400, data);
   }
 }
@@ -76,6 +76,37 @@ export class ServerError extends APIError {
   }
 }
 
+// find message in data
+// recursively search for message field in data, and append all messages as a single string
+// const findMessage = (data: unknown): string => {
+//   if (typeof data === "string") {
+//     return data;
+//   }
+//   if (Array.isArray(data)) {
+//     return data.map(findMessage).join(", ");
+//   }
+//   if (typeof data === "object" && data !== null) {
+//     return findMessage(Object.values(data));
+//   }
+//   return "";
+// };
+// Just return the first message
+const findMessage = (data: unknown): string => {
+  if (typeof data === "string") {
+    return data;
+  }
+  if (Array.isArray(data)) {
+    return data.map(findMessage).join(", ");
+  }
+  if (typeof data === "object" && data !== null) {
+    if (Object.prototype.hasOwnProperty.call(data, "message")) {
+      return (data as { message: string }).message; // Type assertion added here
+    }
+    return findMessage(Object.values(data));
+  }
+  return "";
+};
+
 export const handleAxiosError = (error: AxiosError) => {
   if (!(error instanceof Error)) {
     throw new Error("Unknown error occurred.");
@@ -87,8 +118,9 @@ export const handleAxiosError = (error: AxiosError) => {
   if (error.response) {
     const { status, data } = error.response;
     if (status === 400) {
-      const badRequestData = data as badRequestDataType;
-      const message = badRequestData.map((error) => error.message).join(", ");
+      const badRequestData = data;
+
+      const message = findMessage(badRequestData);
       throw new BadRequestError(message, badRequestData);
     }
     if (status === 401) {

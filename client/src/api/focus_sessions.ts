@@ -7,7 +7,7 @@ import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
 import { PastSessionDocument } from "@server/models/pastFocusSession.model";
 
 const activeFocusSessionAPI = axios.create({
-  baseURL: `${API_DOMAIN}/focus-sessions/`,
+  baseURL: `${API_DOMAIN}focus-sessions/`,
   headers: {
     "Content-type": "application/json",
   },
@@ -29,7 +29,7 @@ activeFocusSessionAPI.interceptors.response.use(
 );
 
 export const getFocusSession = async () => {
-  const response = await activeFocusSessionAPI.get<ActiveSessionDocument[]>(
+  const response = await activeFocusSessionAPI.get<ActiveSessionDocument>(
     "active"
   );
   return response.data;

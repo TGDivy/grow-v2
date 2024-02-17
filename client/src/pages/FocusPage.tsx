@@ -1,6 +1,22 @@
-import { Row, Col, Card } from "antd";
+import { Row, Col, Card, message } from "antd";
+import { useEffect } from "react";
+import useFocusSessionStore from "src/stores/focus_session_store";
 
 const FocusPage = () => {
+  const [loading, getAndSetSession] = useFocusSessionStore((state) => [
+    state.loading,
+    state.getAndSetSession,
+  ]);
+  useEffect(() => {
+    getAndSetSession()
+      .then()
+      .catch((error) => {
+        if (error instanceof Error) {
+          message.error(error.message);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div
       style={{
@@ -19,7 +35,9 @@ const FocusPage = () => {
         }}
       >
         <Col xs={24}>
-          <Card bordered={false}>Hi</Card>
+          <Card bordered={false} loading={loading}>
+            Hi
+          </Card>
         </Col>
       </Row>
     </div>

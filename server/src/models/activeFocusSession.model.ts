@@ -22,7 +22,7 @@ export interface ActiveSessionDocument extends ActiveSessionInput, Document {
 
 const activeSessionSchema = new mongoose.Schema<ActiveSessionDocument>({
     userId: { type: String, required: true },
-    name: { type: String, required: true },
+    name: { type: String },
     notes: { type: String, trim: true },
     startTime: { type: Date, required: true, default: Date.now },
     duration: { type: Number, min: 300, max: 10800, required: true }, // 3 hours max, 5 minutes min

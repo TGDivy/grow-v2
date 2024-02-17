@@ -8,6 +8,7 @@ import {
     getFocusSession,
     updateFocusSession,
 } from "../services/focusSession.service";
+import { logger } from "../utils/logger";
 
 export const createFocusSessionHandler = async (
     req: Request<{}, {}, createActiveSessionInput["body"]>,
@@ -50,9 +51,26 @@ export const getActiveSessionHandler = async (req: Request<{}, {}, {}>, res: Res
         return res.status(401).send("Unauthorized");
     }
 
-    const focusSession = await getFocusSession(userId);
+    logger.info("Getting active session for user", userId);
 
-    return res.send(focusSession);
+    try {
+        const focusSession = await getFocusSession(userId);
+        logger.info(`Got active session for user ${userId} focusSession: ${focusSession}`);
+        if (!focusSession) {
+            return res.status(404).send("No active session found");
+        }
+        return res.send(focusSession);
+    } catch (error) {
+        logger.error("Error getting active session for user", userId, error);
+        if (error instanceof mongoose.Error.ValidationError) {
+            return res.status(400).send(error);
+        }
+        if (error instanceof Error) {
+            return res.status(500).send(error.message);
+        }
+        return res.status(500).send("Something went wrong");
+    }
+    logger.info("Past the limit", userId);
 };
 
 export const updateFocusSessionHandler = async (
