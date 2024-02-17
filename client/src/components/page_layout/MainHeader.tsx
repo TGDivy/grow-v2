@@ -20,7 +20,7 @@ const MainHeader = () => {
           flexDirection: "row",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "end",
+          alignItems: breaks.sm ? "end" : "center",
           width: "100%",
           backgroundColor: "transparent",
           padding: breaks.sm ? "0px 40px" : "0px 15px 0px 5px",
@@ -32,6 +32,7 @@ const MainHeader = () => {
             display: "flex",
             gap: token.sizeXS,
             flexDirection: "row",
+            alignItems: breaks.sm ? "end" : "center",
           }}
         >
           {!breaks.sm && (
@@ -43,18 +44,12 @@ const MainHeader = () => {
               icon={<MenuOutlined />}
             />
           )}
-          <Link to="/">
+          <Link to="/" style={{}}>
             <Typography.Title level={5}>Grow v2</Typography.Title>
           </Link>
         </div>
 
-        <div
-          style={{
-            alignSelf: !breaks.sm ? "center" : "baseline",
-          }}
-        >
-          <UserProfile />
-        </div>
+        <UserProfile />
       </Header>
       {!breaks.sm && (
         <Drawer
