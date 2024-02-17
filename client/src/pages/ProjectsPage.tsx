@@ -147,10 +147,11 @@ const ProjectsPage = () => {
                       <Avatar
                         size="large"
                         style={{
-                          backgroundColor:
+                          backgroundColor: token.colorBgLayout,
+                          border:
                             hover === item._id
-                              ? token.colorBgContainer
-                              : token.colorBgLayout,
+                              ? `2px solid ${token.colorBorder}`
+                              : "none",
                         }}
                       >
                         {item.emoji.skins[0].native}

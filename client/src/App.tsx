@@ -14,6 +14,7 @@ import { HomePage } from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import useUserStore from "./stores/user_store";
 import { themes } from "./utils/themes";
+import FocusPage from "./pages/FocusPage";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -39,6 +40,7 @@ function App() {
           algorithm: themes[usertheme].algorithm,
           cssVar: true,
           token: {
+            colorPrimary: "#4285f4",
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
             colorBgBase: themes[usertheme].colorBgBase,
             fontSize: 16,
@@ -63,6 +65,8 @@ function App() {
               <Route path="" element={<HomePage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="project/:projectId/*" element={<div>Project</div>} />
+              <Route path="focus" element={<FocusPage />} />
+
               <Route path="settings" element={<div>Settings</div>} />
               <Route path="help" element={<div>Help</div>} />
               <Route path="*" element={<Navigate to="/" />} />

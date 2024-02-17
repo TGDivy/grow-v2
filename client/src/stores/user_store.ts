@@ -20,8 +20,6 @@ interface userStoreType {
   setTheme: (theme: "light" | "dark") => void;
 }
 
-console.log(window.localStorage.getItem("theme"), "asd");
-
 export const userInfoDefault = {
   name: "Guest",
   email: undefined,

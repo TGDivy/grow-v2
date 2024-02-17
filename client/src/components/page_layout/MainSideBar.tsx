@@ -1,5 +1,5 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Flex } from "antd";
+import { Button, Divider, Flex } from "antd";
 import { Sider, useToken } from "src/utils/antd_components";
 import { useLocalStorageState } from "src/utils/hooks";
 import { BottomMenu, TopMenu } from "./menu_items";
@@ -20,10 +20,9 @@ const MainSideBar = () => {
       onCollapse={setThemeCollapsed}
       collapsed={themeCollapsed}
       style={{
-        backgroundColor: token.colorBgBlur,
         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.05)",
-        // blurring the background
         backdropFilter: "blur(4px)",
+        backgroundColor: token.colorFillQuaternary,
       }}
     >
       <Flex
@@ -43,6 +42,11 @@ const MainSideBar = () => {
             icon={
               !themeCollapsed ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />
             }
+          />
+          <Divider
+            style={{
+              opacity: 0,
+            }}
           />
           <TopMenu themeCollapsed={themeCollapsed} />
         </div>

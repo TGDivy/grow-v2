@@ -1,6 +1,6 @@
 import {
+  AimOutlined,
   FileOutlined,
-  HomeOutlined,
   MoonOutlined,
   QuestionOutlined,
   SettingOutlined,
@@ -13,14 +13,14 @@ import useUserStore from "src/stores/user_store";
 
 const mainItems: MenuItemType[] = [
   {
-    key: "",
-    label: <Link to="/">Home</Link>,
-    icon: <HomeOutlined />,
-  },
-  {
     key: "projects",
     label: <Link to="/projects">Projects</Link>,
     icon: <FileOutlined />,
+  },
+  {
+    key: "focus",
+    label: <Link to="/focus">Focus</Link>,
+    icon: <AimOutlined />,
   },
 ];
 
@@ -44,6 +44,7 @@ interface BottomMenuProps {
 
 export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
   const location = useLocation();
+  const theme = useUserStore((state) => state.theme);
   return (
     <Flex
       vertical
@@ -62,6 +63,7 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
           backgroundColor: "transparent",
           border: "none",
         }}
+        theme={theme}
         onSelect={onSelect}
       />
     </Flex>
@@ -74,6 +76,7 @@ export const BottomMenu = ({ themeCollapsed, onSelect }: BottomMenuProps) => {
     state.setTheme,
   ]);
   const location = useLocation();
+
   return (
     <Flex
       vertical
@@ -92,6 +95,7 @@ export const BottomMenu = ({ themeCollapsed, onSelect }: BottomMenuProps) => {
           backgroundColor: "transparent",
           border: "none",
         }}
+        theme={theme}
         onSelect={onSelect}
       />
       <Flex

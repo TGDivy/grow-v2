@@ -44,15 +44,7 @@ const MainHeader = () => {
             />
           )}
           <Link to="/">
-            <Typography.Title
-              level={3}
-              style={{
-                fontFamily: "Protest Guerrilla",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Grow v2
-            </Typography.Title>
+            <Typography.Title level={5}>Grow v2</Typography.Title>
           </Link>
         </div>
 
