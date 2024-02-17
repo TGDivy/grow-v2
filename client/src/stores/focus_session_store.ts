@@ -1,16 +1,20 @@
 // import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
-import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
+// import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
+import { message } from "antd";
 import {
+  SessionDocumentType,
   createFocusSession,
   getFocusSession,
+  stopFocusSession,
   updateFocusSession,
 } from "src/api/focus_sessions";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
 
 interface focusSessionStoreType {
-  session?: ActiveSessionDocument;
-  setDuration: (duration: number) => Promise<void>;
+  session?: SessionDocumentType;
+  setDuration: (duration: number) => void;
+  toggleSession: () => Promise<void>;
   loading: boolean;
   getAndSetSession: () => Promise<void>;
 }
@@ -20,8 +24,7 @@ export const userInfoDefault = {};
 const useFocusSessionStore = create<focusSessionStoreType>()(
   subscribeWithSelector(
     devtools(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      (set, _get) => ({
+      (set, get) => ({
         loading: false,
         session: undefined,
         getAndSetSession: async () => {
@@ -37,10 +40,37 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
             set({ session, loading: false });
           }
         },
-        setDuration: async (duration) => {
-          set({ loading: true });
-          const session = await updateFocusSession({ duration, active: false });
-          set({ loading: false, session });
+        setDuration: (duration) => {
+          const session = get().session;
+          if (!session) {
+            return;
+          }
+          const newSession = { ...session, duration };
+          set({ loading: false, session: newSession });
+        },
+        toggleSession: async () => {
+          const session = get().session;
+          if (!session) {
+            return;
+          }
+          const newSession = {
+            ...session,
+            startTime: new Date().toISOString(),
+            active: !session.active,
+          };
+          try {
+            if (!session.active) {
+              const s = await updateFocusSession(newSession);
+              set({ session: s });
+            } else {
+              const s = await stopFocusSession();
+              set({ session: s });
+            }
+          } catch (error) {
+            if (error instanceof Error) {
+              message.error(error.message);
+            }
+          }
         },
       }),
       { name: "userStore" }

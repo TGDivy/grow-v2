@@ -14,3 +14,34 @@ export const formatText = (text: string) => {
     })
     .join(" ");
 };
+
+// function to recurse through an object/ array and change all date strings to date objects
+export const convertDateStringsToDates = (input: unknown): unknown => {
+  if (typeof input !== "object") {
+    return input;
+  }
+
+  if (Array.isArray(input)) {
+    return input.map((value) => convertDateStringsToDates(value));
+  }
+
+  if (input === null) {
+    return input;
+  }
+
+  return Object.keys(input as Record<string, unknown>).reduce(
+    (obj: Record<string, unknown>, key: string) => {
+      obj[key] = convertDateStringsToDates(
+        (input as Record<string, unknown>)[key]
+      );
+      if (
+        key.toLowerCase().includes("date") ||
+        (key.toLowerCase().includes("time") && typeof obj[key] === "string")
+      ) {
+        obj[key] = new Date(obj[key] as string);
+      }
+      return obj;
+    },
+    {}
+  );
+};

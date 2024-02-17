@@ -34,4 +34,12 @@ const activeSessionSchema = new mongoose.Schema<ActiveSessionDocument>({
     active: { type: Boolean, required: true, default: true },
 });
 
+activeSessionSchema.pre<ActiveSessionDocument>("save", function (next) {
+    if (!this.startTime) {
+        this.startTime = new Date(Date.now());
+    }
+    this.endTime = new Date(this.startTime.getTime() + this.duration * 60 * 1000);
+    next();
+});
+
 export default mongoose.model<ActiveSessionDocument>("ActiveSession", activeSessionSchema);

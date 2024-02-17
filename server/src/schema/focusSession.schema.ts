@@ -13,7 +13,7 @@ const commonSessionSchema = object({
 
 export const createActiveSessionSchema = object({
     body: commonSessionSchema.extend({
-        startTime: date().optional(),
+        startTime: string().datetime().optional(),
         active: boolean().default(true),
     }),
 });

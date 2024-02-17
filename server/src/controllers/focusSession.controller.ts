@@ -24,13 +24,21 @@ export const createFocusSessionHandler = async (
         const body = req.body;
         let tasks: mongoose.Schema.Types.ObjectId[] = [];
         let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let startTime: Date | undefined;
 
         if (body.linkedEntities) {
             tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
             projects = body.linkedEntities.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
         }
 
-        const focusSession = await createFocusSession({ ...body, userId, linkedEntities: { tasks, projects } });
+        if (body.startTime) startTime = new Date(body.startTime);
+
+        const focusSession = await createFocusSession({
+            ...body,
+            userId,
+            linkedEntities: { tasks, projects },
+            startTime,
+        });
 
         return res.send(focusSession);
     } catch (error) {
@@ -51,17 +59,13 @@ export const getActiveSessionHandler = async (req: Request<{}, {}, {}>, res: Res
         return res.status(401).send("Unauthorized");
     }
 
-    logger.info("Getting active session for user", userId);
-
     try {
         const focusSession = await getFocusSession(userId);
-        logger.info(`Got active session for user ${userId} focusSession: ${focusSession}`);
         if (!focusSession) {
             return res.status(404).send("No active session found");
         }
         return res.send(focusSession);
     } catch (error) {
-        logger.error("Error getting active session for user", userId, error);
         if (error instanceof mongoose.Error.ValidationError) {
             return res.status(400).send(error);
         }
@@ -70,7 +74,6 @@ export const getActiveSessionHandler = async (req: Request<{}, {}, {}>, res: Res
         }
         return res.status(500).send("Something went wrong");
     }
-    logger.info("Past the limit", userId);
 };
 
 export const updateFocusSessionHandler = async (
@@ -87,13 +90,21 @@ export const updateFocusSessionHandler = async (
         const body = req.body;
         let tasks: mongoose.Schema.Types.ObjectId[] = [];
         let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let startTime: Date | undefined;
 
         if (body.linkedEntities) {
             tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
             projects = body.linkedEntities.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
         }
 
-        const focusSession = await updateFocusSession(userId, { ...body, userId, linkedEntities: { tasks, projects } });
+        if (body.startTime) startTime = new Date(body.startTime);
+
+        const focusSession = await updateFocusSession(userId, {
+            ...body,
+            userId,
+            linkedEntities: { tasks, projects },
+            startTime,
+        });
 
         return res.send(focusSession);
     } catch (error) {
@@ -110,12 +121,14 @@ export const updateFocusSessionHandler = async (
 export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Response) => {
     // we also need to create a copy of this to save it in the past sessions
     const userId = res.locals.user?.uid;
+    logger.info("Stop Focus Session Handler", userId);
 
     if (!userId) {
         return res.status(401).send("Unauthorized");
     }
 
     try {
+        logger.info("Stop Focus Session Handler, step 1", userId);
         const focusSession = await updateFocusSession(userId, { active: false });
         if (!focusSession) {
             return res.status(404).send("No active session found");
@@ -127,12 +140,16 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
             return res.status(400).send("Session has no start time");
         }
 
-        await createPastFocusSession({
+        logger.info("Stop Focus Session Handler, step 2", userId);
+
+        const pastFocusSession = await createPastFocusSession({
             ...focusSession,
             startTime: focusSession.startTime,
         });
 
-        return res.send(focusSession);
+        logger.info("Stop Focus Session Handler, step 3", userId);
+
+        return res.status(204).send(focusSession);
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
             return res.status(400).send;
@@ -142,6 +159,7 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
         }
         return res.status(500).send("Something went wrong");
     }
+    logger.info("End of Code...", userId);
 };
 
 export const getAllPastFocusSessionsHandler = async (req: Request<{}, {}, {}>, res: Response) => {

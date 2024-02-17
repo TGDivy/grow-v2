@@ -1,5 +1,6 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import mongoose, { ObjectId } from "mongoose";
+import { logger } from "../utils/logger";
 
 export interface PastSessionInput {
     userId: UserRecord["uid"];
@@ -21,7 +22,7 @@ export interface PastSessionDocument extends PastSessionInput, Document {
     completedAt: Date;
 }
 
-const activeSessionSchema = new mongoose.Schema<PastSessionDocument>({
+const pastSessionSchema = new mongoose.Schema<PastSessionDocument>({
     userId: { type: String, required: true },
     startTime: { type: Date, required: true },
     duration: { type: Number, min: 300, max: 10800, required: true }, // 3 hours max, 5 minutes min
@@ -36,4 +37,14 @@ const activeSessionSchema = new mongoose.Schema<PastSessionDocument>({
     },
 });
 
-export default mongoose.model<PastSessionDocument>("PastSession", activeSessionSchema);
+pastSessionSchema.pre<PastSessionDocument>("save", function (next) {
+    logger.info("Stop Focus Session Handler, step 2.1");
+
+    this.endTime = new Date(this.startTime.getTime() + this.duration * 60 * 1000);
+    this.completedAt = new Date(Date.now());
+    logger.info("Stop Focus Session Handler, step 2.2");
+
+    return next();
+});
+
+export default mongoose.model<PastSessionDocument>("PastSession", pastSessionSchema);

@@ -37,7 +37,7 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     width: 100%;
     height: 100%;
     background: var(--ant-layout-body-bg);
-    animation: slide 2s forwards ease-out;
+    animation: slide 2s forwards cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes slide {

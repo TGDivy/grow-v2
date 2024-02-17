@@ -13,6 +13,8 @@ export const HomePage = () => {
   const user = useUserStore((state) => state.user);
   const { token } = useToken();
 
+  console.log("user", user);
+
   return (
     <div
       style={{
