@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import TimerCard from "src/components/timer/TimerCard";
 import useFocusSessionStore from "src/stores/focus_session_store";
 import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
+import { useBreakpoint } from "src/utils/antd_components";
 
 const Timer = () => {
   const [loading, session, setDuration, toggleSession] = useFocusSessionStore(
@@ -52,6 +53,8 @@ const Timer = () => {
 
 const Notes = () => {
   const loading = useFocusSessionStore((state) => state.loading);
+  const breaks = useBreakpoint();
+
   return (
     <Card
       bordered={false}
@@ -62,7 +65,7 @@ const Notes = () => {
     >
       <Input.TextArea
         placeholder="Notes"
-        autoSize={{ minRows: 3, maxRows: 10 }}
+        autoSize={{ minRows: !breaks.sm ? 3 : 7, maxRows: 10 }}
         showCount
         maxLength={1000}
         variant="borderless"
@@ -115,7 +118,7 @@ const FocusPage = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "calc(100svh - 102px)",
+        minHeight: "calc(100svh - 102px)",
         alignItems: "center",
       }}
     >

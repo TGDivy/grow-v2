@@ -7,6 +7,13 @@ import {
     getProjectHandler,
     updateProjectHandler,
 } from "./controllers/project.controller";
+import {
+    createTodoHandler,
+    deleteTodoHandler,
+    getAllTodosHandler,
+    getTodoHandler,
+    updateTodoHandler,
+} from "./controllers/todo.controller";
 
 import {
     createFocusSessionHandler,
@@ -26,6 +33,13 @@ import {
     getProjectSchema,
     updateProjectSchema,
 } from "./schema/project.schema";
+import {
+    createTodoSchema,
+    deleteTodoSchema,
+    getAllTodosSchema,
+    getTodoSchema,
+    updateTodoSchema,
+} from "./schema/todo.schema";
 import { createActiveSessionSchema } from "./schema/focusSession.schema";
 
 const routes = (app: Express) => {
@@ -54,6 +68,12 @@ const routes = (app: Express) => {
     app.get("/project/:id", [requireUser, validateResource(getProjectSchema)], getProjectHandler);
     app.put("/project/:id", requireUser, validateResource(updateProjectSchema), updateProjectHandler);
     app.delete("/project/:id", [requireUser, validateResource(deleteProjectSchema)], deleteProjectHandler);
+
+    app.post("/todo", [requireUser, validateResource(createTodoSchema)], createTodoHandler);
+    app.get("/todo", [requireUser, validateResource(getAllTodosSchema)], getAllTodosHandler);
+    app.get("/todo/:id", [requireUser, validateResource(getTodoSchema)], getTodoHandler);
+    app.put("/todo/:id", requireUser, validateResource(updateTodoSchema), updateTodoHandler);
+    app.delete("/todo/:id", [requireUser, validateResource(deleteTodoSchema)], deleteTodoHandler);
 
     app.post(
         "/focus-sessions/active",
