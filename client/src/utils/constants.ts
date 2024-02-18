@@ -11,3 +11,6 @@ declare global {
 }
 
 export const API_DOMAIN = import.meta.env.VITE_APP_API;
+
+export const buttonPressSound = new Audio("button-press.wav");
+export const notificationSound = new Audio("notification.wav");

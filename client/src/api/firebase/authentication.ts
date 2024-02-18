@@ -13,6 +13,7 @@ import {
 } from "firebase/auth";
 import useUserStore from "src/stores/user_store";
 import { auth } from "./firebase_init";
+import { notificationSound } from "src/utils/constants";
 
 const actionCodeSettings = {
   url: `${window.location.protocol}//${window.location.host}/`,
@@ -35,6 +36,8 @@ onAuthStateChanged(auth, (user) => {
         placement: "bottomRight",
         type: "warning",
       });
+      notificationSound.play();
+
       sendEmailVerification(user, actionCodeSettings).then(() => {
         // Email verification sent!
         // ...

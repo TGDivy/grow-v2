@@ -8,6 +8,7 @@ import {
   stopFocusSession,
   updateFocusSession,
 } from "src/api/focus_sessions";
+import { notificationSound } from "src/utils/constants";
 import { create } from "zustand";
 import { devtools, subscribeWithSelector } from "zustand/middleware";
 
@@ -103,6 +104,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
                 get().toggleSession();
               },
             });
+            notificationSound.play();
           }
         },
       }),
