@@ -66,6 +66,6 @@ TodoSchema.pre<TodoDocument>("save", function (next) {
     return next();
 });
 
-const Todo = mongoose.model<TodoDocument>("Project", TodoSchema);
+const Todo = mongoose.model<TodoDocument>("Todo", TodoSchema);
 
 export default Todo;
