@@ -31,7 +31,7 @@ const Timer = () => {
     return <Skeleton />;
   }
 
-  const { duration, startTime, active } = session;
+  const { duration, startTime, active, mode } = session;
 
   if (!duration || !startTime) {
     return <Card>Session not found</Card>;
@@ -45,6 +45,7 @@ const Timer = () => {
       loading={loading}
       setDuration={setDuration}
       toggleSession={toggleSession}
+      mode={mode}
     />
   );
 };

@@ -11,6 +11,7 @@ import Countdown from "antd/es/statistic/Countdown";
 import { Formatter } from "antd/es/statistic/utils";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
+import { SessionDocumentType } from "src/api/focus_sessions";
 import useFocusSessionStore from "src/stores/focus_session_store";
 import { useToken } from "src/utils/antd_components";
 import { formatTime } from "src/utils/text";
@@ -98,15 +99,17 @@ interface TimerCardProps {
   loading: boolean;
   active: boolean;
   duration: number;
+  mode: SessionDocumentType["mode"];
   startTime: Date;
   toggleSession: () => void;
   setDuration: (duration: number) => void;
 }
 
 const TimerCard = (props: TimerCardProps) => {
-  const { loading, active, duration, startTime, toggleSession, setDuration } =
-    props;
-
+  const { loading, active, duration, startTime, mode } = props;
+  const [setSessionMode, setDuration, toggleSession] = useFocusSessionStore(
+    (state) => [state.setSessionMode, state.setDuration, state.toggleSession]
+  );
   return (
     <Card bordered={false} loading={loading}>
       <Flex justify="center" align="center" vertical>
@@ -114,7 +117,13 @@ const TimerCard = (props: TimerCardProps) => {
           disabled={active}
           options={["Pomodoro", "Short Break", "Long Break"]}
           onChange={(value) => {
-            console.log(value); // string
+            if (value === "Pomodoro") {
+              setSessionMode("focus");
+            } else if (value === "Short Break") {
+              setSessionMode("break");
+            } else if (value === "Long Break") {
+              setSessionMode("longBreak");
+            }
           }}
         />
         <DisplayTime
@@ -123,7 +132,7 @@ const TimerCard = (props: TimerCardProps) => {
           duration={duration}
         />
       </Flex>
-      {!active && (
+      {!active && mode == "focus" && (
         <Slider
           min={300}
           max={2 * 60 * 60}

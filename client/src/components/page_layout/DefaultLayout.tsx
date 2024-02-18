@@ -24,7 +24,7 @@ const DefaultLayout = () => {
     <>
       <Layout>
         {breaks.sm && <MainSideBar />}
-        <Layout style={{}}>
+        <Layout>
           <MainHeader />
           <Layout.Content
             style={{
