@@ -1,6 +1,6 @@
 // import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
 // import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
-import { message } from "antd";
+import { message, notification } from "antd";
 import {
   SessionDocumentType,
   createFocusSession,
@@ -14,9 +14,12 @@ import { devtools, subscribeWithSelector } from "zustand/middleware";
 interface focusSessionStoreType {
   session?: SessionDocumentType;
   setDuration: (duration: number) => void;
+  setSessionMode: (mode: SessionDocumentType["mode"]) => void;
   toggleSession: () => Promise<void>;
   loading: boolean;
   getAndSetSession: () => Promise<void>;
+  sessionCompleted: boolean;
+  setSessionCompleted: (completed: boolean) => void;
 }
 
 export const userInfoDefault = {};
@@ -31,6 +34,16 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
           set({ loading: true });
           try {
             const session = await getFocusSession();
+            if (!session) {
+              throw new Error("Session not found");
+            }
+            if (session.active && session.startTime && session.duration) {
+              const deadline =
+                session.startTime.getTime() + session.duration * 1000;
+              if (session.active && deadline < Date.now()) {
+                get().setSessionCompleted(true);
+              }
+            }
             set({ loading: false, session });
           } catch (error) {
             const session = await createFocusSession({
@@ -45,8 +58,14 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
           if (!session) {
             return;
           }
-          const newSession = { ...session, duration };
-          set({ loading: false, session: newSession });
+          set({ session: { ...session, duration } });
+        },
+        setSessionMode: (mode) => {
+          const session = get().session;
+          if (!session) {
+            return;
+          }
+          set({ session: { ...session, mode } });
         },
         toggleSession: async () => {
           const session = get().session;
@@ -61,15 +80,29 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
           try {
             if (!session.active) {
               const s = await updateFocusSession(newSession);
-              set({ session: s });
+              set({ session: s, sessionCompleted: false });
             } else {
               const s = await stopFocusSession();
-              set({ session: s });
+              set({ session: s, sessionCompleted: false });
             }
           } catch (error) {
             if (error instanceof Error) {
               message.error(error.message);
             }
+          }
+        },
+        sessionCompleted: false,
+        setSessionCompleted: (completed) => {
+          set({ sessionCompleted: completed });
+          if (completed) {
+            notification.success({
+              message: "Congratulations!",
+              description: "You have completed your focus session!",
+              duration: 5,
+              onClose() {
+                get().toggleSession();
+              },
+            });
           }
         },
       }),

@@ -94,3 +94,21 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 .ant-switch.ant-switch-checked {
     background-color: var(--ant-color-bg-elevated) !important;
 }
+
+.ant-menu-item-selected {
+    background-color: var(--ant-menu-dark-item-selected-bg) !important;
+    color: var(--ant-menu-dark-item-selected-color) !important;
+}
+
+.ant-menu-item:not(.ant-menu-item-selected):hover {
+    background-color: var(--ant-menu-item-bg);
+    color: var(--ant-menu-dark-item-selected-color);
+}
+
+/* .ant-menu-item {
+    transition: unset !important;
+} */
+
+.ant-menu-title-content {
+    transition: unset !important;
+}

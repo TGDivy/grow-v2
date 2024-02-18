@@ -41,7 +41,8 @@ pastSessionSchema.pre<PastSessionDocument>("save", function (next) {
     logger.info("Stop Focus Session Handler, step 2.1");
 
     this.endTime = new Date(this.startTime.getTime() + this.duration * 1000);
-    this.completedAt = new Date(Date.now());
+    // max of endTime and current time
+    this.completedAt = new Date(Math.max(this.endTime.getTime(), Date.now()));
     logger.info("Stop Focus Session Handler, step 2.2");
 
     return next();

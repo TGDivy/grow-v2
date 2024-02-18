@@ -1,8 +1,8 @@
 import {
   AimOutlined,
+  BookFilled,
   CheckSquareOutlined,
-  FolderOutlined,
-  OrderedListOutlined,
+  FolderFilled,
 } from "@ant-design/icons";
 import { Col, Row, Typography } from "antd";
 import LinkCard from "src/components/basics/LinkCard";
@@ -45,6 +45,7 @@ export const HomePage = () => {
             >
               Welcome to Odyssey!
             </span>
+            <br />
           </Typography.Title>
         </Col>
         <Col span={24}>
@@ -63,14 +64,10 @@ export const HomePage = () => {
             padding: "10px",
           }}
         >
-          <LinkCard to="/projects" title="Projects" icon={<FolderOutlined />} />
+          <LinkCard to="/projects" title="Projects" icon={<FolderFilled />} />
           <LinkCard to="/tasks" title="Tasks" icon={<CheckSquareOutlined />} />
           <LinkCard to="/focus" title="Focus" icon={<AimOutlined />} />
-          <LinkCard
-            to="/journal"
-            title="Journal"
-            icon={<OrderedListOutlined />}
-          />
+          <LinkCard to="/journal" title="Journal" icon={<BookFilled />} />
         </Col>
         <Col
           md={24}

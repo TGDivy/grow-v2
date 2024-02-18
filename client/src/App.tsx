@@ -16,6 +16,7 @@ import useUserStore from "./stores/user_store";
 import { themes } from "./utils/themes";
 import FocusPage from "./pages/FocusPage";
 import { SignUpPage } from "./pages/SignUpPage";
+import { useBreakpoint } from "./utils/antd_components";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -29,6 +30,7 @@ const CustomizeRenderEmpty = () => {
 function App() {
   const user = useUserStore((state) => state.user);
   const usertheme = useUserStore((state) => state.theme);
+  const breaks = useBreakpoint();
 
   if (user === undefined) {
     return null;
@@ -41,10 +43,10 @@ function App() {
           algorithm: themes[usertheme].algorithm,
           cssVar: true,
           token: {
-            colorPrimary: "#4285f4",
+            colorPrimary: themes[usertheme].colorPrimary,
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
             colorBgBase: themes[usertheme].colorBgBase,
-            fontSize: 16,
+            fontSize: !breaks.sm ? 14 : 16,
           },
           components: {
             Typography: {

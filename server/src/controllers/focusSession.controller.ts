@@ -130,8 +130,13 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
     try {
         logger.info("Stop Focus Session Handler, step 1", userId);
         const focusSession = await updateFocusSession(userId, { active: false });
+
         if (!focusSession) {
             return res.status(404).send("No active session found");
+        }
+        // if focusSession mode was not Focus, we don't need to create a past session
+        if (focusSession.mode !== "focus") {
+            return res.send(focusSession);
         }
         if (!focusSession.duration) {
             return res.status(400).send("Cannot stop a session that has not started");

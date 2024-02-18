@@ -1,4 +1,4 @@
-import { object, string, number, boolean, array, date, TypeOf } from "zod";
+import { object, string, number, boolean, array, date, TypeOf, z } from "zod";
 
 const commonSessionSchema = object({
     duration: number().min(300).max(10800),
@@ -15,6 +15,7 @@ export const createActiveSessionSchema = object({
     body: commonSessionSchema.extend({
         startTime: string().datetime().optional(),
         active: boolean().default(true),
+        mode: z.enum(["focus", "break", "longBreak"]).optional(),
     }),
 });
 

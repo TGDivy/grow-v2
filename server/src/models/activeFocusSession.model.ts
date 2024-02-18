@@ -15,6 +15,8 @@ export interface ActiveSessionInput {
         tasks: ObjectId[];
         projects: ObjectId[];
     };
+
+    mode?: "focus" | "break" | "longBreak";
 }
 
 export interface ActiveSessionDocument extends ActiveSessionInput, Document {
@@ -33,6 +35,7 @@ const activeSessionSchema = new mongoose.Schema<ActiveSessionDocument>({
         projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
     },
     active: { type: Boolean, required: true, default: true },
+    mode: { type: String, enum: ["focus", "break", "longBreak"], required: true, default: "focus" },
 });
 
 activeSessionSchema.pre<ActiveSessionDocument>("save", function (next) {
@@ -42,6 +45,10 @@ activeSessionSchema.pre<ActiveSessionDocument>("save", function (next) {
     }
     this.endTime = new Date(this.startTime.getTime() + this.duration * 1000);
     next();
+    // if not mode, set mode to focus
+    if (!this.mode) {
+        this.mode = "focus";
+    }
 });
 
 export default mongoose.model<ActiveSessionDocument>("ActiveSession", activeSessionSchema);

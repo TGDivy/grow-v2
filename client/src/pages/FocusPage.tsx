@@ -1,19 +1,18 @@
 import {
-  Row,
-  Col,
+  Alert,
   Card,
-  message,
+  Col,
+  Empty,
+  Input,
+  Row,
+  Skeleton,
   Typography,
-  Slider,
-  Button,
-  Popconfirm,
+  message,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import TimerCard from "src/components/timer/TimerCard";
 import useFocusSessionStore from "src/stores/focus_session_store";
-
-const timeElapsed = (startTime: Date) => {
-  return Math.ceil((new Date().getTime() - startTime.getTime()) / 1000);
-};
+import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 
 const Timer = () => {
   const [loading, session, setDuration, toggleSession] = useFocusSessionStore(
@@ -25,92 +24,81 @@ const Timer = () => {
     ]
   );
 
-  const { duration, startTime, active } = session || {};
-
-  const [studyTime, setStudyTime] = useState<number>(
-    active && startTime ? timeElapsed(startTime) : duration || 30 * 60
-  );
-  const [sliderValue, setSliderValue] = useState(active ? studyTime : duration);
-
-  useEffect(() => {
-    if (active && startTime) {
-      const interval = setInterval(() => {
-        const elapsedTime = timeElapsed(startTime);
-        setStudyTime(elapsedTime);
-        setSliderValue(elapsedTime);
-      }, 1000);
-      return () => clearInterval(interval);
+  if (!session) {
+    if (loading) {
+      return <Skeleton active />;
     }
-  }, [active, startTime]);
+    return <Skeleton />;
+  }
+
+  const { duration, startTime, active } = session;
+
+  if (!duration || !startTime) {
+    return <Card>Session not found</Card>;
+  }
+
+  return (
+    <TimerCard
+      duration={duration}
+      startTime={startTime}
+      active={active}
+      loading={loading}
+      setDuration={setDuration}
+      toggleSession={toggleSession}
+    />
+  );
+};
+
+const Notes = () => {
+  const loading = useFocusSessionStore((state) => state.loading);
+  return (
+    <Card
+      bordered={false}
+      loading={loading}
+      style={{
+        height: "100%",
+      }}
+    >
+      <Input.TextArea
+        placeholder="Notes"
+        autoSize={{ minRows: 3, maxRows: 10 }}
+        showCount
+        maxLength={1000}
+        variant="borderless"
+        style={{
+          marginBottom: "16px",
+        }}
+      />
+    </Card>
+  );
+};
+
+const LinkedEntities = () => {
+  const loading = useFocusSessionStore((state) => state.loading);
 
   return (
     <Card bordered={false} loading={loading}>
-      <Typography.Title
-        level={1}
-        style={{
-          textAlign: "center",
-        }}
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description="Feature coming soon!"
       >
-        {/* upto 3 hours, */}
-        {new Intl.DateTimeFormat("en-GB", {
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-          hour12: false,
-        }).format(studyTime * 1000 - 60 * 60 * 1000)}
-      </Typography.Title>
-      <Slider
-        min={300}
-        max={active ? duration : 3 * 60 * 60}
-        step={300}
-        value={sliderValue}
-        onChange={(value) => {
-          setSliderValue(value);
-        }}
-        tooltip={{
-          placement: "top",
-          overlayStyle: { zIndex: 1000 },
-          formatter: (value?: number) => {
-            if (!value) {
-              return "";
-            }
-            return `${Math.floor(value / 60)}:${
-              value % 60 < 10 ? `0${value % 60}` : value % 60
-            }`;
-          },
-        }}
-        onChangeComplete={(value) => {
-          setStudyTime(value);
-          if (!active) {
-            setDuration(value);
-          }
-        }}
-        disabled={active}
-      />
-      {!active ? (
-        <Button onClick={toggleSession} type="primary" block>
-          Start
-        </Button>
-      ) : (
-        <Popconfirm
-          title="Are you sure you want to end the session?"
-          onConfirm={toggleSession}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button type="primary" block>
-            Stop
-          </Button>
-        </Popconfirm>
-      )}
+        <Typography.Text>
+          Link your tasks, projects, and more to your focus session.
+        </Typography.Text>
+      </Empty>
     </Card>
   );
 };
 
 const FocusPage = () => {
-  const getAndSetSession = useFocusSessionStore(
-    (state) => state.getAndSetSession
+  const [getAndSetSession, toggleSession] = useFocusSessionStore((state) => [
+    state.getAndSetSession,
+    state.toggleSession,
+  ]);
+  const sessionCompleted = useFocusSessionStore(
+    (state) => state.sessionCompleted
   );
+
   useEffect(() => {
     getAndSetSession()
       .then()
@@ -138,10 +126,29 @@ const FocusPage = () => {
           width: "100%",
         }}
       >
+        {sessionCompleted && (
+          <Col xs={24}>
+            <Alert
+              message="Congratulations!"
+              description="You have completed your focus session!"
+              type="success"
+              showIcon
+              closable
+              afterClose={() => toggleSession()}
+            />
+          </Col>
+        )}
         <Col xs={24}>
           <Timer />
         </Col>
+        <Col xs={24} md={12}>
+          <Notes />
+        </Col>
+        <Col xs={24} md={12}>
+          <LinkedEntities />
+        </Col>
       </Row>
+      {sessionCompleted && <Fireworks autorun={{ speed: 1, duration: 5000 }} />}
     </div>
   );
 };
