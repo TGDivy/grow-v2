@@ -1,5 +1,11 @@
+import RTE from "src/components/rte/RTE";
+
 const TasksPage = () => {
-  return <div>TasksPage</div>;
+  return (
+    <div>
+      <RTE />
+    </div>
+  );
 };
 
 export default TasksPage;
