@@ -2,7 +2,9 @@ import { object, string, number, boolean, array, TypeOf, date } from "zod";
 
 const payload = {
     body: object({
-        raw: string({ required_error: "Raw is required" }),
+        rawText: string({ required_error: "Raw Text is required" }),
+        jsonString: string().optional(),
+        htmlString: string().optional(),
         priority: number().min(0).max(25).optional().default(0),
         projects: array(string()).optional().default([]),
         contexts: array(string()).optional().default([]),

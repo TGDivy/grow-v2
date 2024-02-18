@@ -2,7 +2,10 @@ import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import mongoose, { ObjectId } from "mongoose";
 
 export interface TodoInput {
-    raw: string;
+    rawText: string;
+    jsonString?: string;
+    htmlString?: string;
+
     userId: UserRecord["uid"];
 
     priority?: number;
@@ -31,7 +34,9 @@ export interface TodoDocument extends TodoInput, mongoose.Document {
 
 const TodoSchema = new mongoose.Schema(
     {
-        raw: { type: String, required: true },
+        rawText: { type: String, required: true },
+        jsonString: { type: String },
+        htmlString: { type: String },
         userId: { type: String, required: true },
 
         priority: { type: Number, required: true, default: 0, min: 0, max: 25 },
