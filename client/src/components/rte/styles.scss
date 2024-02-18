@@ -1,5 +1,31 @@
 /* Basic editor styles */
 .tiptap {
+  outline: 0;
+  border-radius: 40px;
+  padding: 16px 32px;
+  border-width: var(--ant-line-width);
+  border-style: var(--ant-line-type);
+  border-color: transparent;
+  background: var(--ant-color-fill-tertiary);
+  color: var(--ant-color-text);
+  position: relative;
+
+  &:focus,
+  &:active {
+    border-color: var(--ant-color-border);
+  }
+
+  p:last-of-type {
+    margin: 0;
+  }
+
+  .mention {
+    background-color: var(--ant-color-primary-active);
+    // color: var(--ant-color-
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+
   > * + * {
     margin-top: 0.75em;
   }

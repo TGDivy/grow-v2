@@ -46,6 +46,7 @@ function App() {
         theme={{
           algorithm: themes[usertheme].algorithm,
           cssVar: true,
+          hashed: false,
           token: {
             colorPrimary: themes[usertheme].colorPrimary,
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",

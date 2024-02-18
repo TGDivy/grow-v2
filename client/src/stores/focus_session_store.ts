@@ -1,5 +1,3 @@
-// import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
-// import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
 import { message, notification } from "antd";
 import {
   SessionDocumentType,
@@ -108,7 +106,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
           }
         },
       }),
-      { name: "userStore" }
+      { name: "focusStore" }
     )
   )
 );

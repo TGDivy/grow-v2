@@ -14,6 +14,8 @@ import {
 import useUserStore from "src/stores/user_store";
 import { auth } from "./firebase_init";
 import { notificationSound } from "src/utils/constants";
+import { getProjects } from "../project";
+import useProjectStore from "src/stores/projects_store";
 
 const actionCodeSettings = {
   url: `${window.location.protocol}//${window.location.host}/`,
@@ -27,6 +29,25 @@ onAuthStateChanged(auth, (user) => {
     // const uid = user.uid;
     message.success("You have successfully logged in!");
     useUserStore.getState().setUser(user);
+
+    useProjectStore.getState().setLoading(true);
+    getProjects()
+      .then((projects) => {
+        if (projects.length === 0) {
+          notification.info({
+            message: "Welcome to Focus!",
+            description:
+              "You can create a project by typing @ followed by the project name",
+            duration: 5,
+            placement: "bottomRight",
+          });
+        }
+        useProjectStore.getState().setProjects(projects);
+      })
+      .catch(() => {})
+      .finally(() => {
+        useProjectStore.getState().setLoading(false);
+      });
 
     if (!user.emailVerified) {
       notification.open({

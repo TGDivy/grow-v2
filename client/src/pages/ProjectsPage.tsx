@@ -12,24 +12,21 @@ import {
 } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { createProject, getProjects } from "src/api/project";
+import { createProject } from "src/api/project";
+import useProjectStore from "src/stores/projects_store";
 import { useToken } from "src/utils/antd_components";
-import { useAsync } from "src/utils/hooks";
 import { formatText } from "src/utils/text";
 
-// refetch is set state bool
-const CreateProject = ({ refetch }: { refetch: React.Dispatch<boolean> }) => {
+const CreateProject = () => {
   const [title, setTitle] = useState("");
+  const addProject = useProjectStore((state) => state.addProject);
 
   const handleCreateProject = async () => {
     try {
-      if (!title) {
-        throw new Error("Title is required");
-      }
-      await createProject({ title, completed: false });
-      refetch(true);
+      const project = await createProject({ title, completed: false });
       setTitle("");
       message.success("Project created");
+      addProject(project);
     } catch (error) {
       if (error instanceof Error) {
         message.error(error.message);
@@ -72,14 +69,13 @@ const CreateProject = ({ refetch }: { refetch: React.Dispatch<boolean> }) => {
 };
 
 const ProjectsPage = () => {
-  const { data, loading, error, refetch } = useAsync(getProjects, []);
+  const [projects, loading] = useProjectStore((state) => [
+    state.projects,
+    state.loading,
+  ]);
 
   const { token } = useToken();
   const [hover, setHover] = useState<string>();
-
-  if (error) {
-    return <Typography.Text type="danger">{error.message}</Typography.Text>;
-  }
 
   return (
     <div
@@ -107,7 +103,7 @@ const ProjectsPage = () => {
             width: "100%",
           }}
           loading={loading}
-          dataSource={data || []}
+          dataSource={projects || []}
           grid={{
             gutter: 16,
             xs: 1,
@@ -173,7 +169,7 @@ const ProjectsPage = () => {
           zIndex: 100,
         }}
       >
-        <CreateProject refetch={refetch} />
+        <CreateProject />
       </div>
     </div>
   );
