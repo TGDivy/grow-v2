@@ -62,6 +62,7 @@ export const DisplayTime = (props: DisplayTimeProps) => {
 
             return (
               <CountUp
+                useEasing
                 end={time}
                 formattingFn={(value) => formatTime(value)}
                 start={previousDuration}

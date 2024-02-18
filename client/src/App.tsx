@@ -19,6 +19,8 @@ import { SignUpPage } from "./pages/SignUpPage";
 import { useBreakpoint } from "./utils/antd_components";
 import TasksPage from "./pages/TasksPage";
 import PhilosophyPage from "./pages/PhilosophyPage";
+import SettingsPage from "./pages/SettingsPage";
+import ProjectPage from "./pages/ProjectPage";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -71,12 +73,11 @@ function App() {
               <Route path="" element={<HomePage />} />
               <Route path="signup" element={<SignUpPage />} />
               <Route path="projects" element={<ProjectsPage />} />
-              <Route path="project/:projectId/*" element={<div>Project</div>} />
+              <Route path="project/:projectId/*" element={<ProjectPage />} />
               <Route path="focus" element={<FocusPage />} />
               <Route path="tasks" element={<TasksPage />} />
 
-              <Route path="settings" element={<div>Settings</div>} />
-              <Route path="help" element={<div>Help</div>} />
+              <Route path="settings" element={<SettingsPage />} />
               <Route path="philosophy" element={<PhilosophyPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Route>

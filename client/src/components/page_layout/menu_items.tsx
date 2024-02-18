@@ -4,7 +4,6 @@ import {
   InfoOutlined,
   MoonOutlined,
   OrderedListOutlined,
-  QuestionOutlined,
   SettingOutlined,
   SunOutlined,
 } from "@ant-design/icons";
@@ -36,11 +35,6 @@ const settingsItems: ItemType<MenuItemType>[] = [
     key: "philosophy",
     label: <Link to="/philosophy">Principles</Link>,
     icon: <InfoOutlined />,
-  },
-  {
-    key: "help",
-    label: <Link to="/help">Help</Link>,
-    icon: <QuestionOutlined />,
   },
   {
     key: "settings",
