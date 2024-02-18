@@ -1,30 +1,42 @@
 import {
   AimOutlined,
   FileOutlined,
+  InfoOutlined,
   MoonOutlined,
+  OrderedListOutlined,
   QuestionOutlined,
   SettingOutlined,
   SunOutlined,
 } from "@ant-design/icons";
 import { Flex, Menu, Switch } from "antd";
-import { MenuItemType } from "antd/es/menu/hooks/useItems";
+import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 import { Link, useLocation } from "react-router-dom";
 import useUserStore from "src/stores/user_store";
 
-const mainItems: MenuItemType[] = [
+const mainItems: ItemType<MenuItemType>[] = [
+  {
+    key: "focus",
+    label: <Link to="/focus">Focus</Link>,
+    icon: <AimOutlined />,
+  },
   {
     key: "projects",
     label: <Link to="/projects">Projects</Link>,
     icon: <FileOutlined />,
   },
   {
-    key: "focus",
-    label: <Link to="/focus">Focus</Link>,
-    icon: <AimOutlined />,
+    key: "tasks",
+    label: <Link to="/tasks">Tasks</Link>,
+    icon: <OrderedListOutlined />,
   },
 ];
 
-const settingsItems: MenuItemType[] = [
+const settingsItems: ItemType<MenuItemType>[] = [
+  {
+    key: "philosophy",
+    label: <Link to="/philosophy">Principles</Link>,
+    icon: <InfoOutlined />,
+  },
   {
     key: "help",
     label: <Link to="/help">Help</Link>,
