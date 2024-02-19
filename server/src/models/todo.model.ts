@@ -1,15 +1,15 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import mongoose, { ObjectId } from "mongoose";
+// import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 export interface TodoInput {
     rawText: string;
+    userId: UserRecord["uid"];
     jsonString?: string;
     htmlString?: string;
 
-    userId: UserRecord["uid"];
-
     priority?: number;
-    projects: ObjectId[];
+    projects: mongoose.Types.ObjectId[];
     contexts: string[];
 
     dueDate?: Date;

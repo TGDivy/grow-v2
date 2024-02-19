@@ -16,6 +16,8 @@ import { auth } from "./firebase_init";
 import { notificationSound } from "src/utils/constants";
 import { getProjects } from "../project";
 import useProjectStore from "src/stores/projects_store";
+import { getTodos } from "../todo.api";
+import useTodoStore from "src/stores/todos.store";
 
 const actionCodeSettings = {
   url: `${window.location.protocol}//${window.location.host}/`,
@@ -43,6 +45,14 @@ onAuthStateChanged(auth, (user) => {
           });
         }
         useProjectStore.getState().setProjects(projects);
+      })
+      .catch(() => {})
+      .finally(() => {
+        useProjectStore.getState().setLoading(false);
+      });
+    getTodos()
+      .then((todos) => {
+        useTodoStore.getState().setTodos(todos);
       })
       .catch(() => {})
       .finally(() => {

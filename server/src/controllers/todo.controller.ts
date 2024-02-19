@@ -6,6 +6,7 @@ import {
     getTodoInput,
     deleteTodoInput,
     getAllTodosInput,
+    createTodoSchema,
 } from "../schema/todo.schema";
 import { createTodo, deleteTodo, getTodo, getTodos, updateTodo } from "../services/todo.service";
 
@@ -18,10 +19,10 @@ export const createTodoHandler = async (req: Request<{}, {}, createTodoInput["bo
 
     try {
         const body = req.body;
-        let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let projects: mongoose.Types.ObjectId[] = [];
 
         if (body.projects) {
-            projects = body.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
+            projects = body.projects.map((id: string) => new mongoose.Types.ObjectId(id));
         }
 
         const todo = await createTodo({ ...body, userId, projects });
@@ -77,10 +78,10 @@ export const getAllTodosHandler = async (req: Request<{}, {}, getAllTodosInput["
     const filters = req.body.filters;
 
     try {
-        let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let projects: mongoose.Types.ObjectId[] = [];
 
         if (filters?.projects) {
-            projects = filters.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
+            projects = filters.projects.map((id: string) => new mongoose.Types.ObjectId(id));
         }
         const todos = await getTodos(userId, { ...filters, projects });
 
@@ -104,10 +105,10 @@ export const updateTodoHandler = async (
 
     try {
         const body = req.body;
-        let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let projects: mongoose.Types.ObjectId[] = [];
 
         if (body.projects) {
-            projects = body.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
+            projects = body.projects.map((id: string) => new mongoose.Types.ObjectId(id));
         }
 
         // first get the todo to check if it exists, and to get the userId

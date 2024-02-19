@@ -9,7 +9,7 @@ export const getTodo = async (id: string) => {
 };
 
 export const getTodos = async (userId: string, filters?: Partial<TodoInput>) => {
-    return TodoModel.find({ userId, ...filters });
+    return TodoModel.find({ userId });
 };
 
 export const updateTodo = async (id: string, input: Partial<TodoInput>) => {

@@ -17,7 +17,7 @@ import { themes } from "./utils/themes";
 import FocusPage from "./pages/FocusPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { useBreakpoint } from "./utils/antd_components";
-import TasksPage from "./pages/TasksPage";
+import TodosPage from "./pages/TodosPage";
 import PhilosophyPage from "./pages/PhilosophyPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProjectPage from "./pages/ProjectPage";
@@ -76,7 +76,7 @@ function App() {
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="project/:projectId/*" element={<ProjectPage />} />
               <Route path="focus" element={<FocusPage />} />
-              <Route path="tasks" element={<TasksPage />} />
+              <Route path="tasks" element={<TodosPage />} />
 
               <Route path="settings" element={<SettingsPage />} />
               <Route path="philosophy" element={<PhilosophyPage />} />
