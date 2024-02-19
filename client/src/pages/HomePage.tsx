@@ -15,6 +15,13 @@ export const HomePage = () => {
 
   console.log("user", user);
 
+  let welcomeText = "Hello, ";
+  if (user?.displayName) {
+    welcomeText += user.displayName.split(" ")[0];
+  } else {
+    welcomeText += "there";
+  }
+
   return (
     <div
       style={{
@@ -33,9 +40,14 @@ export const HomePage = () => {
         }}
       >
         <Col xs={24}>
-          <Typography.Title level={1}>
-            <span key={user?.displayName} className="welcome-text">
-              Hello, {user?.displayName}.
+          <Typography.Title
+            level={1}
+            style={{
+              overflow: "hidden",
+            }}
+          >
+            <span key={welcomeText} className="welcome-text">
+              {welcomeText}.
             </span>
             <br />
             <span
