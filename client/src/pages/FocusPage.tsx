@@ -124,10 +124,12 @@ const LinkedEntities = () => {
               maxCount={3}
               onChange={(values) => setTasks(values)}
               value={linkedEntities.tasks}
-              options={todos.map((todo) => ({
-                label: todo.rawText,
-                value: todo._id,
-              }))}
+              options={todos
+                .filter((todo) => !todo.completed)
+                .map((todo) => ({
+                  label: todo.rawText,
+                  value: todo._id,
+                }))}
             />
           </Card>
           <Divider />
