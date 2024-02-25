@@ -12,6 +12,7 @@ import {
     deleteTodoHandler,
     getAllTodosHandler,
     getTodoHandler,
+    toggleTodoHandler,
     updateTodoHandler,
 } from "./controllers/todo.controller";
 
@@ -73,6 +74,7 @@ const routes = (app: Express) => {
     app.get("/todo", [requireUser, validateResource(getAllTodosSchema)], getAllTodosHandler);
     app.get("/todo/:id", [requireUser, validateResource(getTodoSchema)], getTodoHandler);
     app.put("/todo/:id", requireUser, validateResource(updateTodoSchema), updateTodoHandler);
+    app.put("/todo/:id/toggle", requireUser, validateResource(getTodoSchema), toggleTodoHandler);
     app.delete("/todo/:id", [requireUser, validateResource(deleteTodoSchema)], deleteTodoHandler);
 
     app.post(

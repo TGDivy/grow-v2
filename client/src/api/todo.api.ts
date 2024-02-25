@@ -38,3 +38,8 @@ export const createTodo = async (todo: createTodoInput["body"]) => {
   const response = await todoAPI.post<TodoDocument>("/todo", todo);
   return response.data;
 };
+
+export const toggleTodo = async (id: string) => {
+  const response = await todoAPI.put<TodoDocument>(`/todo/${id}/toggle`);
+  return response.data;
+};

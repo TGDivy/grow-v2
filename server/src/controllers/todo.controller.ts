@@ -10,6 +10,8 @@ import {
 } from "../schema/todo.schema";
 import { createTodo, deleteTodo, getTodo, getTodos, updateTodo } from "../services/todo.service";
 
+// Basic CRUD operations for a todo
+
 export const createTodoHandler = async (req: Request<{}, {}, createTodoInput["body"]>, res: Response) => {
     const userId = res.locals.user?.uid;
 
@@ -163,6 +165,40 @@ export const deleteTodoHandler = async (req: Request<deleteTodoInput["params"]>,
         await deleteTodo(todoId);
 
         return res.sendStatus(204);
+    } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            return res.status(400).send("Invalid id");
+        }
+        return res.status(500).send("Something went wrong");
+    }
+};
+
+// Custom CRUD operations for a todo
+
+export const toggleTodoHandler = async (req: Request<updateTodoInput["params"]>, res: Response) => {
+    const userId = res.locals.user?.uid;
+
+    if (!userId) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const todoId = req.params.id;
+
+    try {
+        const todo = await getTodo(todoId);
+
+        if (!todo) {
+            return res.sendStatus(404);
+        }
+
+        if (todo.userId !== userId) {
+            return res.status(403).send("Unauthorized");
+        }
+
+        todo.completed = !todo.completed;
+        await todo.save();
+
+        return res.send(todo);
     } catch (error) {
         if (error instanceof mongoose.Error.CastError) {
             return res.status(400).send("Invalid id");
