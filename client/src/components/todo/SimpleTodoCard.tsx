@@ -15,11 +15,13 @@ import { toggleTodo } from "src/api/todo.api";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
 import TodoDrawer from "./TodoDrawer";
+import { formatTime } from "src/utils/text";
 
 type Props = {
   todo: TodoDocument;
   extensions: Extensions;
   allowEdit?: boolean;
+  vertical?: boolean;
 };
 
 const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
@@ -55,13 +57,26 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
     return null;
   }
 
-  if (todo.timeEstimate && todo.timeEstimate > 0) {
+  if (todo.timeEstimate !== undefined && todo.timeEstimate > 0) {
     return (
       <Progress
-        percent={(todo.timeSpent || 0) / todo.timeEstimate}
-        format={() => `${todo.timeSpent || 0}/${todo.timeEstimate}`}
+        percent={(todo.timeSpent || 0) / (todo.timeEstimate / 100)}
+        format={() =>
+          `${formatTime(
+            todo.timeSpent || 0,
+            false,
+            true,
+            true,
+            false
+          )}/${formatTime(
+            todo.timeEstimate || 0,
+            false,
+            true,
+            true,
+            false
+          )} (HH:mm)`
+        }
         size="small"
-        status="normal"
         style={{
           margin: "0px",
           width: "100px",
@@ -73,7 +88,9 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
   return (
     <Progress
       percent={60}
-      format={() => `${todo.timeSpent}`}
+      format={() =>
+        `${formatTime(todo.timeSpent || 0, false, true, true, false)} (HH:mm)`
+      }
       size="small"
       status="normal"
       style={{
@@ -85,7 +102,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
 };
 
 const SimpleTodoCard = (props: Props) => {
-  const { todo, extensions, allowEdit } = props;
+  const { todo, extensions, allowEdit, vertical } = props;
   const { token } = useToken();
   const dueDateString =
     todo.dueDate &&
@@ -105,7 +122,9 @@ const SimpleTodoCard = (props: Props) => {
 
   const [open, setOpen] = useState(false);
 
-  const showExtra = todo.completedAt && todo.completed;
+  const showExtra =
+    (todo.completedAt && todo.completed) ||
+    (todo.timeSpent != undefined && todo.timeSpent > 0);
   // (todo.priority !== undefined && todo.priority > 0);
 
   const ribbonColor = todo.dueDate
@@ -153,7 +172,7 @@ const SimpleTodoCard = (props: Props) => {
                 <></>
               </EditorProvider>
               {showExtra && (
-                <Space>
+                <Space direction={vertical ? "vertical" : "horizontal"}>
                   {todo.completed && todo.completedAt && (
                     <>
                       <Typography.Text

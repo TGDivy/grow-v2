@@ -18,8 +18,6 @@ export const updateFocusSession = async (userId: string, input: Partial<ActiveSe
         throw new Error("No active session found");
     }
 
-    logger.info(`Stop Focus Session Handler, step 2.001, input: ${JSON.stringify(input)}`);
-
     return await ActiveSessionModel.findByIdAndUpdate(session._id, input, { new: true });
 };
 
@@ -34,8 +32,6 @@ export const deleteFocusSession = async (userId: string) => {
 // Past Focus Sessions
 
 export const createPastFocusSession = async (input: PastSessionInput) => {
-    logger.info(`Stop Focus Session Handler, step 2.01, input: ${JSON.stringify(input)}`);
-
     return await PastSessionModel.create(input);
 };
 

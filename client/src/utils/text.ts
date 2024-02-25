@@ -55,7 +55,13 @@ export const timeElapsed = (startTime: Date) => {
 };
 
 // in seconds by default, or in milliseconds if specified
-export const formatTime = (time: number, inMilliseconds = false) => {
+export const formatTime = (
+  time: number,
+  inMilliseconds = false,
+  showHours = true,
+  showMinutes = true,
+  showSeconds = true
+) => {
   const seconds = inMilliseconds ? time / 1000 : time;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -71,5 +77,22 @@ export const formatTime = (time: number, inMilliseconds = false) => {
     displayMinutes = `0${displayMinutes}`;
   }
 
-  return `${hours}:${displayMinutes}:${displaySeconds}`;
+  let buildString = "";
+  if (showHours) {
+    buildString += `${hours}`;
+  }
+  if (showMinutes) {
+    if (showHours) {
+      buildString += ":";
+    }
+    buildString += `${displayMinutes}`;
+  }
+  if (showSeconds) {
+    if (showMinutes || showHours) {
+      buildString += ":";
+    }
+    buildString += `${displaySeconds}`;
+  }
+
+  return buildString;
 };

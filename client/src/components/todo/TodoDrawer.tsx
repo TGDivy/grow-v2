@@ -60,7 +60,7 @@ const TodoDrawer = (props: Props) => {
         dueDate: values.dueDate,
         projects: values.projects,
         priority: values.priority,
-        timeEstimate: values.timeEstimate,
+        timeEstimate: (values.timeEstimate || 0) * 60,
 
         rawText: editor.getText(),
         jsonString: JSON.stringify(json),

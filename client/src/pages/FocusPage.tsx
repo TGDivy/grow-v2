@@ -6,6 +6,7 @@ import {
   Alert,
   Card,
   Col,
+  Divider,
   Empty,
   Input,
   List,
@@ -75,13 +76,7 @@ const Notes = () => {
   const breaks = useBreakpoint();
 
   return (
-    <Card
-      bordered={false}
-      loading={loading}
-      style={{
-        height: "100%",
-      }}
-    >
+    <Card bordered={false} loading={loading}>
       <Input.TextArea
         placeholder="Notes"
         autoSize={{ minRows: !breaks.sm ? 3 : 7, maxRows: 10 }}
@@ -114,39 +109,45 @@ const LinkedEntities = () => {
     linkedEntities.tasks.includes(todo._id)
   );
 
-  return session.active ? (
-    <List
-      dataSource={selectedTodos}
-      loading={loading}
-      grid={{
-        xs: 1,
-        column: 1,
-      }}
-      rowKey={(todo) => todo._id}
-      renderItem={(todo) => (
-        <List.Item>
-          <SimpleTodoCard todo={todo} extensions={extensions} />
-        </List.Item>
+  return (
+    <>
+      {!session.active && (
+        <>
+          <Card bordered={false} loading={loading}>
+            <Select
+              variant="borderless"
+              disabled={session.active}
+              mode="multiple"
+              allowClear
+              placeholder="Select tasks"
+              style={{ width: "100%" }}
+              maxCount={3}
+              onChange={(values) => setTasks(values)}
+              value={linkedEntities.tasks}
+              options={todos.map((todo) => ({
+                label: todo.rawText,
+                value: todo._id,
+              }))}
+            />
+          </Card>
+          <Divider />
+        </>
       )}
-    />
-  ) : (
-    <Card bordered={false} loading={loading}>
-      <Select
-        variant="borderless"
-        disabled={session.active}
-        mode="multiple"
-        allowClear
-        placeholder="Select tasks"
-        style={{ width: "100%" }}
-        maxCount={3}
-        onChange={(values) => setTasks(values)}
-        value={linkedEntities.tasks}
-        options={todos.map((todo) => ({
-          label: todo.rawText,
-          value: todo._id,
-        }))}
+      <List
+        dataSource={selectedTodos}
+        loading={loading}
+        grid={{
+          xs: 1,
+          column: 1,
+        }}
+        rowKey={(todo) => todo._id}
+        renderItem={(todo) => (
+          <List.Item>
+            <SimpleTodoCard todo={todo} extensions={extensions} vertical />
+          </List.Item>
+        )}
       />
-    </Card>
+    </>
   );
 };
 

@@ -9,6 +9,8 @@ import {
     updateFocusSession,
 } from "../services/focusSession.service";
 import { logger } from "../utils/logger";
+import { getTodo } from "../services/todo.service";
+import e from "cors";
 
 export const createFocusSessionHandler = async (
     req: Request<{}, {}, createActiveSessionInput["body"]>,
@@ -121,14 +123,12 @@ export const updateFocusSessionHandler = async (
 export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Response) => {
     // we also need to create a copy of this to save it in the past sessions
     const userId = res.locals.user?.uid;
-    logger.info("Stop Focus Session Handler", userId);
 
     if (!userId) {
         return res.status(401).send("Unauthorized");
     }
 
     try {
-        logger.info("Stop Focus Session Handler, step 1", userId);
         const focusSession = await updateFocusSession(userId, { active: false });
 
         if (!focusSession) {
@@ -145,8 +145,6 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
             return res.status(400).send("Session has no start time");
         }
 
-        logger.info(`Stop Focus Session Handler, step 2 ${JSON.stringify(focusSession)}`);
-
         const pastFocusSession = await createPastFocusSession({
             ...focusSession,
             startTime: focusSession.startTime,
@@ -154,7 +152,18 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
             userId: focusSession.userId,
         });
 
-        logger.info("Stop Focus Session Handler, step 3", pastFocusSession);
+        // add the time spent to each of user's tasks in the linkedEntities
+        // we can do this in the background
+        for (const todoId of focusSession?.linkedEntities?.tasks || []) {
+            // get the task, then save it
+            const todo = await getTodo(todoId.toString());
+            if (todo) {
+                todo.timeSpent = (todo.timeSpent || 0) + focusSession.duration;
+                await todo.save();
+            } else {
+                logger.error("Todo not found", todoId);
+            }
+        }
 
         return res.send(focusSession);
     } catch (error) {
