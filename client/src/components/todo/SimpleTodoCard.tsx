@@ -16,6 +16,7 @@ import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
 import TodoDrawer from "./TodoDrawer";
 import { formatTime } from "src/utils/text";
+import { checkSound } from "src/utils/constants";
 
 type Props = {
   todo: TodoDocument;
@@ -47,6 +48,7 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
       onChange={handleToggleTodo}
       onClick={(e) => {
         e.stopPropagation();
+        checkSound.play();
       }}
     />
   );

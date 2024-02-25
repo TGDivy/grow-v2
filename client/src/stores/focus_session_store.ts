@@ -114,7 +114,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
               message: "Congratulations!",
               description: "You have completed your focus session!",
               onClose() {
-                get().toggleSession();
+                if (get().session?.active) get().toggleSession();
               },
             });
             notificationSound.play();
