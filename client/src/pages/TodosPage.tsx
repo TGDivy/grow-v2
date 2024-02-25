@@ -3,7 +3,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import Text from "@tiptap/extension-text";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, Extension, useEditor } from "@tiptap/react";
 import "src/components/rte/styles.scss";
 
 import { SendOutlined } from "@ant-design/icons";
@@ -28,8 +28,23 @@ const extensions = [
 ];
 
 const CreateTask = () => {
+  const DisableEnter = Extension.create({
+    addKeyboardShortcuts() {
+      return {
+        Enter: ({ editor }) => {
+          if (document.querySelector(".tippy-content")) {
+            return false;
+          }
+
+          handleCreateTodo(editor as Editor);
+          return true;
+        },
+      };
+    },
+  });
+
   const editor = useEditor({
-    extensions,
+    extensions: [...extensions, DisableEnter],
     editorProps: {
       attributes: {
         class: "tiptapStandard",
@@ -39,7 +54,9 @@ const CreateTask = () => {
 
   const addTodo = useTodoStore((state) => state.addTodo);
 
-  const handleCreateTodo = async () => {
+  // console.log(editor?.getText());
+
+  const handleCreateTodo = async (editor: Editor) => {
     if (!editor) return;
     const json = editor.getJSON();
     try {
@@ -88,7 +105,7 @@ const CreateTask = () => {
             transform: "translateY(50%)",
             right: 10,
           }}
-          onClick={handleCreateTodo}
+          onClick={() => editor && handleCreateTodo(editor)}
         />
       </div>
     </>
