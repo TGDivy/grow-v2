@@ -1,5 +1,5 @@
 /* Basic editor styles */
-.tiptap {
+.tiptapStandard {
   outline: 0;
   border-radius: 40px;
   padding: 16px 32px;
@@ -9,6 +9,9 @@
   background: var(--ant-color-fill-tertiary);
   color: var(--ant-color-text);
   position: relative;
+
+  // prevent text from being typed 60px from right edge
+  padding-right: 60px;
 
   &:focus,
   &:active {

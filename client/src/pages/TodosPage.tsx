@@ -3,7 +3,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import Text from "@tiptap/extension-text";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
 import "src/components/rte/styles.scss";
 
 import { SendOutlined } from "@ant-design/icons";
@@ -21,22 +21,18 @@ const extensions = [
   Text,
   Mention.configure(projectsConfig),
   Placeholder.configure({
-    // Use a placeholder:
     placeholder: "Write to create a task …",
-    // Use different placeholders depending on the node type:
-    // placeholder: ({ node }) => {
-    //   if (node.type.name === 'heading') {
-    //     return 'What’s the title?'
-    //   }
-
-    //   return 'Can you add some further context?'
-    // },
   }),
 ];
 
 const CreateTask = () => {
   const editor = useEditor({
     extensions,
+    editorProps: {
+      attributes: {
+        class: "tiptapStandard",
+      },
+    },
   });
 
   const addTodo = useTodoStore((state) => state.addTodo);
@@ -137,12 +133,19 @@ const TasksPage = () => {
             <List.Item>
               <Card bordered={false}>
                 <Space>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: todo.htmlString || "",
+                  <EditorProvider
+                    extensions={extensions}
+                    content={JSON.parse(todo.jsonString || "{}") || {}}
+                    editable={false}
+                    autofocus={false}
+                    editorProps={{
+                      attributes: {
+                        class: "tiptapReadOnly",
+                      },
                     }}
-                    className="tiptapReadOnly"
-                  />
+                  >
+                    <></>
+                  </EditorProvider>
                 </Space>
               </Card>
             </List.Item>

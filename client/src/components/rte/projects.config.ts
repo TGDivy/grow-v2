@@ -155,4 +155,17 @@ export const projectsConfig: Partial<MentionOptions> = {
   HTMLAttributes: {
     class: "mention",
   },
+
+  renderHTML({ options, node }) {
+    return [
+      "a",
+      {
+        href: `/projects/${node.attrs.id}`,
+        class: options.HTMLAttributes.class,
+        target: "_blank",
+      },
+
+      `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
+    ];
+  },
 };
