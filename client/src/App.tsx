@@ -59,6 +59,11 @@ function App() {
               titleMarginBottom: "0",
               titleMarginTop: "0",
             },
+            Collapse: {
+              contentPadding: "0px",
+              headerPadding: "0px",
+              padding: 0,
+            },
           },
         }}
         renderEmpty={CustomizeRenderEmpty}

@@ -7,7 +7,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import "src/components/rte/styles.scss";
 
 import { SendOutlined } from "@ant-design/icons";
-import { Button, List, message } from "antd";
+import { Button, Collapse, List, message } from "antd";
 import { createTodo } from "src/api/todo.api";
 import { Mention } from "src/components/rte/mention";
 import { projectsConfig } from "src/components/rte/projects.config";
@@ -15,6 +15,7 @@ import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
 import { extractIds } from "src/utils/extract_data";
+import { TodoDocument } from "@server/models/todo.model";
 
 const extensions = [
   Document,
@@ -94,12 +95,28 @@ const CreateTask = () => {
   );
 };
 
-const TasksPage = () => {
+const TodosPage = () => {
   const [todos, loading] = useTodoStore((state) => [
     state.todos,
     state.loading,
   ]);
   const { token } = useToken();
+
+  const { completedTodos, notCompletedTodos } = todos.reduce(
+    (acc, todo) => {
+      if (todo.completed) {
+        acc.completedTodos.push(todo);
+      } else {
+        acc.notCompletedTodos.push(todo);
+      }
+      return acc;
+    },
+    {
+      completedTodos: [] as TodoDocument[],
+      notCompletedTodos: [] as TodoDocument[],
+    }
+  );
+
   return (
     <div
       style={{
@@ -119,10 +136,9 @@ const TasksPage = () => {
         }}
       >
         <List
-          dataSource={todos}
+          dataSource={notCompletedTodos}
           loading={loading}
           style={{
-            height: "100%",
             maxWidth: "850px",
             width: "100%",
           }}
@@ -130,12 +146,46 @@ const TasksPage = () => {
             xs: 1,
             column: 1,
           }}
+          rowKey={(todo) => todo._id}
           renderItem={(todo) => (
             <List.Item>
               <SimpleTodoCard todo={todo} extensions={extensions} />
             </List.Item>
           )}
         />
+        {completedTodos && completedTodos.length > 0 && (
+          <Collapse
+            style={{
+              width: "100%",
+              maxWidth: "850px",
+              marginLeft: "-20px",
+            }}
+            ghost
+            bordered={false}
+            size="small"
+            items={[
+              {
+                key: "1",
+                label: "Completed",
+                children: (
+                  <List
+                    dataSource={completedTodos}
+                    loading={loading}
+                    grid={{
+                      xs: 1,
+                      column: 1,
+                    }}
+                    renderItem={(todo) => (
+                      <List.Item>
+                        <SimpleTodoCard todo={todo} extensions={extensions} />
+                      </List.Item>
+                    )}
+                  />
+                ),
+              },
+            ]}
+          />
+        )}
       </div>
       <div
         style={{
@@ -152,4 +202,4 @@ const TasksPage = () => {
   );
 };
 
-export default TasksPage;
+export default TodosPage;
