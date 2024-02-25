@@ -2,7 +2,7 @@ import axios from "axios";
 import useUserStore from "src/stores/user_store";
 import { API_DOMAIN } from "src/utils/constants";
 import { handleAxiosError } from "./errors";
-import { createTodoInput } from "@server/schema/todo.schema";
+import { createTodoInput, updateTodoInput } from "@server/schema/todo.schema";
 import { TodoDocument } from "@server/models/todo.model";
 import { convertDateStringsToDates } from "src/utils/text";
 
@@ -36,6 +36,11 @@ export const getTodos = async () => {
 
 export const createTodo = async (todo: createTodoInput["body"]) => {
   const response = await todoAPI.post<TodoDocument>("/todo", todo);
+  return response.data;
+};
+
+export const updateTodo = async (id: string, todo: updateTodoInput["body"]) => {
+  const response = await todoAPI.put<TodoDocument>(`/todo/${id}`, todo);
   return response.data;
 };
 

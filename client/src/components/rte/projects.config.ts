@@ -1,10 +1,10 @@
 import { MentionOptions } from "@tiptap/extension-mention";
 import { ReactRenderer } from "@tiptap/react";
+import Fuse from "fuse.js";
 import { RefAttributes } from "react";
+import useProjectStore from "src/stores/projects_store";
 import tippy, { GetReferenceClientRect, Instance, Props } from "tippy.js";
 import MentionList, { MentionListProps, MentionListRef } from "./MentionList";
-import useProjectStore from "src/stores/projects_store";
-import Fuse from "fuse.js";
 
 export const projectsConfig: Partial<MentionOptions> = {
   suggestion: {
@@ -157,15 +157,38 @@ export const projectsConfig: Partial<MentionOptions> = {
   },
 
   renderHTML({ options, node }) {
-    return [
-      "a",
-      {
-        href: `/projects/${node.attrs.id}`,
-        class: options.HTMLAttributes.class,
-        target: "_blank",
-      },
+    const elem = document.createElement("a");
 
-      `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
-    ];
+    Object.entries(options.HTMLAttributes).forEach(([attr, val]) =>
+      elem.setAttribute(attr, val)
+    );
+
+    elem.setAttribute("href", `/projects/${node.attrs.id}`);
+    elem.setAttribute("target", "_blank");
+    elem.textContent = `${options.suggestion.char}${
+      node.attrs.label ?? node.attrs.id
+    }`;
+
+    elem.onclick = (e) => {
+      e.stopPropagation();
+    };
+
+    return elem;
+
+    // return [
+    //   "a",
+    //   {
+    //     href: `/projects/${node.attrs.id}`,
+    //     class: options.HTMLAttributes.class,
+    //     target: "_blank",
+    //     onclick: (e: Event) => {
+    //       console.log("clicked");
+    //       e.stopPropagation();
+    //       e.preventDefault();
+    //     },
+    //   },
+
+    //   `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
+    // ];
   },
 };

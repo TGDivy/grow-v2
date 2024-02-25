@@ -97,6 +97,7 @@ export const updateTodoHandler = async (
     req: Request<updateTodoInput["params"], {}, updateTodoInput["body"]>,
     res: Response,
 ) => {
+    console.log("updateTodoHandler");
     const userId = res.locals.user?.uid;
 
     if (!userId) {
@@ -196,6 +197,11 @@ export const toggleTodoHandler = async (req: Request<updateTodoInput["params"]>,
         }
 
         todo.completed = !todo.completed;
+        if (todo.completed) {
+            todo.completedAt = new Date();
+        } else {
+            todo.completedAt = undefined;
+        }
         await todo.save();
 
         return res.send(todo);

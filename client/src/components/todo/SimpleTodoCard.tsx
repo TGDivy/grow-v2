@@ -1,9 +1,20 @@
 import { TodoDocument } from "@server/models/todo.model";
 import { EditorProvider, Extensions } from "@tiptap/react";
-import { Card, Checkbox, Space, Typography, message } from "antd";
+import {
+  Badge,
+  Card,
+  Checkbox,
+  Progress,
+  Space,
+  Typography,
+  message,
+} from "antd";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { useState } from "react";
 import { toggleTodo } from "src/api/todo.api";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
+import TodoDrawer from "./TodoDrawer";
 
 type Props = {
   todo: TodoDocument;
@@ -13,7 +24,9 @@ type Props = {
 const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
   const updateTodo = useTodoStore((state) => state.updateTodo);
 
-  const handleToggleTodo = async () => {
+  const handleToggleTodo = async (e: CheckboxChangeEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     try {
       const newTodo = await toggleTodo(todo._id);
       message.success("Completed!");
@@ -25,52 +38,139 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
       console.error(error);
     }
   };
-  return <Checkbox checked={todo.completed} onChange={handleToggleTodo} />;
+  return (
+    <Checkbox
+      checked={todo.completed}
+      onChange={handleToggleTodo}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    />
+  );
+};
+
+const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
+  if (todo.timeSpent === 0 || !todo.timeSpent) {
+    return null;
+  }
+
+  if (todo.timeEstimate && todo.timeEstimate > 0) {
+    return (
+      <Progress
+        percent={(todo.timeSpent || 0) / todo.timeEstimate}
+        format={() => `${todo.timeSpent || 0}/${todo.timeEstimate}`}
+        size="small"
+        status="normal"
+        style={{
+          margin: "0px",
+          width: "100px",
+        }}
+      />
+    );
+  }
+
+  return (
+    <Progress
+      percent={60}
+      format={() => `${todo.timeSpent}`}
+      size="small"
+      status="normal"
+      style={{
+        margin: "0px",
+        width: "100px",
+      }}
+    />
+  );
 };
 
 const SimpleTodoCard = (props: Props) => {
   const { todo, extensions } = props;
-  const dueDateString = new Intl.DateTimeFormat("en-US", {
+  const { token } = useToken();
+  const dueDateString =
+    todo.dueDate &&
+    new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    }).format(todo.dueDate);
+
+  const completedDateString = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
     day: "2-digit",
-  }).format(todo.dueDate);
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(todo.completedAt);
 
-  const { token } = useToken();
+  const [open, setOpen] = useState(false);
+
+  const showExtra = todo.completedAt && todo.completed;
+  // (todo.priority !== undefined && todo.priority > 0);
+
+  const ribbonColor = todo.dueDate
+    ? todo.dueDate < new Date()
+      ? token.colorError
+      : undefined
+    : "transparent";
 
   return (
-    <Card bordered={false}>
-      <Space size="middle" align="start">
-        <ToggleTodo todo={todo} />
-        <Space direction="vertical" size="small">
-          <EditorProvider
-            extensions={extensions}
-            content={JSON.parse(todo.jsonString || "{}") || {}}
-            editable={false}
-            autofocus={false}
-            editorProps={{
-              attributes: {
-                class: "tiptapReadOnly",
-              },
-            }}
-          >
-            <></>
-          </EditorProvider>
-          <Space>
-            {todo.dueDate && (
-              <Typography.Text
-                type="secondary"
-                style={{
-                  fontSize: `${token.fontSizeSM}px`,
+    <>
+      <TodoDrawer
+        todo={todo}
+        open={open}
+        onClose={() => setOpen(false)}
+        extensions={extensions}
+      />
+      <Badge.Ribbon text={dueDateString} color={ribbonColor}>
+        <Card
+          bordered={false}
+          onClick={() => setOpen(true)}
+          hoverable
+          style={{
+            width: "100%",
+            flex: 2,
+            flexGrow: 2,
+          }}
+        >
+          <Space size="middle" align="start">
+            <ToggleTodo todo={todo} />
+
+            <Space direction="vertical" size="small">
+              <EditorProvider
+                extensions={extensions}
+                content={JSON.parse(todo.jsonString || "{}") || {}}
+                editable={false}
+                autofocus={false}
+                editorProps={{
+                  attributes: {
+                    class: "tiptapReadOnly",
+                  },
                 }}
               >
-                Due: {dueDateString}
-              </Typography.Text>
-            )}
+                <></>
+              </EditorProvider>
+              {showExtra && (
+                <Space>
+                  {todo.completed && todo.completedAt && (
+                    <>
+                      <Typography.Text
+                        type="secondary"
+                        style={{
+                          fontSize: `${token.fontSizeSM}px`,
+                        }}
+                      >
+                        Completed At: {completedDateString}
+                      </Typography.Text>
+                    </>
+                  )}
+                  <TimeSpent todo={todo} />
+                </Space>
+              )}
+            </Space>
           </Space>
-        </Space>
-      </Space>
-    </Card>
+        </Card>
+      </Badge.Ribbon>
+    </>
   );
 };
 

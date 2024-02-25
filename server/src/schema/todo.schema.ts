@@ -19,6 +19,24 @@ const payload = {
     }),
 };
 
+const updatePayload = {
+    body: object({
+        rawText: string().optional(),
+        jsonString: string().optional(),
+        htmlString: string().optional(),
+
+        priority: number().optional(),
+        projects: array(string()).optional(),
+        contexts: array(string()).optional(),
+        dueDate: string()
+            .transform((val) => new Date(val))
+            .optional(),
+        tags: array(string()).optional(),
+        timeEstimate: number().optional(),
+        links: array(string()).default([]),
+    }),
+};
+
 const params = {
     params: object({
         id: string({ required_error: "Id is required" }),
@@ -27,7 +45,7 @@ const params = {
 
 export const createTodoSchema = object(payload);
 export const getTodoSchema = object(params);
-export const updateTodoSchema = object({ ...params, ...payload });
+export const updateTodoSchema = object({ ...params, ...updatePayload });
 export const deleteTodoSchema = object(params);
 // filters are passed as body
 export const getAllTodosSchema = object({

@@ -36,13 +36,13 @@ export const convertDateStringsToDates = (input: unknown): unknown => {
       );
       if (
         key.toLowerCase().includes("date") ||
-        (key.toLowerCase().includes("updatedAt") &&
-          typeof obj[key] === "string") ||
-        (key.toLowerCase().includes("createdAt") &&
-          typeof obj[key] === "string") ||
+        (key === "updatedAt" && typeof obj[key] === "string") ||
+        (key === "createdAt" && typeof obj[key] === "string") ||
+        (key === "completedAt" && typeof obj[key] === "string") ||
+        (key === "dueDate" && typeof obj[key] === "string") ||
         (key.toLowerCase().includes("time") && typeof obj[key] === "string")
       ) {
-        obj[key] = new Date(obj[key] as string);
+        obj[key] = obj[key] && new Date(obj[key] as string);
       }
       return obj;
     },

@@ -59,7 +59,7 @@ const CreateTask = () => {
         links: [],
       });
       editor.commands.clearContent();
-      message.success("Project created");
+      message.success("Created!");
       addTodo(todo);
     } catch (error) {
       if (error instanceof Error) {
