@@ -19,6 +19,7 @@ import TodoDrawer from "./TodoDrawer";
 type Props = {
   todo: TodoDocument;
   extensions: Extensions;
+  allowEdit?: boolean;
 };
 
 const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
@@ -84,7 +85,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
 };
 
 const SimpleTodoCard = (props: Props) => {
-  const { todo, extensions } = props;
+  const { todo, extensions, allowEdit } = props;
   const { token } = useToken();
   const dueDateString =
     todo.dueDate &&
@@ -115,17 +116,19 @@ const SimpleTodoCard = (props: Props) => {
 
   return (
     <>
-      <TodoDrawer
-        todo={todo}
-        open={open}
-        onClose={() => setOpen(false)}
-        extensions={extensions}
-      />
+      {allowEdit && (
+        <TodoDrawer
+          todo={todo}
+          open={open}
+          onClose={() => setOpen(false)}
+          extensions={extensions}
+        />
+      )}
       <Badge.Ribbon text={dueDateString} color={ribbonColor}>
         <Card
           bordered={false}
-          onClick={() => setOpen(true)}
-          hoverable
+          onClick={() => allowEdit && setOpen(true)}
+          hoverable={allowEdit}
           style={{
             width: "100%",
             flex: 2,

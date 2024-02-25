@@ -1,5 +1,5 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { logger } from "../utils/logger";
 
 export interface ActiveSessionInput {
@@ -12,8 +12,8 @@ export interface ActiveSessionInput {
     notes?: string;
 
     linkedEntities?: {
-        tasks: ObjectId[];
-        projects: ObjectId[];
+        tasks: mongoose.Types.ObjectId[];
+        projects: mongoose.Types.ObjectId[];
     };
 
     mode?: "focus" | "break" | "longBreak";
@@ -31,8 +31,8 @@ const activeSessionSchema = new mongoose.Schema<ActiveSessionDocument>({
     duration: { type: Number, min: 300, max: 10800, required: true }, // 3 hours max, 5 minutes min
     endTime: { type: Date, computed: "startTime + duration * 1000" },
     linkedEntities: {
-        tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
-        projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+        tasks: [{ type: mongoose.Types.ObjectId, ref: "Task" }],
+        projects: [{ type: mongoose.Types.ObjectId, ref: "Project" }],
     },
     active: { type: Boolean, required: true, default: true },
     mode: { type: String, enum: ["focus", "break", "longBreak"], required: true, default: "focus" },

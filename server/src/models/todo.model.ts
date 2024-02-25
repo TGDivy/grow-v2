@@ -40,7 +40,7 @@ const TodoSchema = new mongoose.Schema(
         userId: { type: String, required: true },
 
         priority: { type: Number, required: true, default: 0, min: 0, max: 25 },
-        projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+        projects: [{ type: mongoose.Types.ObjectId, ref: "Project" }],
         contexts: [{ type: String, required: true }],
 
         dueDate: { type: Date },

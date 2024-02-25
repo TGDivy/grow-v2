@@ -3,7 +3,7 @@ import mongoose, { ObjectId } from "mongoose";
 
 export interface GoalInput {
     title: string;
-    projectId: ObjectId;
+    projectId: mongoose.Types.ObjectId;
     userId: UserRecord["uid"];
 
     description?: string;
@@ -27,10 +27,10 @@ const GoalSchema = new mongoose.Schema(
         dueDate: { type: Date, required: false },
         completed: { type: Boolean, required: true },
 
-        projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+        projectId: { type: mongoose.Types.ObjectId, ref: "Project" },
         user: { type: String, required: true },
 
-        _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+        _id: { type: mongoose.Types.ObjectId, required: true },
     },
     { timestamps: true },
 );

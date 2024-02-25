@@ -7,7 +7,10 @@ import { ActiveSessionDocument } from "@server/models/activeFocusSession.model";
 import { PastSessionDocument } from "@server/models/pastFocusSession.model";
 import { convertDateStringsToDates } from "src/utils/text";
 
-export type SessionDocumentType = ActiveSessionDocument & {
+export type SessionDocumentType = Omit<
+  ActiveSessionDocument,
+  "linkedEntities"
+> & {
   linkedEntities: {
     tasks: string[];
     projects: string[];

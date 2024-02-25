@@ -22,13 +22,13 @@ export const createFocusSessionHandler = async (
 
     try {
         const body = req.body;
-        let tasks: mongoose.Schema.Types.ObjectId[] = [];
-        let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let tasks: mongoose.Types.ObjectId[] = [];
+        let projects: mongoose.Types.ObjectId[] = [];
         let startTime: Date | undefined;
 
         if (body.linkedEntities) {
-            tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
-            projects = body.linkedEntities.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
+            tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Types.ObjectId(id));
+            projects = body.linkedEntities.projects.map((id: string) => new mongoose.Types.ObjectId(id));
         }
 
         if (body.startTime) startTime = new Date(body.startTime);
@@ -88,13 +88,13 @@ export const updateFocusSessionHandler = async (
 
     try {
         const body = req.body;
-        let tasks: mongoose.Schema.Types.ObjectId[] = [];
-        let projects: mongoose.Schema.Types.ObjectId[] = [];
+        let tasks: mongoose.Types.ObjectId[] = [];
+        let projects: mongoose.Types.ObjectId[] = [];
         let startTime: Date | undefined;
 
         if (body.linkedEntities) {
-            tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
-            projects = body.linkedEntities.projects.map((id: string) => new mongoose.Schema.Types.ObjectId(id));
+            tasks = body.linkedEntities.tasks.map((id: string) => new mongoose.Types.ObjectId(id));
+            projects = body.linkedEntities.projects.map((id: string) => new mongoose.Types.ObjectId(id));
         }
 
         if (body.startTime) startTime = new Date(body.startTime);

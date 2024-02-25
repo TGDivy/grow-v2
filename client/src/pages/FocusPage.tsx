@@ -1,19 +1,38 @@
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import Placeholder from "@tiptap/extension-placeholder";
 import {
   Alert,
   Card,
   Col,
   Empty,
   Input,
+  List,
   Row,
+  Select,
   Skeleton,
-  Typography,
   message,
 } from "antd";
 import { useEffect } from "react";
-import TimerCard from "src/components/timer/TimerCard";
-import useFocusSessionStore from "src/stores/focus_session_store";
 import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
+import { projectsConfig } from "src/components/rte/projects.config";
+import TimerCard from "src/components/timer/TimerCard";
+import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
+import useFocusSessionStore from "src/stores/focus_session_store";
+import useTodoStore from "src/stores/todos.store";
 import { useBreakpoint } from "src/utils/antd_components";
+import { Mention } from "src/components/rte/mention";
+
+const extensions = [
+  Document,
+  Paragraph,
+  Text,
+  Mention.configure(projectsConfig),
+  Placeholder.configure({
+    placeholder: "Write to create a task …",
+  }),
+];
 
 const Timer = () => {
   const [loading, session, setDuration, toggleSession] = useFocusSessionStore(
@@ -78,18 +97,55 @@ const Notes = () => {
 };
 
 const LinkedEntities = () => {
-  const loading = useFocusSessionStore((state) => state.loading);
+  const [loading, setTasks, session] = useFocusSessionStore((state) => [
+    state.loading,
+    state.setTasks,
+    state.session,
+  ]);
+  const todos = useTodoStore((state) => state.todos);
 
-  return (
+  if (!session) {
+    return <Empty />;
+  }
+
+  const { linkedEntities } = session;
+
+  const selectedTodos = todos.filter((todo) =>
+    linkedEntities.tasks.includes(todo._id)
+  );
+
+  return session.active ? (
+    <List
+      dataSource={selectedTodos}
+      loading={loading}
+      grid={{
+        xs: 1,
+        column: 1,
+      }}
+      rowKey={(todo) => todo._id}
+      renderItem={(todo) => (
+        <List.Item>
+          <SimpleTodoCard todo={todo} extensions={extensions} />
+        </List.Item>
+      )}
+    />
+  ) : (
     <Card bordered={false} loading={loading}>
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description="Feature coming soon!"
-      >
-        <Typography.Text>
-          Link your tasks, projects, and more to your focus session.
-        </Typography.Text>
-      </Empty>
+      <Select
+        variant="borderless"
+        disabled={session.active}
+        mode="multiple"
+        allowClear
+        placeholder="Select tasks"
+        style={{ width: "100%" }}
+        maxCount={3}
+        onChange={(values) => setTasks(values)}
+        value={linkedEntities.tasks}
+        options={todos.map((todo) => ({
+          label: todo.rawText,
+          value: todo._id,
+        }))}
+      />
     </Card>
   );
 };

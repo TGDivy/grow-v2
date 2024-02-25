@@ -1,5 +1,5 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { logger } from "../utils/logger";
 
 export interface PastSessionInput {
@@ -12,8 +12,8 @@ export interface PastSessionInput {
     notes?: string;
 
     linkedEntities?: {
-        tasks: ObjectId[];
-        projects: ObjectId[];
+        tasks: mongoose.Types.ObjectId[];
+        projects: mongoose.Types.ObjectId[];
     };
 }
 
@@ -32,8 +32,8 @@ const pastSessionSchema = new mongoose.Schema<PastSessionDocument>({
     name: { type: String },
     notes: { type: String, trim: true },
     linkedEntities: {
-        tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
-        projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+        tasks: [{ type: mongoose.Types.ObjectId, ref: "Task" }],
+        projects: [{ type: mongoose.Types.ObjectId, ref: "Project" }],
     },
 });
 

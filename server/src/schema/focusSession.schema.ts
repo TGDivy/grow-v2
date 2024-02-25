@@ -6,8 +6,8 @@ const commonSessionSchema = object({
     name: string().optional(),
     notes: string().optional(),
     linkedEntities: object({
-        tasks: array(string().uuid()),
-        projects: array(string().uuid()),
+        tasks: array(string()),
+        projects: array(string()),
     }).optional(),
 });
 

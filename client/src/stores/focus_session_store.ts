@@ -19,6 +19,7 @@ interface focusSessionStoreType {
   getAndSetSession: () => Promise<void>;
   sessionCompleted: boolean;
   setSessionCompleted: (completed: boolean) => void;
+  setTasks: (tasks: string[]) => void;
 }
 
 export const userInfoDefault = {};
@@ -58,6 +59,21 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
             return;
           }
           set({ session: { ...session, duration } });
+        },
+        setTasks: (tasks) => {
+          const session = get().session;
+          if (!session) {
+            return;
+          }
+          set({
+            session: {
+              ...session,
+              linkedEntities: {
+                ...session.linkedEntities,
+                tasks: tasks,
+              },
+            },
+          });
         },
         setSessionMode: (mode) => {
           const session = get().session;

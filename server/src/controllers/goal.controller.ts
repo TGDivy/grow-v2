@@ -12,7 +12,7 @@ export const createGoalHandler = async (req: Request<{}, {}, createGoalInput["bo
 
     const body = req.body;
 
-    const projectId = new mongoose.Schema.Types.ObjectId(body.projectId);
+    const projectId = new mongoose.Types.ObjectId(body.projectId);
 
     const goal = await createGoal({ ...body, userId, projectId });
 
@@ -25,7 +25,7 @@ export const updateGoalHandler = async (
 ) => {
     const body = req.body;
 
-    const projectId = new mongoose.Schema.Types.ObjectId(body.projectId);
+    const projectId = new mongoose.Types.ObjectId(body.projectId);
 
     const goal = await updateGoal(req.params.id, { ...body, projectId });
 

@@ -149,7 +149,7 @@ const TodosPage = () => {
           rowKey={(todo) => todo._id}
           renderItem={(todo) => (
             <List.Item>
-              <SimpleTodoCard todo={todo} extensions={extensions} />
+              <SimpleTodoCard todo={todo} extensions={extensions} allowEdit />
             </List.Item>
           )}
         />
@@ -177,7 +177,11 @@ const TodosPage = () => {
                     }}
                     renderItem={(todo) => (
                       <List.Item>
-                        <SimpleTodoCard todo={todo} extensions={extensions} />
+                        <SimpleTodoCard
+                          todo={todo}
+                          extensions={extensions}
+                          allowEdit
+                        />
                       </List.Item>
                     )}
                   />
