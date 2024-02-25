@@ -115,7 +115,7 @@ const ProjectsPage = () => {
           }}
           renderItem={(item) => (
             <List.Item>
-              <Link to={`/project/${item._id}`}>
+              <Link to={`/projects/${item._id}`}>
                 <Card
                   style={{
                     height: "200px",

@@ -3,14 +3,15 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import Text from "@tiptap/extension-text";
-import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import "src/components/rte/styles.scss";
 
 import { SendOutlined } from "@ant-design/icons";
-import { Button, Card, List, Space, message } from "antd";
+import { Button, List, message } from "antd";
 import { createTodo } from "src/api/todo.api";
 import { Mention } from "src/components/rte/mention";
 import { projectsConfig } from "src/components/rte/projects.config";
+import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
 import { extractIds } from "src/utils/extract_data";
@@ -131,23 +132,7 @@ const TasksPage = () => {
           }}
           renderItem={(todo) => (
             <List.Item>
-              <Card bordered={false}>
-                <Space>
-                  <EditorProvider
-                    extensions={extensions}
-                    content={JSON.parse(todo.jsonString || "{}") || {}}
-                    editable={false}
-                    autofocus={false}
-                    editorProps={{
-                      attributes: {
-                        class: "tiptapReadOnly",
-                      },
-                    }}
-                  >
-                    <></>
-                  </EditorProvider>
-                </Space>
-              </Card>
+              <SimpleTodoCard todo={todo} extensions={extensions} />
             </List.Item>
           )}
         />
