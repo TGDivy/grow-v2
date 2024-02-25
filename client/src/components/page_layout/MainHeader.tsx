@@ -44,7 +44,18 @@ const MainHeader = () => {
               icon={<MenuOutlined />}
             />
           )}
-          <Link to="/" style={{}}>
+          <Link
+            to="/"
+            style={{
+              display: "flex",
+              gap: token.sizeXS,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            {breaks.sm && (
+              <img src="/logos/TreeNoback.png" height={26} alt="logo" />
+            )}
             <Typography.Title level={5}>Odyssey v2</Typography.Title>
           </Link>
         </div>
