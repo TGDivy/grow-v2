@@ -6,21 +6,22 @@ import {
   Layout,
 } from "antd";
 import "antd/dist/reset.css";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import PageTitle from "./components/PageTitle";
 import DefaultLayout from "./components/page_layout/DefaultLayout";
 import "./global.css";
-import { HomePage } from "./pages/HomePage";
-import ProjectsPage from "./pages/ProjectsPage";
-import useUserStore from "./stores/user_store";
-import { themes } from "./utils/themes";
 import FocusPage from "./pages/FocusPage";
-import { SignUpPage } from "./pages/SignUpPage";
-import { useBreakpoint } from "./utils/antd_components";
-import TodosPage from "./pages/TodosPage";
+import { HomePage } from "./pages/HomePage";
+import PageNotFound from "./pages/PageNotFound";
 import PhilosophyPage from "./pages/PhilosophyPage";
-import SettingsPage from "./pages/SettingsPage";
 import ProjectPage from "./pages/ProjectPage";
+import ProjectsPage from "./pages/ProjectsPage";
+import SettingsPage from "./pages/SettingsPage";
+import { SignUpPage } from "./pages/SignUpPage";
+import TodosPage from "./pages/TodosPage";
+import useUserStore from "./stores/user_store";
+import { useBreakpoint } from "./utils/antd_components";
+import { themes } from "./utils/themes";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -80,7 +81,7 @@ function App() {
 
               <Route path="settings" element={<SettingsPage />} />
               <Route path="philosophy" element={<PhilosophyPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="*" element={<PageNotFound />} />
             </Route>
           </Routes>
           <FloatButton.BackTop />
