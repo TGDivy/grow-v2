@@ -211,7 +211,7 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
           zIndex: 100,
         }}
       >
-        <CreateTask project={project?._id} />
+        <CreateTask projectId={project?._id} />
       </div>
     </div>
   );
@@ -249,7 +249,7 @@ const ProjectPage = () => {
         </Skeleton>
       </Col>
       <Col lg={16} md={24}>
-        <ProjectTodosCard todos={todos} loading={loading} />
+        <ProjectTodosCard todos={todos} loading={loading} project={project} />
       </Col>
     </Row>
   );

@@ -7,11 +7,11 @@ import { extractIds } from "src/utils/extract_data";
 import { todoExtensions } from "./TodoExtensions";
 
 interface CreateTaskProps {
-  project?: string;
+  projectId?: string;
 }
 
 const CreateTask = (props: CreateTaskProps) => {
-  const { project } = props;
+  const { projectId } = props;
 
   const DisableEnter = Extension.create({
     addKeyboardShortcuts() {
@@ -43,12 +43,16 @@ const CreateTask = (props: CreateTaskProps) => {
     if (!editor) return;
     const json = editor.getJSON();
     try {
+      const projects = extractIds("project", json);
+      if (projectId) {
+        projects.push(projectId);
+      }
+
       const todo = await createTodo({
         rawText: editor.getText(),
         jsonString: JSON.stringify(json),
         htmlString: editor.getHTML(),
-        projects: extractIds("project", json).concat(project || []),
-
+        projects: projects,
         priority: 0,
         contexts: [],
         completed: false,
