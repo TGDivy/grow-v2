@@ -23,7 +23,7 @@ export const ToggleSession = () => {
       setOpen(newOpen);
       return;
     }
-    buttonPressSound.play();
+    buttonPressSound().play();
 
     if (!active) {
       confirm();

@@ -117,7 +117,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
                 if (get().session?.active) get().toggleSession();
               },
             });
-            notificationSound.play();
+            notificationSound().play();
           }
         },
       }),

@@ -67,7 +67,7 @@ onAuthStateChanged(auth, (user) => {
         placement: "bottomRight",
         type: "warning",
       });
-      notificationSound.play();
+      notificationSound().play();
 
       sendEmailVerification(user, actionCodeSettings).then(() => {
         // Email verification sent!

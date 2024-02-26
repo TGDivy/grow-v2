@@ -48,7 +48,7 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
       onChange={handleToggleTodo}
       onClick={(e) => {
         e.stopPropagation();
-        checkSound.play();
+        checkSound().play();
       }}
     />
   );

@@ -49,7 +49,7 @@ const PhilosophyPage = () => {
         </Col>
         <Col span={24}>
           <Image
-            src="/gtd.png"
+            src="/images/gtd.png"
             style={{
               borderRadius: token.borderRadiusLG,
             }}
@@ -62,7 +62,7 @@ const PhilosophyPage = () => {
           }}
         >
           <Image
-            src="/GTD_Workflow.avif"
+            src="/images/GTD_Workflow.avif"
             style={{
               borderRadius: token.borderRadiusLG,
             }}
