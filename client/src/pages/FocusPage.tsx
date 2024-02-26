@@ -130,6 +130,7 @@ const LinkedEntities = () => {
                   label: todo.rawText,
                   value: todo._id,
                 }))}
+              placement="topLeft"
             />
           </Card>
           <Divider />

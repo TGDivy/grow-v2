@@ -1,116 +1,12 @@
-import Document from "@tiptap/extension-document";
-import Paragraph from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
-
-import Text from "@tiptap/extension-text";
-import { Editor, EditorContent, Extension, useEditor } from "@tiptap/react";
 import "src/components/rte/styles.scss";
 
-import { SendOutlined } from "@ant-design/icons";
-import { Button, Collapse, List, message } from "antd";
-import { createTodo } from "src/api/todo.api";
-import { Mention } from "src/components/rte/mention";
-import { projectsConfig } from "src/components/rte/projects.config";
+import { TodoDocument } from "@server/models/todo.model";
+import { Collapse, List } from "antd";
 import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
-import { extractIds } from "src/utils/extract_data";
-import { TodoDocument } from "@server/models/todo.model";
-
-const extensions = [
-  Document,
-  Paragraph,
-  Text,
-  Mention.configure(projectsConfig),
-  Placeholder.configure({
-    placeholder: "Write to create a task …",
-  }),
-];
-
-const CreateTask = () => {
-  const DisableEnter = Extension.create({
-    addKeyboardShortcuts() {
-      return {
-        Enter: ({ editor }) => {
-          if (document.querySelector(".tippy-content")) {
-            return false;
-          }
-
-          handleCreateTodo(editor as Editor);
-          return true;
-        },
-      };
-    },
-  });
-
-  const editor = useEditor({
-    extensions: [...extensions, DisableEnter],
-    editorProps: {
-      attributes: {
-        class: "tiptapStandard",
-      },
-    },
-  });
-
-  const addTodo = useTodoStore((state) => state.addTodo);
-
-  // console.log(editor?.getText());
-
-  const handleCreateTodo = async (editor: Editor) => {
-    if (!editor) return;
-    const json = editor.getJSON();
-    try {
-      const todo = await createTodo({
-        rawText: editor.getText(),
-        jsonString: JSON.stringify(json),
-        htmlString: editor.getHTML(),
-        projects: extractIds("project", json),
-
-        priority: 0,
-        contexts: [],
-        completed: false,
-        notes: [],
-        tags: [],
-        timeSpent: 0,
-        timeEstimate: 0,
-        links: [],
-      });
-      editor.commands.clearContent();
-      message.success("Created!");
-      addTodo(todo);
-    } catch (error) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      }
-      console.error(error);
-    }
-  };
-
-  return (
-    <>
-      <div
-        style={{
-          position: "relative",
-        }}
-      >
-        <EditorContent editor={editor} />
-        <Button
-          shape="circle"
-          type="primary"
-          icon={<SendOutlined />}
-          size="large"
-          style={{
-            position: "absolute",
-            bottom: "50%",
-            transform: "translateY(50%)",
-            right: 10,
-          }}
-          onClick={() => editor && handleCreateTodo(editor)}
-        />
-      </div>
-    </>
-  );
-};
+import { todoExtensions } from "src/components/todo/TodoExtensions";
+import CreateTask from "src/components/todo/CreateTodo";
 
 const TodosPage = () => {
   const [todos, loading] = useTodoStore((state) => [
@@ -157,7 +53,7 @@ const TodosPage = () => {
           loading={loading}
           style={{
             maxWidth: "850px",
-            width: "100%",
+            width: "calc(100% - 20px)",
           }}
           grid={{
             xs: 1,
@@ -166,14 +62,18 @@ const TodosPage = () => {
           rowKey={(todo) => todo._id}
           renderItem={(todo) => (
             <List.Item>
-              <SimpleTodoCard todo={todo} extensions={extensions} allowEdit />
+              <SimpleTodoCard
+                todo={todo}
+                extensions={todoExtensions}
+                allowEdit
+              />
             </List.Item>
           )}
         />
         {completedTodos && completedTodos.length > 0 && (
           <Collapse
             style={{
-              width: "100%",
+              width: "calc(100% - 20px)",
               maxWidth: "850px",
               marginLeft: "-20px",
             }}
@@ -196,7 +96,7 @@ const TodosPage = () => {
                       <List.Item>
                         <SimpleTodoCard
                           todo={todo}
-                          extensions={extensions}
+                          extensions={todoExtensions}
                           allowEdit
                         />
                       </List.Item>

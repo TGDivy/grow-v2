@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { createProjectInput, updateProjectInput } from "../schema/project.schema";
 import { createProject, deleteProject, getProject, getProjects, updateProject } from "../services/project.service";
 import { getEmoji } from "../utils/emoji";
+import { getTodos } from "../services/todo.service";
 
 export const createProjectHandler = async (req: Request<{}, {}, createProjectInput["body"]>, res: Response) => {
     const userId = res.locals.user?.uid;
@@ -55,13 +56,55 @@ export const updateProjectHandler = async (
 };
 
 export const getProjectHandler = async (req: Request<updateProjectInput["params"], {}, {}>, res: Response) => {
-    const project = await getProject(req.params.id);
+    const userId = res.locals.user?.uid;
 
-    if (!project) {
-        return res.sendStatus(404);
+    if (!userId) {
+        return res.status(401).send("Unauthorized");
     }
 
-    return res.send(project);
+    try {
+        const project = await getProject(req.params.id);
+
+        if (!project) {
+            return res.sendStatus(404);
+        }
+
+        if (project.userId !== userId) {
+            return res.status(403).send("Unauthorized");
+        }
+
+        return res.send(project);
+    } catch (error) {
+        return res.status(500).send("Something went wrong");
+    }
+};
+
+export const getProjectFull = async (req: Request<updateProjectInput["params"], {}, {}>, res: Response) => {
+    const userId = res.locals.user?.uid;
+
+    if (!userId) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    try {
+        const project = await getProject(req.params.id);
+
+        if (!project) {
+            return res.sendStatus(404);
+        }
+
+        if (project.userId !== userId) {
+            return res.status(403).send("Unauthorized");
+        }
+
+        let projects = [new mongoose.Types.ObjectId(project._id)];
+
+        const todos = await getTodos(userId, { projects });
+
+        return res.send({ project, todos });
+    } catch (error) {
+        return res.status(500).send("Something went wrong");
+    }
 };
 
 export const getAllProjectsHandler = async (req: Request<{}, {}, {}>, res: Response) => {

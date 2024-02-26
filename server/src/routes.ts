@@ -4,6 +4,7 @@ import {
     createProjectHandler,
     deleteProjectHandler,
     getAllProjectsHandler,
+    getProjectFull,
     getProjectHandler,
     updateProjectHandler,
 } from "./controllers/project.controller";
@@ -67,6 +68,8 @@ const routes = (app: Express) => {
     app.post("/project", [requireUser, validateResource(createProjectSchema)], createProjectHandler);
     app.get("/project", [requireUser, validateResource(getAllProjectsSchema)], getAllProjectsHandler);
     app.get("/project/:id", [requireUser, validateResource(getProjectSchema)], getProjectHandler);
+    app.get("/project/:id/details", [requireUser, validateResource(getProjectSchema)], getProjectFull);
+
     app.put("/project/:id", requireUser, validateResource(updateProjectSchema), updateProjectHandler);
     app.delete("/project/:id", [requireUser, validateResource(deleteProjectSchema)], deleteProjectHandler);
 
