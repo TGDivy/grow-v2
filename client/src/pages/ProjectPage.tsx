@@ -21,6 +21,7 @@ import CreateTask from "src/components/todo/CreateTodo";
 import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import { todoExtensions } from "src/components/todo/TodoExtensions";
 import { useBreakpoint, useToken } from "src/utils/antd_components";
+import { formatTime } from "src/utils/text";
 
 interface ProjectDetailsCardProps {
   project: ProjectDocument;
@@ -68,7 +69,13 @@ const ProjectDetailsCard = (props: ProjectDetailsCardProps) => {
     {
       key: "3",
       label: "Total Time Spent",
-      children: `${totalDuration} minutes`,
+      children: `${formatTime(
+        totalDuration || 0,
+        false,
+        true,
+        true,
+        false
+      )} (HH:mm)`,
     },
   ];
 
