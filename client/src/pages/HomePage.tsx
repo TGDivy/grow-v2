@@ -13,8 +13,6 @@ export const HomePage = () => {
   const user = useUserStore((state) => state.user);
   const { token } = useToken();
 
-  console.log("user", user);
-
   let welcomeText = "Hello, ";
   if (user?.displayName) {
     welcomeText += user.displayName.split(" ")[0];

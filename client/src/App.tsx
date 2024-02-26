@@ -81,12 +81,12 @@ function App() {
               <Route path="signup" element={<SignUpPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="projects/:projectId/*" element={<ProjectPage />} />
-              <Route path="focus" element={<FocusPage />} />
               <Route path="tasks" element={<TodosPage />} />
 
               <Route path="settings" element={<SettingsPage />} />
               <Route path="philosophy" element={<PhilosophyPage />} />
               <Route path="*" element={<PageNotFound />} />
+              <Route path="focus" element={<FocusPage />} />
             </Route>
           </Routes>
           <FloatButton.BackTop />

@@ -16,7 +16,7 @@ interface focusSessionStoreType {
   setSessionMode: (mode: SessionDocumentType["mode"]) => void;
   toggleSession: () => Promise<void>;
   loading: boolean;
-  getAndSetSession: () => Promise<void>;
+  getAndSetSession: () => Promise<SessionDocumentType>;
   sessionCompleted: boolean;
   setSessionCompleted: (completed: boolean) => void;
   setTasks: (tasks: string[]) => void;
@@ -45,12 +45,14 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
               }
             }
             set({ loading: false, session });
+            return session;
           } catch (error) {
             const session = await createFocusSession({
               duration: 25 * 60,
               active: false,
             });
             set({ session, loading: false });
+            return session;
           }
         },
         setDuration: (duration) => {
@@ -63,6 +65,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
         setTasks: (tasks) => {
           const session = get().session;
           if (!session) {
+            console.error("Session not found");
             return;
           }
           set({

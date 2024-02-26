@@ -1,7 +1,7 @@
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
-import Text from "@tiptap/extension-text";
 import Placeholder from "@tiptap/extension-placeholder";
+import Text from "@tiptap/extension-text";
 import {
   Alert,
   Card,
@@ -17,13 +17,14 @@ import {
 } from "antd";
 import { useEffect } from "react";
 import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
+import { useSearchParams } from "react-router-dom";
+import { Mention } from "src/components/rte/mention";
 import { projectsConfig } from "src/components/rte/projects.config";
 import TimerCard from "src/components/timer/TimerCard";
 import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import useFocusSessionStore from "src/stores/focus_session_store";
 import useTodoStore from "src/stores/todos.store";
 import { useBreakpoint } from "src/utils/antd_components";
-import { Mention } from "src/components/rte/mention";
 
 const extensions = [
   Document,
@@ -155,17 +156,24 @@ const LinkedEntities = () => {
 };
 
 const FocusPage = () => {
-  const [getAndSetSession, toggleSession] = useFocusSessionStore((state) => [
-    state.getAndSetSession,
-    state.toggleSession,
-  ]);
+  const [getAndSetSession, toggleSession, setTasks] = useFocusSessionStore(
+    (state) => [state.getAndSetSession, state.toggleSession, state.setTasks]
+  );
   const sessionCompleted = useFocusSessionStore(
     (state) => state.sessionCompleted
   );
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     getAndSetSession()
-      .then()
+      .then((session) => {
+        if (session.active) return;
+
+        if (searchParams.has("tasks")) {
+          const tasks = searchParams.getAll("tasks");
+          setTasks(tasks);
+        }
+      })
       .catch((error) => {
         if (error instanceof Error) {
           message.error(error.message);

@@ -16,7 +16,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
+        type: "module",
       },
+
       manifest: {
         name: "Odyssey v2",
         short_name: "Odyssey",
@@ -36,6 +38,11 @@ export default defineConfig({
             type: "image/png",
           },
         ],
+      },
+      workbox: {
+        navigateFallback: "/index.html",
+        runtimeCaching: [],
+        disableDevLogs: true,
       },
     }),
   ],
