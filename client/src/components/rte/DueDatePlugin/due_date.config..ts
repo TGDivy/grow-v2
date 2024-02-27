@@ -6,6 +6,8 @@ import tippy, { GetReferenceClientRect, Instance, Props } from "tippy.js";
 import DueDateList, { DueDateListProps, DueDateListRef } from "./DueDateList";
 import { DueDateOptions } from "./due_date.plugin";
 import Fuse from "fuse.js";
+import { extractIds } from "src/utils/extract_data";
+import { message } from "antd";
 
 export const DueDatePluginKey = new PluginKey("dueDate");
 
@@ -50,7 +52,13 @@ export const dueDateConfig: Partial<DueDateOptions> = {
     pluginKey: DueDatePluginKey,
     allowSpaces: true,
 
-    items: ({ query }) => {
+    items: ({ query, editor }) => {
+      // if editor already has a due date, don't show suggestions
+      if (extractIds("dueDate", editor.getJSON()).length > 0) {
+        message.warning("You can only have one due date per task");
+        return [];
+      }
+
       if (!query) {
         return relativeDates.slice(0, 5);
       }
@@ -160,8 +168,6 @@ export const dueDateConfig: Partial<DueDateOptions> = {
       const date = dayJS.format("ddd, MMM D, YYYY");
       const dateISO = dayJS.toISOString();
 
-      console.log("date", date, dateISO);
-
       if (overrideSpace) {
         range.to += 1;
       }
@@ -173,7 +179,7 @@ export const dueDateConfig: Partial<DueDateOptions> = {
           {
             type: "dueDate",
             attrs: {
-              id: dayJS.toISOString(),
+              id: dateISO,
               label: ` ${date}`,
               type: "dueDate",
             },

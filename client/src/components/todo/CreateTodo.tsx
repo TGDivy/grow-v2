@@ -21,6 +21,8 @@ const CreateTask = (props: CreateTaskProps) => {
             return false;
           }
 
+          console.log("editor", editor);
+
           handleCreateTodo(editor as Editor);
           return true;
         },
@@ -44,6 +46,8 @@ const CreateTask = (props: CreateTaskProps) => {
     const json = editor.getJSON();
     try {
       const projects = extractIds("project", json);
+      const dueDates = extractIds("dueDate", json);
+
       if (projectId) {
         projects.push(projectId);
       }
@@ -56,6 +60,7 @@ const CreateTask = (props: CreateTaskProps) => {
         priority: 0,
         contexts: [],
         completed: false,
+        dueDate: dueDates.length > 0 ? new Date(dueDates[0]) : undefined,
         notes: [],
         tags: [],
         timeSpent: 0,
