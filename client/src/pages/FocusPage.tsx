@@ -18,8 +18,8 @@ import {
 import { useEffect } from "react";
 import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 import { useSearchParams } from "react-router-dom";
+import { projectsConfig } from "src/components/rte/ProjectPlugin/projects.config";
 import { Mention } from "src/components/rte/mention";
-import { projectsConfig } from "src/components/rte/projects.config";
 import TimerCard from "src/components/timer/TimerCard";
 import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import useFocusSessionStore from "src/stores/focus_session_store";

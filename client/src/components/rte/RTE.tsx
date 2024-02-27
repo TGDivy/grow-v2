@@ -16,7 +16,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import "./styles.scss";
 
 import { Typography } from "antd";
-import { projectsConfig } from "./projects.config";
+import { projectsConfig } from "./ProjectPlugin/projects.config";
 
 const extensions = [
   Document,

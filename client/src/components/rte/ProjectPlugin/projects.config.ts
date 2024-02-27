@@ -164,7 +164,7 @@ export const projectsConfig: Partial<MentionOptions> = {
     );
 
     elem.setAttribute("href", `/projects/${node.attrs.id}`);
-    elem.setAttribute("target", "_blank");
+    // elem.setAttribute("target", "_blank");
     elem.textContent = `${options.suggestion.char}${
       node.attrs.label ?? node.attrs.id
     }`;
@@ -174,21 +174,5 @@ export const projectsConfig: Partial<MentionOptions> = {
     };
 
     return elem;
-
-    // return [
-    //   "a",
-    //   {
-    //     href: `/projects/${node.attrs.id}`,
-    //     class: options.HTMLAttributes.class,
-    //     target: "_blank",
-    //     onclick: (e: Event) => {
-    //       console.log("clicked");
-    //       e.stopPropagation();
-    //       e.preventDefault();
-    //     },
-    //   },
-
-    //   `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`,
-    // ];
   },
 };

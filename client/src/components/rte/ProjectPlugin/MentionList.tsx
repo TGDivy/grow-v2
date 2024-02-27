@@ -65,7 +65,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
 
     return (
       <>
-        <div className="items">
+        <div className="items css-var-r0">
           {props.items.length ? (
             props.items.map((item, index) => (
               <button

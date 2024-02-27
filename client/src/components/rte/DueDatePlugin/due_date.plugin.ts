@@ -3,28 +3,29 @@ import { DOMOutputSpec, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { PluginKey } from "@tiptap/pm/state";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 
-export type MentionOptions = {
+export type DueDateOptions = {
   HTMLAttributes: Record<string, unknown>;
   /** @deprecated use renderText and renderHTML instead  */
   renderLabel?: (props: {
-    options: MentionOptions;
+    options: DueDateOptions;
     node: ProseMirrorNode;
   }) => string;
   renderText: (props: {
-    options: MentionOptions;
+    options: DueDateOptions;
     node: ProseMirrorNode;
   }) => string;
   renderHTML: (props: {
-    options: MentionOptions;
+    options: DueDateOptions;
     node: ProseMirrorNode;
   }) => DOMOutputSpec;
   suggestion: Omit<SuggestionOptions, "editor">;
 };
 
-export const MentionPluginKey = new PluginKey("mention");
+export const DueDatePluginKey = new PluginKey("dueDate");
 
-export const Mention = Node.create<MentionOptions>({
-  name: "mention",
+export const DueDate = Node.create<DueDateOptions>({
+  name: "dueDate",
+
   addOptions() {
     return {
       HTMLAttributes: {},
@@ -40,7 +41,7 @@ export const Mention = Node.create<MentionOptions>({
       },
       suggestion: {
         char: "@",
-        pluginKey: MentionPluginKey,
+        pluginKey: DueDatePluginKey,
         command: ({ editor, range, props }) => {
           // increase range.to by one when the next node is of type "text"
           // and starts with a space character
@@ -198,7 +199,7 @@ export const Mention = Node.create<MentionOptions>({
     return {
       Backspace: () =>
         this.editor.commands.command(({ tr, state }) => {
-          let isMention = false;
+          let isDueDate = false;
           const { selection } = state;
           const { empty, anchor } = selection;
 
@@ -208,7 +209,7 @@ export const Mention = Node.create<MentionOptions>({
 
           state.doc.nodesBetween(anchor - 1, anchor, (node, pos) => {
             if (node.type.name === this.name) {
-              isMention = true;
+              isDueDate = true;
               tr.insertText(
                 this.options.suggestion.char || "",
                 pos,
@@ -219,7 +220,7 @@ export const Mention = Node.create<MentionOptions>({
             }
           });
 
-          return isMention;
+          return isDueDate;
         }),
     };
   },
