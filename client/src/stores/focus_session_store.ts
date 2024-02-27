@@ -113,6 +113,7 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
         setSessionCompleted: (completed) => {
           set({ sessionCompleted: completed });
           if (completed) {
+            notificationSound().play();
             notification.success({
               message: "Congratulations!",
               description: "You have completed your focus session!",
@@ -120,7 +121,6 @@ const useFocusSessionStore = create<focusSessionStoreType>()(
                 if (get().session?.active) get().toggleSession();
               },
             });
-            notificationSound().play();
           }
         },
       }),
