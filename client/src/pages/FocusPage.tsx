@@ -156,9 +156,14 @@ const LinkedEntities = () => {
 };
 
 const FocusPage = () => {
-  const [getAndSetSession, toggleSession, setTasks] = useFocusSessionStore(
-    (state) => [state.getAndSetSession, state.toggleSession, state.setTasks]
-  );
+  const [getAndSetSession, toggleSession, setTasks, setDuration] =
+    useFocusSessionStore((state) => [
+      state.getAndSetSession,
+      state.toggleSession,
+      state.setTasks,
+      state.setDuration,
+    ]);
+  const [todos] = useTodoStore((state) => [state.todos]);
   const sessionCompleted = useFocusSessionStore(
     (state) => state.sessionCompleted
   );
@@ -172,6 +177,17 @@ const FocusPage = () => {
         if (searchParams.has("tasks")) {
           const tasks = searchParams.getAll("tasks");
           setTasks(tasks);
+          for (const task of tasks) {
+            const todo = todos.find((todo) => todo._id === task);
+            if (todo && todo.timeEstimate) {
+              // check if the todo timeEstimate - timeSpent is between 0 and maxDuration (2hours)
+              const timeRemaining = todo.timeEstimate - (todo.timeSpent || 0);
+              if (timeRemaining > 0) {
+                setDuration(Math.min(timeRemaining, 7200));
+                return;
+              }
+            }
+          }
         }
       })
       .catch((error) => {
