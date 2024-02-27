@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // replace state but everytime it's called, it will save to localStorage, and load from localStorage
 export const useLocalStorageState = (key: string, defaultValue: unknown) => {
@@ -69,4 +69,50 @@ export const useLocalStorage = <T>(
   };
 
   return [value, setValueAndSave];
+};
+
+export const useLongPress = (callback = () => {}, ms = 300) => {
+  const [startLongPress, setStartLongPress] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [cancelClick, setCancelClick] = useState(false);
+
+  useEffect(() => {
+    let timerId: number | null = null;
+    if (startLongPress) {
+      timerId = window.setTimeout(() => {
+        setIsActive(true);
+        setCancelClick(true);
+        callback();
+      }, ms);
+    } else {
+      setIsActive(false);
+      if (timerId !== null) {
+        window.clearTimeout(timerId);
+      }
+    }
+
+    return () => {
+      window.clearTimeout(timerId ?? undefined);
+    };
+  }, [callback, ms, startLongPress]);
+
+  const start = useCallback(() => {
+    setIsActive(true); // Start the animation
+    setStartLongPress(true);
+  }, []);
+  const stop = useCallback(() => {
+    setIsActive(false); // Stop the animation
+    setStartLongPress(false);
+    setCancelClick(false);
+  }, []);
+
+  return {
+    onMouseDown: start,
+    onTouchStart: start,
+    onMouseUp: stop,
+    onMouseLeave: stop,
+    onTouchEnd: stop,
+    isActive,
+    cancelClick,
+  };
 };

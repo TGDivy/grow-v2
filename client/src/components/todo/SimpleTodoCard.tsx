@@ -17,6 +17,8 @@ import { useToken } from "src/utils/antd_components";
 import TodoDrawer from "./TodoDrawer";
 import { formatTime } from "src/utils/text";
 import { checkSound } from "src/utils/constants";
+import { useLongPress } from "src/utils/hooks";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   todo: TodoDocument;
@@ -113,7 +115,12 @@ const SimpleTodoCard = (props: Props) => {
       month: "short",
       day: "2-digit",
     }).format(todo.dueDate);
-
+  const navigate = useNavigate();
+  const { isActive, cancelClick, onMouseUp, ...longPressActions } =
+    useLongPress(() => {
+      checkSound().play();
+      navigate(`/focus?tasks=${todo._id}`);
+    }, 1000);
   const completedDateString = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -148,14 +155,37 @@ const SimpleTodoCard = (props: Props) => {
       <Badge.Ribbon text={dueDateString} color={ribbonColor}>
         <Card
           bordered={false}
-          onClick={() => allowEdit && setOpen(true)}
+          // onClick={() => allowEdit && !cancelClick && setOpen(true)}
+          onMouseUp={() => {
+            if (!cancelClick && allowEdit) {
+              setOpen(true);
+            }
+            onMouseUp();
+          }}
           hoverable={allowEdit}
           style={{
             width: "100%",
             flex: 2,
             flexGrow: 2,
+            position: "relative",
+            overflow: "hidden",
           }}
+          {...longPressActions}
         >
+          {isActive && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: `linear-gradient(90deg, ${token.colorSuccess}, ${token.colorSuccessBg})`,
+                backgroundSize: "100% 100%",
+                animation: "wave 0.9s ease-in-out forwards",
+              }}
+            />
+          )}
           <Space size="middle" align="start">
             <ToggleTodo todo={todo} />
 
