@@ -58,6 +58,27 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
 
 const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
   if (todo.timeSpent === 0 || !todo.timeSpent) {
+    if (todo.timeEstimate !== undefined && todo.timeEstimate > 0) {
+      return (
+        <Progress
+          percent={0}
+          format={() =>
+            `0/${formatTime(
+              todo.timeEstimate || 0,
+              false,
+              true,
+              true,
+              false
+            )} (HH:mm)`
+          }
+          size="small"
+          style={{
+            margin: "0px",
+            width: "100px",
+          }}
+        />
+      );
+    }
     return null;
   }
 
@@ -133,7 +154,8 @@ const SimpleTodoCard = (props: Props) => {
 
   const showExtra =
     (todo.completedAt && todo.completed) ||
-    (todo.timeSpent != undefined && todo.timeSpent > 0);
+    (todo.timeSpent != undefined && todo.timeSpent > 0) ||
+    (todo.timeEstimate != undefined && todo.timeEstimate > 0);
   // (todo.priority !== undefined && todo.priority > 0);
 
   const ribbonColor = todo.dueDate
