@@ -9,7 +9,9 @@ const payload = {
         priority: number().min(0).max(25).default(0),
         projects: array(string()).default([]),
         contexts: array(string()).default([]),
-        dueDate: date().optional(),
+        dueDate: string()
+            .transform((val) => new Date(val))
+            .optional(),
         completed: boolean().default(false),
         notes: array(string()).default([]),
         tags: array(string()).default([]),
