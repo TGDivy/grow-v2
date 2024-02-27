@@ -33,6 +33,8 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
   const handleToggleTodo = async (e: CheckboxChangeEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    checkSound().play();
+
     try {
       const newTodo = await toggleTodo(todo._id);
       message.success("Completed!");
@@ -50,7 +52,6 @@ const ToggleTodo = ({ todo }: { todo: TodoDocument }) => {
       onChange={handleToggleTodo}
       onClick={(e) => {
         e.stopPropagation();
-        checkSound().play();
       }}
     />
   );
@@ -137,11 +138,10 @@ const SimpleTodoCard = (props: Props) => {
       day: "2-digit",
     }).format(todo.dueDate);
   const navigate = useNavigate();
-  const { isActive, cancelClick, onMouseUp, ...longPressActions } =
-    useLongPress(() => {
-      checkSound().play();
-      navigate(`/focus?tasks=${todo._id}`);
-    }, 1000);
+  const { isActive, cancelClick, ...longPressActions } = useLongPress(() => {
+    checkSound().play();
+    navigate(`/focus?tasks=${todo._id}`);
+  }, 1000);
   const completedDateString = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -177,12 +177,10 @@ const SimpleTodoCard = (props: Props) => {
       <Badge.Ribbon text={dueDateString} color={ribbonColor}>
         <Card
           bordered={false}
-          // onClick={() => allowEdit && !cancelClick && setOpen(true)}
-          onMouseUp={() => {
+          onClick={() => {
             if (!cancelClick && allowEdit) {
               setOpen(true);
             }
-            onMouseUp();
           }}
           hoverable={allowEdit}
           style={{
@@ -202,9 +200,10 @@ const SimpleTodoCard = (props: Props) => {
                 left: 0,
                 width: "100%",
                 height: "100%",
-                background: `linear-gradient(90deg, ${token.colorSuccess}, ${token.colorSuccessBg})`,
+                background: `linear-gradient(270deg, ${token.colorPrimary}, transparent)`,
                 backgroundSize: "100% 100%",
-                animation: "wave 0.9s ease-in-out forwards",
+                // complex easing function which pauses at the end
+                animation: "wave 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards",
               }}
             />
           )}
@@ -228,16 +227,14 @@ const SimpleTodoCard = (props: Props) => {
               {showExtra && (
                 <Space direction={vertical ? "vertical" : "horizontal"}>
                   {todo.completed && todo.completedAt && (
-                    <>
-                      <Typography.Text
-                        type="secondary"
-                        style={{
-                          fontSize: `${token.fontSizeSM}px`,
-                        }}
-                      >
-                        Completed At: {completedDateString}
-                      </Typography.Text>
-                    </>
+                    <Typography.Text
+                      type="secondary"
+                      style={{
+                        fontSize: `${token.fontSizeSM}px`,
+                      }}
+                    >
+                      Completed At: {completedDateString}
+                    </Typography.Text>
                   )}
                   <TimeSpent todo={todo} />
                 </Space>

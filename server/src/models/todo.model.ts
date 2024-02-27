@@ -9,7 +9,7 @@ export interface TodoInput {
     htmlString?: string;
 
     priority?: number;
-    projects: mongoose.Types.ObjectId[];
+    projects: string[];
     contexts: string[];
 
     dueDate?: Date;

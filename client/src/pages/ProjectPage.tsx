@@ -20,6 +20,7 @@ import { getProjectFull } from "src/api/project";
 import CreateTask from "src/components/todo/CreateTodo";
 import SimpleTodoCard from "src/components/todo/SimpleTodoCard";
 import { todoExtensions } from "src/components/todo/TodoExtensions";
+import useTodoStore from "src/stores/todos.store";
 import { useBreakpoint, useToken } from "src/utils/antd_components";
 import { formatTime } from "src/utils/text";
 
@@ -170,6 +171,7 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
                 todo={todo}
                 extensions={todoExtensions}
                 allowEdit
+                vertical={breaks.md}
               />
             </List.Item>
           )}
@@ -177,9 +179,8 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
         {completedTodos && completedTodos.length > 0 && (
           <Collapse
             style={{
-              width: "calc(100% - 20px)",
-              maxWidth: "850px",
-              marginLeft: "-20px",
+              width: "calc(100%)",
+              // marginLeft: "-20px",
             }}
             ghost
             bordered={false}
@@ -188,6 +189,10 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
               {
                 key: "1",
                 label: "Completed",
+                style: {
+                  width: "calc(100%)",
+                  padding: "0px",
+                },
                 children: (
                   <List
                     dataSource={completedTodos}
@@ -202,6 +207,7 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
                           todo={todo}
                           extensions={todoExtensions}
                           allowEdit
+                          vertical={!breaks.xl}
                         />
                       </List.Item>
                     )}
@@ -228,7 +234,11 @@ const ProjectPage = () => {
   const projectId = useParams<{ projectId: string }>().projectId;
   const [loading, setLoading] = useState(false);
   const [project, setProject] = useState<ProjectDocument>();
-  const [todos, setTodos] = useState<TodoDocument[]>([]);
+  // const [todos, setTodos] = useState<TodoDocument[]>([]);
+  const [todos, updateTodos] = useTodoStore((state) => [
+    state.todos,
+    state.updateTodos,
+  ]);
 
   useEffect(() => {
     if (!projectId) {
@@ -238,7 +248,8 @@ const ProjectPage = () => {
     getProjectFull(projectId)
       .then((data) => {
         setProject(data.project);
-        setTodos(data.todos);
+        // setTodos(data.todos);
+        updateTodos(data.todos);
       })
       .catch((err) => {
         message.error(err.message);
@@ -246,17 +257,27 @@ const ProjectPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [projectId]);
+  }, [projectId, updateTodos]);
+
+  const projectTodos = todos.filter((todo) =>
+    projectId ? todo.projects.includes(projectId) : false
+  );
 
   return (
     <Row gutter={[16, 32]}>
-      <Col lg={8} md={24}>
+      <Col xl={8} lg={10} md={24} sm={24}>
         <Skeleton loading={loading} active>
-          {project && <ProjectDetailsCard project={project} todos={todos} />}
+          {project && (
+            <ProjectDetailsCard project={project} todos={projectTodos} />
+          )}
         </Skeleton>
       </Col>
-      <Col lg={16} md={24}>
-        <ProjectTodosCard todos={todos} loading={loading} project={project} />
+      <Col xl={16} lg={14} md={24} sm={24}>
+        <ProjectTodosCard
+          todos={projectTodos}
+          loading={loading}
+          project={project}
+        />
       </Col>
     </Row>
   );
