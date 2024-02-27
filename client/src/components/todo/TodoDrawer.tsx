@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { updateTodo } from "src/api/todo.api";
 import useProjectStore from "src/stores/projects_store";
 import useTodoStore from "src/stores/todos.store";
+import { useBreakpoint } from "src/utils/antd_components";
 import { extractIds } from "src/utils/extract_data";
 import { formatTime } from "src/utils/text";
 
@@ -35,6 +36,7 @@ const TodoDrawer = (props: Props) => {
   const projects = useProjectStore((state) => state.projects);
   const [form] = Form.useForm<updateTodoInput["body"]>();
   const navigate = useNavigate();
+  const breaks = useBreakpoint();
 
   const editor = useEditor({
     extensions,
@@ -93,13 +95,14 @@ const TodoDrawer = (props: Props) => {
       destroyOnClose
       extra={
         <Space>
-          <Button
-            icon={<PlayCircleOutlined />}
-            // query params for tasks id
-            onClick={() => navigate(`/focus?tasks=${todo._id}`)}
-          >
-            Start in Focus
-          </Button>
+          {breaks.sm && (
+            <Button
+              icon={<PlayCircleOutlined />}
+              onClick={() => navigate(`/focus?tasks=${todo._id}`)}
+            >
+              Start in Focus
+            </Button>
+          )}
           <Button.Group>
             <Button onClick={onClose}>Cancel</Button>
             <Button type="primary" onClick={form.submit}>
