@@ -52,9 +52,12 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
       children: projects.map((project) => ({
         key: project._id,
         label: <Link to={`/projects/${project._id}`}>{project.title}</Link>,
+        icon: project?.emoji?.skins[0].native,
         style: {
-          lineHeight: "32px",
-          height: "32px",
+          lineHeight: "28px",
+          height: "28px",
+          gap: "8px",
+          marginTop: "8px",
         },
       })),
     },
