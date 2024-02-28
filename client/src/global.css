@@ -121,7 +121,7 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 }
 
 .ant-menu-item-selected {
-    background-color: unset !important;
+    background: var(--ant-color-info-hover) !important;
     color: var(--ant-menu-dark-item-selected-color) !important;
 }
 
@@ -134,47 +134,20 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     color: var(--ant-menu-dark-item-selected-color) !important;
 }
 
-.ant-menu-item-selected::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--ant-color-info-hover);
-    animation: wave 0.5s forwards;
-    z-index: -1;
-    border-radius: 5px;
-    pointer-events: none;
-    filter: brightness(0.9);
-}
-
 div.ant-menu-submenu-title {
     color: var(--ant-color-text);
 }
 
 .ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title {
     color: var(--ant-menu-dark-item-selected-color) !important;
+    background: var(--ant-color-info-hover) !important;
+
 }
 
 .ant-menu-dark .ant-menu-submenu-selected>.ant-menu-submenu-title {
     color: var(--ant-color-text);
-}
+    background: var(--ant-color-info-hover) !important;
 
-.ant-menu-submenu-selected>.ant-menu-submenu-title::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--ant-color-info-hover);
-    animation: wave 0.5s forwards;
-    z-index: -1;
-    border-radius: 5px;
-    pointer-events: none;
-    /* darken */
-    filter: brightness(0.9);
 }
 
 .ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
