@@ -149,12 +149,8 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     filter: brightness(0.9);
 }
 
-.ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
-    background-color: var(--ant-menu-dark-bg);
-}
-
-.ant-menu-light.ant-menu-inline .ant-menu-sub.ant-menu-inline {
-    background-color: var(--ant-menu-light-bg);
+div.ant-menu-submenu-title {
+    color: var(--ant-color-text);
 }
 
 .ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title {
@@ -179,4 +175,12 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     pointer-events: none;
     /* darken */
     filter: brightness(0.9);
+}
+
+.ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+    background-color: var(--ant-menu-dark-bg);
+}
+
+.ant-menu-light.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+    background-color: var(--ant-menu-light-bg);
 }
