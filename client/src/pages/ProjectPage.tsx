@@ -180,7 +180,6 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
           <Collapse
             style={{
               width: "calc(100%)",
-              // marginLeft: "-20px",
             }}
             ghost
             bordered={false}
@@ -218,14 +217,16 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
           />
         )}
       </div>
-      <div
-        style={{
-          boxShadow: `0px 0px 20px 10px ${token.colorBgLayout}`,
-          zIndex: 100,
-        }}
-      >
-        <CreateTask projectId={project?._id} />
-      </div>
+      {project && (
+        <div
+          style={{
+            boxShadow: `0px 0px 20px 10px ${token.colorBgLayout}`,
+            zIndex: 100,
+          }}
+        >
+          <CreateTask projectId={project._id} />
+        </div>
+      )}
     </div>
   );
 };

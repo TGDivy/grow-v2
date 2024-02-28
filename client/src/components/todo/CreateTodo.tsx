@@ -13,6 +13,8 @@ interface CreateTaskProps {
 const CreateTask = (props: CreateTaskProps) => {
   const { projectId } = props;
 
+  console.log("projectId", projectId);
+
   const DisableEnter = Extension.create({
     addKeyboardShortcuts() {
       return {
@@ -52,11 +54,15 @@ const CreateTask = (props: CreateTaskProps) => {
         projects.push(projectId);
       }
 
+      console.log("projects", projects, projectId);
+      // return;
+
       const todo = await createTodo({
         rawText: editor.getText(),
         jsonString: JSON.stringify(json),
         htmlString: editor.getHTML(),
-        projects: projects,
+        // remove duplicates
+        projects: Array.from(new Set(projects)),
         priority: 0,
         contexts: [],
         completed: false,
