@@ -16,6 +16,10 @@ app.use(json());
 app.use(cors());
 app.use(urlencoded({ extended: true }));
 app.use(deserializeUser);
+app.use((req, res, next) => {
+    logger.info(`${req.method} - ${req.originalUrl} - ${req.ip}`);
+    next();
+});
 
 app.listen(PORT, async () => {
     logger.info(`Server started at http://localhost:${PORT}`);
