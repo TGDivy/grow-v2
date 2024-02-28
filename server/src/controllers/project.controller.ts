@@ -97,7 +97,7 @@ export const getProjectFull = async (req: Request<updateProjectInput["params"], 
             return res.status(403).send("Unauthorized");
         }
 
-        let projects = [new mongoose.Types.ObjectId(project._id)];
+        let projects = [project._id];
 
         const todos = await getTodos(userId, { projects });
 
