@@ -21,13 +21,8 @@ export const createTodoHandler = async (req: Request<{}, {}, createTodoInput["bo
 
     try {
         const body = req.body;
-        let projects: mongoose.Types.ObjectId[] = [];
 
-        if (body.projects) {
-            projects = body.projects.map((id: string) => new mongoose.Types.ObjectId(id));
-        }
-
-        const todo = await createTodo({ ...body, userId, projects });
+        const todo = await createTodo({ ...body, userId });
 
         return res.send(todo);
     } catch (error) {
@@ -80,13 +75,7 @@ export const getAllTodosHandler = async (req: Request<{}, {}, getAllTodosInput["
     const filters = req.body.filters;
 
     try {
-        let projects: mongoose.Types.ObjectId[] = [];
-
-        if (filters?.projects) {
-            projects = filters.projects.map((id: string) => new mongoose.Types.ObjectId(id));
-        }
-        const todos = await getTodos(userId, { ...filters, projects });
-
+        const todos = await getTodos(userId, { ...filters });
         return res.send(todos);
     } catch (error) {
         return res.status(500).send("Something went wrong");
@@ -108,12 +97,6 @@ export const updateTodoHandler = async (
 
     try {
         const body = req.body;
-        let projects: mongoose.Types.ObjectId[] = [];
-
-        if (body.projects) {
-            projects = body.projects.map((id: string) => new mongoose.Types.ObjectId(id));
-        }
-
         // first get the todo to check if it exists, and to get the userId
         let todo = await getTodo(todoId);
 
@@ -125,7 +108,7 @@ export const updateTodoHandler = async (
             return res.status(403).send("Unauthorized");
         }
 
-        todo = await updateTodo(todoId, { ...body, projects });
+        todo = await updateTodo(todoId, { ...body });
 
         if (!todo) {
             return res.sendStatus(404);
