@@ -12,7 +12,17 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 }
 
 .welcome-text {
-    background: linear-gradient(74deg, var(--bard-color-brand-text-gradient-stop-1) 0, var(--bard-color-brand-text-gradient-stop-2) 9%, var(--bard-color-brand-text-gradient-stop-3) 20%, var(--bard-color-brand-text-gradient-stop-3) 24%, var(--bard-color-brand-text-gradient-stop-2) 35%, var(--bard-color-brand-text-gradient-stop-1) 44%, var(--bard-color-brand-text-gradient-stop-2) 50%, var(--bard-color-brand-text-gradient-stop-3) 56%, var(--bard-color-surface) 75%, var(--bard-color-surface) 100%);
+    background: linear-gradient(74deg,
+            var(--bard-color-brand-text-gradient-stop-1) 0,
+            var(--bard-color-brand-text-gradient-stop-2) 9%,
+            var(--bard-color-brand-text-gradient-stop-3) 20%,
+            var(--bard-color-brand-text-gradient-stop-3) 24%,
+            var(--bard-color-brand-text-gradient-stop-2) 35%,
+            var(--bard-color-brand-text-gradient-stop-1) 44%,
+            var(--bard-color-brand-text-gradient-stop-2) 50%,
+            var(--bard-color-brand-text-gradient-stop-3) 56%,
+            var(--bard-color-surface) 75%,
+            var(--bard-color-surface) 100%);
     background-size: 400% 100%;
 
     -webkit-background-clip: text;
@@ -30,7 +40,7 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
 }
 
 .welcome-text::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -68,7 +78,6 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     &:hover {
         background-color: var(--ant-color-bg-elevated);
     }
-
 }
 
 /* Scroll bar theming */
@@ -95,25 +104,6 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     background-color: var(--ant-color-bg-elevated) !important;
 }
 
-.ant-menu-item-selected {
-    background-color: var(--ant-menu-dark-item-selected-bg) !important;
-    color: var(--ant-menu-dark-item-selected-color) !important;
-}
-
-.ant-menu-item:not(.ant-menu-item-selected):hover {
-    background-color: var(--ant-menu-item-bg);
-    color: var(--ant-menu-dark-item-selected-color);
-}
-
-/* .ant-menu-item {
-    transition: unset !important;
-} */
-
-.ant-menu-title-content {
-    transition: unset !important;
-}
-
-
 @keyframes wave {
     0% {
         transform: translateX(-100%);
@@ -122,4 +112,71 @@ background: linear-gradient(74deg,var(--bard-color-brand-text-gradient-stop-1) 0
     100% {
         transform: translateX(0%);
     }
+}
+
+/* Menu CSS */
+
+.ant-menu-title-content {
+    transition: unset !important;
+}
+
+.ant-menu-item-selected {
+    background-color: unset !important;
+    color: var(--ant-menu-dark-item-selected-color) !important;
+}
+
+.ant-menu-dark.ant-menu-submenu-popup>.ant-menu {
+    background-color: var(--ant-color-bg-elevated);
+}
+
+.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child {
+    background-color: var(--ant-color-info-hover) !important;
+    color: var(--ant-menu-dark-item-selected-color) !important;
+}
+
+.ant-menu-item-selected::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--ant-color-info-hover);
+    animation: wave 0.5s forwards;
+    z-index: -1;
+    border-radius: 5px;
+    pointer-events: none;
+    filter: brightness(0.9);
+}
+
+.ant-menu-dark.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+    background-color: var(--ant-menu-dark-bg);
+}
+
+.ant-menu-light.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+    background-color: var(--ant-menu-light-bg);
+}
+
+.ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title {
+    color: var(--ant-menu-dark-item-selected-color) !important;
+}
+
+.ant-menu-dark .ant-menu-submenu-selected>.ant-menu-submenu-title {
+    color: var(--ant-color-text);
+}
+
+.ant-menu-submenu-selected>.ant-menu-submenu-title::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--ant-color-info-hover);
+    animation: wave 0.5s forwards;
+    z-index: -1;
+    border-radius: 5px;
+    pointer-events: none;
+    /* darken */
+    filter: brightness(0.9);
 }

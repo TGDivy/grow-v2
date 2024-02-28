@@ -13,8 +13,6 @@ interface CreateTaskProps {
 const CreateTask = (props: CreateTaskProps) => {
   const { projectId } = props;
 
-  console.log("projectId", projectId);
-
   const DisableEnter = Extension.create({
     addKeyboardShortcuts() {
       return {
@@ -22,8 +20,6 @@ const CreateTask = (props: CreateTaskProps) => {
           if (document.querySelector(".tippy-content")) {
             return false;
           }
-
-          console.log("editor", editor);
 
           handleCreateTodo(editor as Editor);
           return true;
@@ -54,7 +50,6 @@ const CreateTask = (props: CreateTaskProps) => {
         projects.push(projectId);
       }
 
-      console.log("projects", projects, projectId);
       // return;
 
       const todo = await createTodo({

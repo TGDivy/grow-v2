@@ -9,26 +9,9 @@ import {
 } from "@ant-design/icons";
 import { Flex, Menu, Switch } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useProjectStore from "src/stores/projects_store";
 import useUserStore from "src/stores/user_store";
-
-const mainItems: ItemType<MenuItemType>[] = [
-  {
-    key: "focus",
-    label: <Link to="/focus">Focus</Link>,
-    icon: <AimOutlined />,
-  },
-  {
-    key: "projects",
-    label: <Link to="/projects">Projects</Link>,
-    icon: <FileOutlined />,
-  },
-  {
-    key: "tasks",
-    label: <Link to="/tasks">Tasks</Link>,
-    icon: <OrderedListOutlined />,
-  },
-];
 
 const settingsItems: ItemType<MenuItemType>[] = [
   {
@@ -51,6 +34,37 @@ interface BottomMenuProps {
 export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
   const location = useLocation();
   const theme = useUserStore((state) => state.theme);
+  const projects = useProjectStore((state) => state.projects);
+  const navigate = useNavigate();
+  const mainItems: ItemType<MenuItemType>[] = [
+    {
+      key: "focus",
+      label: <Link to="/focus">Focus</Link>,
+      icon: <AimOutlined />,
+    },
+    {
+      key: "projects",
+      label: "Projects",
+      icon: <FileOutlined />,
+      onTitleClick: () => {
+        navigate("/projects");
+      },
+      children: projects.map((project) => ({
+        key: project._id,
+        label: <Link to={`/projects/${project._id}`}>{project.title}</Link>,
+        style: {
+          lineHeight: "32px",
+          height: "32px",
+        },
+      })),
+    },
+    {
+      key: "tasks",
+      label: <Link to="/tasks">Tasks</Link>,
+      icon: <OrderedListOutlined />,
+    },
+  ];
+  const selectedKeys = location.pathname.split("/");
   return (
     <Flex
       vertical
@@ -62,13 +76,14 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
       <Menu
         mode="inline"
         title="Main Menu"
-        selectedKeys={[location.pathname.split("/")[1]]}
+        selectedKeys={[selectedKeys[selectedKeys.length - 1]]}
         items={mainItems}
         style={{
           width: "100%",
           backgroundColor: "transparent",
           border: "none",
         }}
+        subMenuCloseDelay={0.1}
         theme={theme}
         onSelect={onSelect}
       />

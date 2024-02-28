@@ -120,7 +120,6 @@ export const dueDateConfig: Partial<DueDateOptions> = {
           // separator can be a dot, a slash or a dash
           day = Number(query.split(/[.-/]/)[0]);
           month = Number(query.split(/[.-/]/)[1]);
-          console.log("day", day, "month", month);
           if (
             !isNaN(day) &&
             day > 0 &&
