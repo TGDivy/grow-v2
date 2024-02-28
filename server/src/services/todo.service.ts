@@ -10,7 +10,6 @@ export const getTodo = async (id: string) => {
 
 export const getTodos = async (userId: string, filters?: Partial<TodoInput>) => {
     if (filters?.projects && filters.projects.length > 0) {
-        console.log("filters", filters);
         return TodoModel.find({ userId, projects: filters.projects });
     }
     return TodoModel.find({ userId });
