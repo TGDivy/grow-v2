@@ -176,12 +176,14 @@ const SimpleTodoCard = (props: Props) => {
               setOpen(true);
           }}
           hoverable={allowEdit}
-          bodyStyle={{
+          style={{
             width: "100%",
             flex: 2,
             flexGrow: 2,
             position: "relative",
             overflow: "hidden",
+          }}
+          bodyStyle={{
             padding: "12px 16px"
           }}
         >
