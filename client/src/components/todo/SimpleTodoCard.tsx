@@ -74,6 +74,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
           size="small"
           style={{
             margin: "0px",
+            fontSize: "12px",
             width: "100px",
           }}
         />
@@ -104,6 +105,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
         size="small"
         style={{
           margin: "0px",
+          fontSize: "12px",
           width: "100px",
         }}
       />
@@ -120,6 +122,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
       status="normal"
       style={{
         margin: "0px",
+        fontSize: "12px",
         width: "100px",
       }}
     />
@@ -212,7 +215,8 @@ const SimpleTodoCard = (props: Props) => {
                     <Typography.Text
                       type="secondary"
                       style={{
-                        fontSize: `${token.fontSizeSM}px`,
+                        fontSize: "12px",
+                        // fontSize: `${token.fontSizeSM}px`,
                       }}
                     >
                       Completed At: {completedDateString}
