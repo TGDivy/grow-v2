@@ -176,7 +176,7 @@ const SimpleTodoCard = (props: Props) => {
               setOpen(true);
           }}
           hoverable={allowEdit}
-          style={{
+          bodyStyle={{
             width: "100%",
             flex: 2,
             flexGrow: 2,
