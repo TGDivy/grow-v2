@@ -190,7 +190,7 @@ const SimpleTodoCard = (props: Props) => {
             padding: "12px 16px"
           }}
         >
-          <Space size="middle" align="start">
+          <Space size="middle" align="center">
             <ToggleTodo todo={todo} />
 
             <Space direction="vertical" size="small" style={{
@@ -210,7 +210,10 @@ const SimpleTodoCard = (props: Props) => {
                 <></>
               </EditorProvider>
               {showExtra && (
-                <Space direction={vertical ? "vertical" : "horizontal"}>
+                <Space direction={vertical ? "vertical" : "horizontal"} style={{
+                  columnGap: "4px",
+                  color: token.colorTextDisabled
+                }}>
                   {todo.completed && todo.completedAt && (
                     <Typography.Text
                       type="secondary"
