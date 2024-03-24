@@ -17,7 +17,6 @@ import { useToken } from "src/utils/antd_components";
 import TodoDrawer from "./TodoDrawer";
 import { formatTime } from "src/utils/text";
 import { checkSound } from "src/utils/constants";
-import { useLongPress } from "src/utils/hooks";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
@@ -138,10 +137,6 @@ const SimpleTodoCard = (props: Props) => {
       day: "2-digit",
     }).format(todo.dueDate);
   const navigate = useNavigate();
-  const { isActive, cancelClick, ...longPressActions } = useLongPress(() => {
-    checkSound().play();
-    navigate(`/focus?tasks=${todo._id}`);
-  }, 1000);
   const completedDateString = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -178,9 +173,7 @@ const SimpleTodoCard = (props: Props) => {
         <Card
           bordered={false}
           onClick={() => {
-            if (!cancelClick && allowEdit) {
               setOpen(true);
-            }
           }}
           hoverable={allowEdit}
           style={{
@@ -190,23 +183,7 @@ const SimpleTodoCard = (props: Props) => {
             position: "relative",
             overflow: "hidden",
           }}
-          {...longPressActions}
         >
-          {isActive && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                background: `linear-gradient(270deg, ${token.colorPrimary}, transparent)`,
-                backgroundSize: "100% 100%",
-                // complex easing function which pauses at the end
-                animation: "wave 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards",
-              }}
-            />
-          )}
           <Space size="middle" align="start">
             <ToggleTodo todo={todo} />
 

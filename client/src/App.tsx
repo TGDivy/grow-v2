@@ -119,7 +119,7 @@ function App() {
             colorPrimary: themes[usertheme].colorPrimary,
             fontFamily: "Open Sans, Helvetica Neue,sans-serif",
             colorBgBase: themes[usertheme].colorBgBase,
-            fontSize: !breaks.sm ? 16 : 16,
+            fontSize: !breaks.sm ? 14 : 16,
           },
           components: {
             Typography: {
