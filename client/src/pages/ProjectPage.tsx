@@ -5,12 +5,10 @@ import {
   Col,
   Collapse,
   Descriptions,
-  DescriptionsProps,
+  Flex,
   List,
   Progress,
   Row,
-  Skeleton,
-  Space,
   Typography,
   message,
 } from "antd";
@@ -32,6 +30,7 @@ interface ProjectDetailsCardProps {
 
 const ProjectDetailsCard = (props: ProjectDetailsCardProps) => {
   const { project, todos } = props;
+  const breaks = useBreakpoint();
 
   // total todos completed
   const totalTodos = todos.length;
@@ -42,70 +41,64 @@ const ProjectDetailsCard = (props: ProjectDetailsCardProps) => {
     0
   );
 
-  const items: DescriptionsProps["items"] = [
-    {
-      key: "0",
-      label: "Due Date",
-      children: project.dueDate
-        ? project.dueDate.toDateString()
-        : "Not Specified",
-    },
-    {
-      key: "1",
-      label: "Created",
-      children: new Intl.DateTimeFormat("en-US", {
-        dateStyle: "full",
-      }).format(project.createdAt),
-    },
-    {
-      key: "2",
-      label: "Tasks",
-      children: (
-        <Progress
-          percent={(completedTodos / totalTodos) * 100}
-          format={() => `${completedTodos}/${totalTodos}`}
-        />
-      ),
-    },
-    {
-      key: "3",
-      label: "Total Time Spent",
-      children: `${formatTime(
-        totalDuration || 0,
-        false,
-        true,
-        true,
-        false
-      )} (HH:mm)`,
-    },
-  ];
-
   return (
-    <Space direction="vertical" size="middle">
-      <Card
-        style={{
-          width: "100%",
-        }}
-        bordered={false}
-      >
-        <Space direction="vertical" size="middle">
-          <Typography.Title level={4}>
-            {project.emoji && project.emoji.skins[0].native} {project.title}
-          </Typography.Title>
-          {project.description && (
-            <Typography.Paragraph>{project.description}</Typography.Paragraph>
-          )}
-        </Space>
-      </Card>
-      <Card
-        style={{
-          width: "100%",
-        }}
-        bordered={false}
-      >
-        <Descriptions column={1} items={items} />
-      </Card>
-    </Space>
+    <Card
+      bordered={false}
+      style={{
+        maxWidth: "100%",
+        width: "100vw",
+      }}
+    >
+      <Flex vertical gap={8}>
+        <Typography.Title level={5}>
+          {project.emoji && project.emoji.skins[0].native} {project.title}
+        </Typography.Title>
+        {project.description && (
+          <Typography.Paragraph>{project.description}</Typography.Paragraph>
+        )}
+        <Descriptions
+          column={1}
+          size="small"
+          style={{
+            display: !breaks.md ? "none" : "flex",
+          }}
+        >
+          <Descriptions.Item label="Due Date">
+            {project.dueDate ? project.dueDate.toDateString() : "Not Specified"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Created">
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "full",
+            }).format(project.createdAt)}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label="Tasks"
+            style={{
+              paddingBottom: "0px",
+            }}
+          >
+            <Progress
+              percent={(completedTodos / totalTodos) * 100}
+              format={() => `${completedTodos}/${totalTodos}`}
+            />
+          </Descriptions.Item>
+          <Descriptions.Item
+            label="Total Time Spent"
+            style={{
+              paddingBottom: "0px",
+            }}
+          >
+            {`${formatTime(
+              totalDuration || 0,
+              false,
+              true,
+              true,
+              false
+            )} (HH:mm)`}
+          </Descriptions.Item>
+        </Descriptions>
+      </Flex>
+    </Card>
   );
 };
 
@@ -161,8 +154,8 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
             column: 1,
           }}
           style={{
-            width: "calc(100% - 20px)",
-            alignSelf: "center",
+            width: "calc(100% - 10px)",
+            alignSelf: "start",
           }}
           rowKey={(todo) => todo._id}
           renderItem={(todo) => (
@@ -265,14 +258,12 @@ const ProjectPage = () => {
   );
 
   return (
-    <Row gutter={[16, 32]}>
-      <Col xl={8} lg={10} md={24} sm={24}>
-        <Skeleton loading={loading} active>
-          {project && (
-            <ProjectDetailsCard project={project} todos={projectTodos} />
-          )}
-        </Skeleton>
-      </Col>
+    <Row gutter={[16, 16]}>
+      {project && (
+        <Col xl={8} lg={10} md={24} sm={24}>
+          <ProjectDetailsCard project={project} todos={projectTodos} />
+        </Col>
+      )}
       <Col xl={16} lg={14} md={24} sm={24}>
         <ProjectTodosCard
           todos={projectTodos}
