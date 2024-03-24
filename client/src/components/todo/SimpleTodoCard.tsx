@@ -1,9 +1,11 @@
 import { TodoDocument } from "@server/models/todo.model";
-import { EditorProvider, Extensions } from "@tiptap/react";
+import { EditorContent, Extensions, useEditor } from "@tiptap/react";
 import {
   Badge,
   Card,
   Checkbox,
+  Divider,
+  Flex,
   Progress,
   Space,
   Typography,
@@ -14,10 +16,12 @@ import { useState } from "react";
 import { toggleTodo } from "src/api/todo.api";
 import useTodoStore from "src/stores/todos.store";
 import { useToken } from "src/utils/antd_components";
-import TodoDrawer from "./TodoDrawer";
-import { formatTime } from "src/utils/text";
 import { checkSound } from "src/utils/constants";
-import { useNavigate } from "react-router-dom";
+import { formatTime } from "src/utils/text";
+import TodoDrawer from "./TodoDrawer";
+import React from "react";
+import { extractIds } from "src/utils/extract_data";
+import useProjectStore from "src/stores/projects_store";
 
 type Props = {
   todo: TodoDocument;
@@ -75,6 +79,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
           style={{
             margin: "0px",
             fontSize: "12px",
+            lineHeight: "12px",
             width: "100px",
           }}
         />
@@ -106,6 +111,7 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
         style={{
           margin: "0px",
           fontSize: "12px",
+          lineHeight: "12px",
           width: "100px",
         }}
       />
@@ -124,8 +130,94 @@ const TimeSpent = ({ todo }: { todo: TodoDocument }) => {
         margin: "0px",
         fontSize: "12px",
         width: "100px",
+        lineHeight: "12px",
       }}
     />
+  );
+};
+
+const ExtraBar = ({
+  todo,
+  vertical,
+  json,
+}: {
+  todo: TodoDocument;
+  vertical?: boolean;
+  json: { [key: string]: unknown };
+}) => {
+  const completedDateString = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(todo.completedAt);
+  const { token } = useToken();
+  const projectIds = extractIds("project", json);
+  const addedProjectIds = todo.projects.filter(
+    (project) => !projectIds.includes(project)
+  );
+  const projects = useProjectStore((state) => state.projects);
+
+  const elements = [
+    todo.completed && todo.completedAt && (
+      <Typography.Text
+        type="secondary"
+        style={{
+          fontSize: "12px",
+          lineHeight: "12px",
+        }}
+      >
+        Completed At: {completedDateString}
+      </Typography.Text>
+    ),
+    addedProjectIds.length > 0 && (
+      <Typography.Text
+        type="secondary"
+        style={{
+          fontSize: "12px",
+          lineHeight: "12px",
+        }}
+      >
+        {addedProjectIds
+          .map(
+            (project) => `+${projects.find((p) => p._id === project)?.title}`
+          )
+          .join(", ")}
+      </Typography.Text>
+    ),
+    ((todo.timeEstimate !== undefined && todo.timeEstimate !== 0) ||
+      (todo.timeSpent !== undefined && todo.timeSpent !== 0)) && (
+      <TimeSpent todo={todo} />
+    ),
+  ].filter(Boolean);
+
+  if (elements.length === 0) return null;
+
+  return (
+    <Flex
+      vertical={vertical}
+      // align="start"
+      // justify="center"
+      style={{
+        gap: "4px",
+        color: token.colorTextLabel,
+      }}
+    >
+      {elements.map((element, index) => (
+        <React.Fragment key={index}>
+          {element}
+          {index < elements.length - 1 && !vertical && (
+            <Divider
+              type="vertical"
+              style={{
+                height: "16px",
+              }}
+            />
+          )}
+        </React.Fragment>
+      ))}
+    </Flex>
   );
 };
 
@@ -139,28 +231,25 @@ const SimpleTodoCard = (props: Props) => {
       month: "short",
       day: "2-digit",
     }).format(todo.dueDate);
-  const navigate = useNavigate();
-  const completedDateString = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(todo.completedAt);
-
   const [open, setOpen] = useState(false);
-
-  const showExtra =
-    (todo.completedAt && todo.completed) ||
-    (todo.timeSpent != undefined && todo.timeSpent > 0) ||
-    (todo.timeEstimate != undefined && todo.timeEstimate > 0);
-  // (todo.priority !== undefined && todo.priority > 0);
+  const editor = useEditor({
+    extensions,
+    editorProps: {
+      attributes: {
+        class: "tiptapReadOnly",
+      },
+    },
+    content: JSON.parse(todo.jsonString || "{}") || {},
+    editable: false,
+  });
 
   const ribbonColor = todo.dueDate
     ? todo.dueDate < new Date()
       ? token.colorError
       : undefined
     : "transparent";
+  if (!editor) return;
+  const json = editor.getJSON();
 
   return (
     <>
@@ -176,7 +265,7 @@ const SimpleTodoCard = (props: Props) => {
         <Card
           bordered={false}
           onClick={() => {
-              setOpen(true);
+            setOpen(true);
           }}
           hoverable={allowEdit}
           style={{
@@ -186,49 +275,24 @@ const SimpleTodoCard = (props: Props) => {
             position: "relative",
             overflow: "hidden",
           }}
-          bodyStyle={{
-            padding: "12px 16px"
+          styles={{
+            body: {
+              padding: "12px 16px",
+            },
           }}
         >
           <Space size="middle" align="center">
             <ToggleTodo todo={todo} />
-
-            <Space direction="vertical" size="small" style={{
-                  gap: "4px"
-                }}>
-              <EditorProvider
-                extensions={extensions}
-                content={JSON.parse(todo.jsonString || "{}") || {}}
-                editable={false}
-                autofocus={false}
-                editorProps={{
-                  attributes: {
-                    class: "tiptapReadOnly",
-                  },
-                }}
-              >
-                <></>
-              </EditorProvider>
-              {showExtra && (
-                <Space direction={vertical ? "vertical" : "horizontal"} style={{
-                  columnGap: "4px",
-                  color: token.colorTextDisabled
-                }}>
-                  {todo.completed && todo.completedAt && (
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        fontSize: "12px",
-                        // fontSize: `${token.fontSizeSM}px`,
-                      }}
-                    >
-                      Completed At: {completedDateString}
-                    </Typography.Text>
-                  )}
-                  <TimeSpent todo={todo} />
-                </Space>
-              )}
-            </Space>
+            <Flex
+              vertical
+              // size="small"
+              style={{
+                gap: "4px",
+              }}
+            >
+              <EditorContent editor={editor} />
+              <ExtraBar todo={todo} vertical={vertical} json={json} />
+            </Flex>
           </Space>
         </Card>
       </Badge.Ribbon>

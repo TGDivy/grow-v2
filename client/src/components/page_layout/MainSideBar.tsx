@@ -1,5 +1,5 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Divider, Flex } from "antd";
+import { Button, Flex } from "antd";
 import { Sider, useToken } from "src/utils/antd_components";
 import { useLocalStorageState } from "src/utils/hooks";
 import { BottomMenu, TopMenu } from "./menu_items";
@@ -58,11 +58,11 @@ const MainSideBar = () => {
                 !themeCollapsed ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />
               }
             />
-            <Divider
+            {/* <Divider
               style={{
                 opacity: 0,
               }}
-            />
+            /> */}
             <TopMenu themeCollapsed={themeCollapsed} />
           </div>
           <BottomMenu themeCollapsed={themeCollapsed} />
