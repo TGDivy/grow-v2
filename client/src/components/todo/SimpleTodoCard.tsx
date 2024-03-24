@@ -182,12 +182,15 @@ const SimpleTodoCard = (props: Props) => {
             flexGrow: 2,
             position: "relative",
             overflow: "hidden",
+            padding: "12px 16px"
           }}
         >
           <Space size="middle" align="start">
             <ToggleTodo todo={todo} />
 
-            <Space direction="vertical" size="small">
+            <Space direction="vertical" size="small" style={{
+                  gap: "4px"
+                }}>
               <EditorProvider
                 extensions={extensions}
                 content={JSON.parse(todo.jsonString || "{}") || {}}
