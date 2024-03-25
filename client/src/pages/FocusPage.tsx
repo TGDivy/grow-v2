@@ -94,11 +94,10 @@ const LinkedEntities = () => {
     return <Empty />;
   }
 
-  const { linkedEntities } = session;
-
   const selectedTodos = todos.filter((todo) =>
-    linkedEntities.tasks.includes(todo._id)
+    session.linkedEntities.tasks.includes(todo._id)
   );
+  console.log(selectedTodos);
 
   return (
     <>
@@ -169,6 +168,7 @@ const LinkedEntities = () => {
             extensions={todoExtensions}
             allowEdit={false}
             vertical
+            key={selectedTodos[0]._id}
           />
         </div>
       )}

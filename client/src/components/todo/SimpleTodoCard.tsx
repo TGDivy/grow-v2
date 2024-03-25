@@ -23,6 +23,7 @@ import React from "react";
 import { extractIds } from "src/utils/extract_data";
 import useProjectStore from "src/stores/projects_store";
 import { blendColors } from "src/utils/themes";
+import { Link } from "react-router-dom";
 
 type Props = {
   todo: TodoDocument;
@@ -174,18 +175,39 @@ const ExtraBar = ({
     ),
     addedProjectIds.length > 0 && (
       <Typography.Text
-        type="secondary"
         style={{
           fontSize: "12px",
           lineHeight: "12px",
         }}
       >
-        {addedProjectIds
-          .map(
-            (project) => `+${projects.find((p) => p._id === project)?.title}`
-          )
-          .join(", ")}
+        {addedProjectIds.map((project, index) => {
+          return (
+            <>
+              <Link
+                to={`/projects/${project}`}
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                +{projects.find((p) => p._id === project)?.title}
+              </Link>
+              {index < addedProjectIds.length - 1 && ", "}
+            </>
+          );
+        })}
       </Typography.Text>
+
+      // <Typography.Text
+      //   type="secondary"
+
+      // >
+      //   {addedProjectIds
+      //     .map(
+      //       (project) => `+${projects.find((p) => p._id === project)?.title}`
+      //     )
+      //     .join(", ")}
+      // </Typography.Text>
     ),
     ((todo.timeEstimate !== undefined && todo.timeEstimate !== 0) ||
       (todo.timeSpent !== undefined && todo.timeSpent !== 0)) && (

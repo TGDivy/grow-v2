@@ -9,6 +9,7 @@ import {
   List,
   Progress,
   Row,
+  Skeleton,
   Typography,
   message,
 } from "antd";
@@ -259,11 +260,13 @@ const ProjectPage = () => {
 
   return (
     <Row gutter={[16, 16]}>
-      {project && (
-        <Col xl={8} lg={10} md={24} sm={24}>
-          <ProjectDetailsCard project={project} todos={projectTodos} />
-        </Col>
-      )}
+      <Col xl={8} lg={10} md={24} sm={24}>
+        <Skeleton loading={loading} active={!project}>
+          {project && (
+            <ProjectDetailsCard project={project} todos={projectTodos} />
+          )}
+        </Skeleton>
+      </Col>
       <Col xl={16} lg={14} md={24} sm={24}>
         <ProjectTodosCard
           todos={projectTodos}
