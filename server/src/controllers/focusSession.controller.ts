@@ -144,6 +144,10 @@ export const updateFocusSessionHandler = async (
                     const token = device.deviceToken;
                     message.token = token;
                     // create a timeout to send a notification to the user
+                    // clear the previous timeout if it exists
+                    if (timeouts[userId]) {
+                        clearTimeout(timeouts[userId]);
+                    }
                     timeouts[userId] = setTimeout(async () => {
                         try {
                             await admin.messaging().send(message);
