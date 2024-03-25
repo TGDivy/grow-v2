@@ -22,6 +22,7 @@ import TodoDrawer from "./TodoDrawer";
 import React from "react";
 import { extractIds } from "src/utils/extract_data";
 import useProjectStore from "src/stores/projects_store";
+import { blendColors } from "src/utils/themes";
 
 type Props = {
   todo: TodoDocument;
@@ -248,6 +249,11 @@ const SimpleTodoCard = (props: Props) => {
       ? token.colorError
       : undefined
     : "transparent";
+  // priority from 0 upto 25
+  // priorityColor = 0 upto 25, 1 is warning, 25 is error, and in between is a gradient between warning and error
+  const priorityColor = todo.priority
+    ? blendColors(token.colorError, token.colorWarning, todo.priority / 25)
+    : "transparent";
   if (!editor) return;
   const json = editor.getJSON();
 
@@ -281,11 +287,21 @@ const SimpleTodoCard = (props: Props) => {
             },
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: "100%",
+              width: "4px",
+              backgroundColor: priorityColor,
+            }}
+          />
+
           <Space size="middle" align="center">
             <ToggleTodo todo={todo} />
             <Flex
               vertical
-              // size="small"
               style={{
                 gap: "4px",
               }}
