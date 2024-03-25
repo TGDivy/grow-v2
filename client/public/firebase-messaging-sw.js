@@ -56,7 +56,5 @@ messaging.onBackgroundMessage(function (payload) {
 self.addEventListener("notificationclick", function (event) {
   console.log("On notification click: ", event);
   event.notification.close(); // Android needs explicit close.
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url) // Open the URL from the notification data
-  );
+  event.waitUntil(clients.openWindow(event.notification.data.url));
 });
