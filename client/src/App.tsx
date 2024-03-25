@@ -25,6 +25,7 @@ import { themes } from "./utils/themes";
 import HandleServiceWorker from "./utils/HandleSW";
 import JournalPage from "./pages/Journal/JournalPage";
 import JournalsPage from "./pages/Journal/JournalsPage";
+import JournalSessionPage from "./pages/Journal/JournalSessionPage";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -87,6 +88,7 @@ function App() {
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="projects/:projectId/*" element={<ProjectPage />} />
               <Route path="journals" element={<JournalsPage />} />
+              <Route path="journals/entry" element={<JournalSessionPage />} />
               <Route path="journals/:journalId/*" element={<JournalPage />} />
               <Route path="tasks" element={<TodosPage />} />
               <Route path="focus" element={<FocusPage />} />

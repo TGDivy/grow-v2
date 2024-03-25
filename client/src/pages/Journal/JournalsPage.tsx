@@ -2,18 +2,20 @@ import { Card, Col, Flex, Row, Statistic, Typography } from "antd";
 import { useBreakpoint, useToken } from "src/utils/antd_components";
 import dayjs from "dayjs";
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 const WeekCalendar = () => {
   const today = dayjs();
-  const days = Array.from({ length: 7 }, (_, i) =>
-    today.subtract(3, "day").add(i, "day")
+  const days = Array.from({ length: 15 }, (_, i) =>
+    today.subtract(7, "day").add(i, "day")
   );
   const { token } = useToken();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
-      scrollContainer.scrollLeft = scrollContainer.scrollWidth / 5;
+      scrollContainer.scrollLeft =
+        scrollContainer.scrollWidth / 2 - scrollContainer.clientWidth / 2;
     }
   }, []);
   return (
@@ -94,30 +96,31 @@ const JournalsPage = () => {
                   }
                 />
               </Card>
-              <Card
-                bordered={false}
+              <Link
+                to="/journals/entry"
                 style={{
                   width: "100%",
                   flex: 2,
                   flexGrow: 2,
                 }}
-                hoverable
               >
-                <Typography.Title level={5}>Write</Typography.Title>
-                <Typography.Paragraph
-                  type="secondary"
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  ellipsis={{
-                    rows: 2,
-                    expandable: true,
-                  }}
-                >
-                  Express yourself with a journal entry. Write about your day,
-                  reflect on your thoughts, or jot down your ideas.
-                </Typography.Paragraph>
-              </Card>
+                <Card bordered={false} hoverable>
+                  <Typography.Title level={5}>Write</Typography.Title>
+                  <Typography.Paragraph
+                    type="secondary"
+                    style={{
+                      marginBottom: 0,
+                    }}
+                    ellipsis={{
+                      rows: 2,
+                      expandable: true,
+                    }}
+                  >
+                    Express yourself with a journal entry. Write about your day,
+                    reflect on your thoughts, or jot down your ideas.
+                  </Typography.Paragraph>
+                </Card>
+              </Link>
             </Flex>
           </Col>
         </Row>

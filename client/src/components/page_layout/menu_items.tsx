@@ -1,5 +1,5 @@
 import {
-  AimOutlined,
+  HourglassOutlined,
   InfoOutlined,
   MoonOutlined,
   OrderedListOutlined,
@@ -41,7 +41,7 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
     {
       key: "focus",
       label: <Link to="/focus">Focus</Link>,
-      icon: <AimOutlined />,
+      icon: <HourglassOutlined />,
     },
     {
       key: "projects",
