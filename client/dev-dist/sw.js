@@ -69,6 +69,7 @@ if (!self.define) {
 }
 define(['./workbox-b5f7729d'], (function (workbox) { 'use strict';
 
+  importScripts("./firebase-messaging-sw.js", "./sw,js");
   self.skipWaiting();
   workbox.clientsClaim();
 
@@ -82,7 +83,7 @@ define(['./workbox-b5f7729d'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "/index.html",
-    "revision": "0.0697ca6fmso"
+    "revision": "0.6ksrbmekit"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/index.html"), {

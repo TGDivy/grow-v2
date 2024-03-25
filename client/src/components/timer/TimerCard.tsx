@@ -1,4 +1,4 @@
-import { Card, Flex, Segmented, Slider } from "antd";
+import { Card, Flex, Slider } from "antd";
 import { SessionDocumentType } from "src/api/focus_sessions";
 import useFocusSessionStore from "src/stores/focus_session_store";
 import { formatTime } from "src/utils/text";
@@ -17,14 +17,14 @@ interface TimerCardProps {
 
 const TimerCard = (props: TimerCardProps) => {
   const { loading, active, duration, startTime, mode } = props;
-  const [setSessionMode, setDuration] = useFocusSessionStore((state) => [
-    state.setSessionMode,
+  const [setDuration] = useFocusSessionStore((state) => [
+    // state.setSessionMode,
     state.setDuration,
   ]);
   return (
     <Card bordered={false} loading={loading}>
       <Flex justify="center" align="center" vertical>
-        <Segmented<string>
+        {/* <Segmented<string>
           disabled={active}
           options={["Pomodoro", "Short Break", "Long Break"]}
           onChange={(value) => {
@@ -36,26 +36,43 @@ const TimerCard = (props: TimerCardProps) => {
               setSessionMode("longBreak");
             }
           }}
-        />
+        /> */}
         <DisplayTime
           startTime={startTime}
           active={active}
           duration={duration}
         />
-      </Flex>
-      {!active && mode == "focus" && (
-        <Slider
-          min={300}
-          max={2 * 60 * 60}
-          step={300}
-          defaultValue={duration}
-          tooltip={{
-            formatter: (value?: number) => value && formatTime(value),
+        <Flex
+          style={{
+            width: "100%",
           }}
-          onChangeComplete={(value) => setDuration(value)}
-        />
-      )}
-      <ToggleSession />
+          align="center"
+          justify="center"
+          gap={8}
+        >
+          {!active && mode == "focus" && (
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "250px",
+              }}
+            >
+              <Slider
+                min={300}
+                max={2 * 60 * 60}
+                step={300}
+                defaultValue={duration}
+                tooltip={{
+                  formatter: (value?: number) => value && formatTime(value),
+                }}
+                onChangeComplete={(value) => setDuration(value)}
+              />
+            </div>
+          )}
+
+          <ToggleSession />
+        </Flex>
+      </Flex>
     </Card>
   );
 };

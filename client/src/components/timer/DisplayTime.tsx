@@ -40,7 +40,7 @@ export const DisplayTime = (props: DisplayTimeProps) => {
           value={deadline}
           format="H:mm:ss"
           valueStyle={{
-            fontSize: token.fontSizeHeading1 * 2,
+            fontSize: token.fontSizeHeading1 * 1.5,
           }}
           style={{
             textAlign: "center",
@@ -70,7 +70,7 @@ export const DisplayTime = (props: DisplayTimeProps) => {
             );
           }}
           valueStyle={{
-            fontSize: token.fontSizeHeading1 * 2,
+            fontSize: token.fontSizeHeading1 * 1.5,
           }}
           style={{
             textAlign: "center",

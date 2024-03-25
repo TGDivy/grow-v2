@@ -1,3 +1,4 @@
+import { CaretRightOutlined, StopOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
 import { useState } from "react";
 import useFocusSessionStore from "src/stores/focus_session_store";
@@ -42,7 +43,11 @@ export const ToggleSession = () => {
       onConfirm={confirm}
       onCancel={() => setOpen(false)}
     >
-      <Button type="primary" size="large" block>
+      <Button
+        type="primary"
+        size="large"
+        icon={active ? <StopOutlined /> : <CaretRightOutlined />}
+      >
         {active ? "End" : "Start"}
       </Button>
     </Popconfirm>
