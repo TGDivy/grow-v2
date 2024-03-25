@@ -51,5 +51,6 @@ export const deleteJournalSessionSchema = object(params);
 
 export type createJournalSessionInput = TypeOf<typeof createJournalSessionSchema>;
 export type getJournalSessionInput = TypeOf<typeof getJournalSessionSchema>;
+export type getAllJournalSessionsInput = TypeOf<typeof getAllJournalSessionsSchema>;
 export type updateJournalSessionInput = TypeOf<typeof updateJournalSessionSchema>;
 export type deleteJournalSessionInput = TypeOf<typeof deleteJournalSessionSchema>;
