@@ -1,4 +1,48 @@
-import { Row, Col, Card, Empty, Typography } from "antd";
+import { Row, Col, Card, Empty, Typography, Flex, Switch, message } from "antd";
+import { useEffect, useState } from "react";
+
+const ToggleNotificationForDevice = () => {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (!("Notification" in window)) {
+      console.log("This browser does not support notifications.");
+    } else if (Notification.permission === "granted") {
+      setChecked(true);
+    }
+  }, []);
+
+  const toggleNotifications = () => {
+    if (!checked) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          setChecked(true);
+          message.success("Notifications enabled");
+          // display a sample notification
+          new Notification("Focus", {
+            body: "Notifications enabled",
+            icon: "/favicon.ico",
+            badge: "/favicon.ico",
+          });
+        } else {
+          message.error("Notifications not enabled");
+        }
+      });
+    } else {
+      setChecked(false);
+      message.info("Notifications disabled");
+    }
+  };
+
+  return (
+    <Card bordered={false}>
+      <Flex justify="space-between" align="center">
+        <Typography.Title level={5}>Notifications</Typography.Title>
+        <Switch checked={checked} onChange={toggleNotifications} />
+      </Flex>
+    </Card>
+  );
+};
 
 const SettingsPage = () => {
   return (
@@ -19,6 +63,9 @@ const SettingsPage = () => {
             height: "100%",
           }}
         >
+          <Col xs={24}>
+            <ToggleNotificationForDevice />
+          </Col>
           <Col
             md={24}
             style={{
