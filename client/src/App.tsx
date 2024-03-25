@@ -51,7 +51,7 @@ const HandleServiceWorker = () => {
                 // There is a new service worker available, show the notification
                 if (navigator.serviceWorker.controller) {
                   notification.info({
-                    message: "New version available",
+                    message: "New version available!",
                     description:
                       "A new version of the app is available. Please reopen the app to update.",
                     duration: 0,
