@@ -1,9 +1,10 @@
 import {
   AimOutlined,
-  FileOutlined,
   InfoOutlined,
   MoonOutlined,
   OrderedListOutlined,
+  ProjectOutlined,
+  ReadOutlined,
   SettingOutlined,
   SunOutlined,
 } from "@ant-design/icons";
@@ -45,7 +46,7 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
     {
       key: "projects",
       label: "Projects",
-      icon: <FileOutlined />,
+      icon: <ProjectOutlined />,
       onTitleClick: () => {
         navigate("/projects");
       },
@@ -65,6 +66,11 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
       key: "tasks",
       label: <Link to="/tasks">Tasks</Link>,
       icon: <OrderedListOutlined />,
+    },
+    {
+      key: "journals",
+      label: <Link to="/journals">Journal</Link>,
+      icon: <ReadOutlined />,
     },
   ];
   const selectedKeys = location.pathname.split("/");

@@ -12,17 +12,19 @@ import DefaultLayout from "./components/page_layout/DefaultLayout";
 import "./global.css";
 import FocusPage from "./pages/FocusPage";
 import { HomePage } from "./pages/HomePage";
-import PageNotFound from "./pages/PageNotFound";
-import PhilosophyPage from "./pages/PhilosophyPage";
-import ProjectPage from "./pages/ProjectPage";
-import ProjectsPage from "./pages/ProjectsPage";
+import PageNotFound from "./pages/Misc/PageNotFound";
+import PhilosophyPage from "./pages/Info/PhilosophyPage";
+import ProjectPage from "./pages/Project/ProjectPage";
+import ProjectsPage from "./pages/Project/ProjectsPage";
 import SettingsPage from "./pages/SettingsPage";
-import { SignUpPage } from "./pages/SignUpPage";
+import { SignUpPage } from "./pages/Misc/SignUpPage";
 import TodosPage from "./pages/TodosPage";
 import useUserStore from "./stores/user_store";
 import { useBreakpoint } from "./utils/antd_components";
 import { themes } from "./utils/themes";
 import HandleServiceWorker from "./utils/HandleSW";
+import JournalPage from "./pages/Journal/JournalPage";
+import JournalsPage from "./pages/Journal/JournalsPage";
 
 const CustomizeRenderEmpty = () => {
   return (
@@ -81,14 +83,17 @@ function App() {
             <Route path="" element={<DefaultLayout />} key={"home_page"}>
               <Route path="" element={<HomePage />} />
               <Route path="signup" element={<SignUpPage />} />
+
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="projects/:projectId/*" element={<ProjectPage />} />
+              <Route path="journals" element={<JournalsPage />} />
+              <Route path="journals/:journalId/*" element={<JournalPage />} />
               <Route path="tasks" element={<TodosPage />} />
+              <Route path="focus" element={<FocusPage />} />
 
               <Route path="settings" element={<SettingsPage />} />
               <Route path="philosophy" element={<PhilosophyPage />} />
               <Route path="*" element={<PageNotFound />} />
-              <Route path="focus" element={<FocusPage />} />
             </Route>
           </Routes>
           <FloatButton.BackTop />

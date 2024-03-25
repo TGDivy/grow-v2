@@ -77,7 +77,7 @@ export const HomePage = () => {
           <LinkCard to="/projects" title="Projects" icon={<FolderFilled />} />
           <LinkCard to="/tasks" title="Tasks" icon={<CheckSquareOutlined />} />
           <LinkCard to="/focus" title="Focus" icon={<AimOutlined />} />
-          <LinkCard to="/journal" title="Journal" icon={<BookFilled />} />
+          <LinkCard to="/journals" title="Journal" icon={<BookFilled />} />
         </Col>
         <Col
           md={24}
