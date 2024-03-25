@@ -45,7 +45,20 @@ import {
 import { createUserHandler, deleteUserHandler, getUserHandler, updateUserHandler } from "./controllers/user.controller";
 import { createUserSchema, deleteUserSchema, getUserSchema, updateUserSchema } from "./schema/user.schema";
 import { createActiveSessionSchema } from "./schema/focusSession.schema";
-
+import {
+    createJournalSessionHandler,
+    getJournalSessionHandler,
+    getAllJournalSessionsHandler,
+    updateJournalSessionHandler,
+    deleteJournalSessionHandler,
+} from "./controllers/journal.controller";
+import {
+    createJournalSessionSchema,
+    getJournalSessionSchema,
+    updateJournalSessionSchema,
+    deleteJournalSessionSchema,
+    getAllJournalSessionsSchema,
+} from "./schema/journal.schema";
 const routes = (app: Express) => {
     /**
      * @swagger
@@ -81,6 +94,17 @@ const routes = (app: Express) => {
     app.put("/todo/:id", requireUser, validateResource(updateTodoSchema), updateTodoHandler);
     app.put("/todo/:id/toggle", requireUser, validateResource(getTodoSchema), toggleTodoHandler);
     app.delete("/todo/:id", [requireUser, validateResource(deleteTodoSchema)], deleteTodoHandler);
+
+    // Journal routes
+    app.post("/journal", [requireUser, validateResource(createJournalSessionSchema)], createJournalSessionHandler);
+    app.get("/journal", [requireUser, validateResource(getAllJournalSessionsSchema)], getAllJournalSessionsHandler);
+    app.get("/journal/:id", [requireUser, validateResource(getJournalSessionSchema)], getJournalSessionHandler);
+    app.put("/journal/:id", requireUser, validateResource(updateJournalSessionSchema), updateJournalSessionHandler);
+    app.delete(
+        "/journal/:id",
+        [requireUser, validateResource(deleteJournalSessionSchema)],
+        deleteJournalSessionHandler,
+    );
 
     // User routes
     app.post("/user", validateResource(createUserSchema), createUserHandler);
