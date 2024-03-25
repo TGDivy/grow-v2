@@ -18,6 +18,7 @@ import { getProjects } from "../project";
 import useProjectStore from "src/stores/projects_store";
 import { getTodos } from "../todo.api";
 import useTodoStore from "src/stores/todos.store";
+import { createUser, getUser } from "../user.api";
 
 const actionCodeSettings = {
   url: `${window.location.protocol}//${window.location.host}/`,
@@ -33,6 +34,25 @@ onAuthStateChanged(auth, (user) => {
     useUserStore.getState().setUser(user);
 
     useProjectStore.getState().setLoading(true);
+    getUser(user.uid)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(() => {
+        // message.error("Error getting user data");
+        // create user
+        createUser({
+          uid: user.uid,
+          email: user.email || "",
+          deviceInfo: [],
+        })
+          .then(() => {
+            // message.success("User created");
+          })
+          .catch(() => {
+            message.error("Error creating user");
+          });
+      });
     getProjects()
       .then((projects) => {
         if (projects.length === 0) {

@@ -42,6 +42,8 @@ import {
     getTodoSchema,
     updateTodoSchema,
 } from "./schema/todo.schema";
+import { createUserHandler, deleteUserHandler, getUserHandler, updateUserHandler } from "./controllers/user.controller";
+import { createUserSchema, deleteUserSchema, getUserSchema, updateUserSchema } from "./schema/user.schema";
 import { createActiveSessionSchema } from "./schema/focusSession.schema";
 
 const routes = (app: Express) => {
@@ -79,6 +81,12 @@ const routes = (app: Express) => {
     app.put("/todo/:id", requireUser, validateResource(updateTodoSchema), updateTodoHandler);
     app.put("/todo/:id/toggle", requireUser, validateResource(getTodoSchema), toggleTodoHandler);
     app.delete("/todo/:id", [requireUser, validateResource(deleteTodoSchema)], deleteTodoHandler);
+
+    // User routes
+    app.post("/user", validateResource(createUserSchema), createUserHandler);
+    app.get("/user/:uid", validateResource(getUserSchema), getUserHandler);
+    app.put("/user/:uid", validateResource(updateUserSchema), updateUserHandler);
+    app.delete("/user/:uid", validateResource(deleteUserSchema), deleteUserHandler);
 
     app.post(
         "/focus-sessions/active",

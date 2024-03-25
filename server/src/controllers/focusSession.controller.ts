@@ -11,6 +11,9 @@ import {
 import { logger } from "../utils/logger";
 import { getTodo } from "../services/todo.service";
 import e from "cors";
+import { getUser } from "../services/user.service";
+import { Message } from "firebase-admin/lib/messaging/messaging-api";
+import admin from "firebase-admin";
 
 export const createFocusSessionHandler = async (
     req: Request<{}, {}, createActiveSessionInput["body"]>,
@@ -78,6 +81,30 @@ export const getActiveSessionHandler = async (req: Request<{}, {}, {}>, res: Res
     }
 };
 
+const message: Message = {
+    notification: {
+        title: "Focus Session Completed",
+        body: `You have completed a focus session!`,
+    },
+    data: {
+        url: "/focus",
+    },
+    webpush: {
+        headers: {
+            Urgency: "high",
+        },
+        notification: {
+            click_action: "https://odyssey.divyb.xyz/focus",
+            fcmOptions: {
+                link: "https://odyssey.divyb.xyz/focus",
+            },
+        },
+    },
+    token: "",
+};
+
+const timeouts: { [key: string]: NodeJS.Timeout } = {};
+
 export const updateFocusSessionHandler = async (
     req: Request<{}, {}, createActiveSessionInput["body"]>,
     res: Response,
@@ -108,6 +135,31 @@ export const updateFocusSessionHandler = async (
             startTime,
         });
 
+        if (focusSession?.active) {
+            // create a set timeout to send a notification to the user
+            const user = await getUser(userId);
+            const deviceInfo = user?.deviceInfo;
+            if (deviceInfo && deviceInfo.length > 0) {
+                for (const device of deviceInfo) {
+                    const token = device.deviceToken;
+                    message.token = token;
+                    // create a timeout to send a notification to the user
+                    timeouts[userId] = setTimeout(async () => {
+                        try {
+                            await admin.messaging().send(message);
+                            logger.info("Successfully sent message");
+                        } catch (error) {
+                            logger.error("Error sending message:", error);
+                        }
+                    }, focusSession.duration * 1000);
+                }
+            }
+        } else {
+            // clear the timeout
+            console.log("Clearing timeout", userId, timeouts);
+            await clearTimeout(timeouts[userId]);
+        }
+
         return res.send(focusSession);
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
@@ -134,6 +186,9 @@ export const stopFocusSessionHandler = async (req: Request<{}, {}, {}>, res: Res
         if (!focusSession) {
             return res.status(404).send("No active session found");
         }
+
+        await clearTimeout(timeouts[userId]);
+
         // if focusSession mode was not Focus, we don't need to create a past session
         if (focusSession.mode !== "focus") {
             return res.send(focusSession);

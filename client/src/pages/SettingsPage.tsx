@@ -1,5 +1,9 @@
 import { Row, Col, Card, Empty, Typography, Flex, Switch, message } from "antd";
+import { getToken } from "firebase/messaging";
 import { useEffect, useState } from "react";
+import { messaging } from "src/api/firebase/firebase_init";
+import { updateUser } from "src/api/user.api";
+import useUserStore from "src/stores/user_store";
 
 const ToggleNotificationForDevice = () => {
   const [checked, setChecked] = useState(false);
@@ -17,6 +21,32 @@ const ToggleNotificationForDevice = () => {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
           setChecked(true);
+
+          getToken(messaging, {
+            vapidKey:
+              "BPaLNWmzkHnXhcrXjhWE2bFGW2MVnGRLywDoy1-EX4sciAbtJAlMl1IApY8qo4DrlcGt17ss57IdTYkJTJoxdPM",
+          })
+            .then((currentToken) => {
+              if (currentToken) {
+                // Send the token to your server and update the UI if necessary
+                updateUser(useUserStore.getState().user?.uid || "", {
+                  deviceInfo: [
+                    {
+                      deviceToken: currentToken,
+                      deviceType: "web",
+                    },
+                  ],
+                });
+              } else {
+                // Show permission request UI
+                console.log(
+                  "No registration token available. Request permission to generate one."
+                );
+              }
+            })
+            .catch((err) => {
+              console.log("An error occurred while retrieving token. ", err);
+            });
           message.success("Notifications enabled");
           // display a sample notification
           new Notification("Focus", {
