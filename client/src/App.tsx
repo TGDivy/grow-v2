@@ -69,7 +69,7 @@ const HandleServiceWorker = () => {
       notification.info({
         message: "You are offline",
         description: "Some features may not be available",
-        duration: 0,
+        duration: 5,
       });
     }
 
@@ -78,7 +78,7 @@ const HandleServiceWorker = () => {
       notification.success({
         message: "You are online",
         description: "All features are available",
-        duration: 2.5,
+        duration: 5,
       });
     });
 
@@ -86,7 +86,7 @@ const HandleServiceWorker = () => {
       notification.info({
         message: "You are offline",
         description: "Some features may not be available",
-        duration: 0,
+        duration: 5,
       });
     });
 
