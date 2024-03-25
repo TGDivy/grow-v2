@@ -121,19 +121,15 @@ const LinkedEntities = () => {
           >
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
                 maxHeight: "50svh",
+                overflowY: "scroll",
               }}
             >
               <List
                 dataSource={todos.filter((todo) => !todo.completed)}
-                style={{
-                  overflowY: "scroll",
-                }}
                 renderItem={(todo, i) => (
                   <List.Item key={todo._id}>
-                    {i + 1}.{" "}
+                    {`${i + 1}. `}
                     <Typography.Link
                       onClick={() => {
                         setTasks([todo._id]);
