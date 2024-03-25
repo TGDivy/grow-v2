@@ -2,7 +2,7 @@ import { Row, Col, Card, Empty, Typography, Flex, Switch, message } from "antd";
 import { getToken } from "firebase/messaging";
 import { useEffect, useState } from "react";
 import { messaging } from "src/api/firebase/firebase_init";
-import { updateUser } from "src/api/user.api";
+import { getUser, updateUser } from "src/api/user.api";
 import useUserStore from "src/stores/user_store";
 
 const ToggleNotificationForDevice = () => {
@@ -29,14 +29,38 @@ const ToggleNotificationForDevice = () => {
             .then((currentToken) => {
               if (currentToken) {
                 // Send the token to your server and update the UI if necessary
-                updateUser(useUserStore.getState().user?.uid || "", {
-                  deviceInfo: [
-                    {
+                getUser(useUserStore.getState().user?.uid || "")
+                  .then((user) => {
+                    let devices = user.deviceInfo || [];
+                    devices.push({
                       deviceToken: currentToken,
                       deviceType: "web",
-                    },
-                  ],
-                });
+                    });
+                    // remove duplicates
+                    devices = devices.filter(
+                      (v, i, a) =>
+                        a.findIndex((t) => t.deviceToken === v.deviceToken) ===
+                        i
+                    );
+                    updateUser(useUserStore.getState().user?.uid || "", {
+                      deviceInfo: devices,
+                    })
+                      .then((res) => {
+                        console.log("User info updated successfully. ", res);
+                      })
+                      .catch((err) => {
+                        message.error(
+                          "An error occurred while updating user info. ",
+                          err
+                        );
+                      });
+                  })
+                  .catch((err) => {
+                    message.error(
+                      "An error occurred while updating user info. ",
+                      err
+                    );
+                  });
               } else {
                 // Show permission request UI
                 console.log(
