@@ -1,3 +1,5 @@
+/* eslint-env serviceworker */
+
 importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js");
 
@@ -35,7 +37,26 @@ messaging.onBackgroundMessage(function (payload) {
   const notificationOptions = {
     body: payload.notification.body,
     icon: "favicon.ico",
+    // open URL on notification click
+    data: {
+      url: payload.data.url,
+    },
+    actions: [
+      {
+        action: "open_url",
+        title: "Open",
+      },
+    ],
+    click_action: payload.data.url,
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener("notificationclick", function (event) {
+  console.log("On notification click: ", event);
+  event.notification.close(); // Android needs explicit close.
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url) // Open the URL from the notification data
+  );
 });

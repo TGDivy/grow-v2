@@ -23,6 +23,7 @@ const ToggleNotificationForDevice = () => {
             body: "Notifications enabled",
             icon: "/favicon.ico",
             badge: "/favicon.ico",
+            data: { url: "https://odyssey.divyb.xyz/focus" }, // Add the URL here
           });
         } else {
           message.error("Notifications not enabled");

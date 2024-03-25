@@ -4,12 +4,13 @@ import express from "express";
 import { PORT } from "./constants";
 import { deserializeUser } from "./middleware/deserialize_user";
 import routes from "./routes";
-import { initializeFirebase } from "./utils/firebase";
+import { initializeCronJobForTestNotification, initializeFirebase } from "./utils/firebase";
 import { logger } from "./utils/logger";
 import { swaggerDocs } from "./utils/swagger";
 import { connectDB } from "./utils/connect";
 
 initializeFirebase();
+initializeCronJobForTestNotification();
 
 const app = express();
 app.use(json());
