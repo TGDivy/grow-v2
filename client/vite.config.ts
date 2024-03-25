@@ -43,6 +43,7 @@ export default defineConfig({
         navigateFallback: "/index.html",
         runtimeCaching: [],
         disableDevLogs: true,
+        importScripts: ["./firebase-messaging-sw.js"],
       },
     }),
   ],
