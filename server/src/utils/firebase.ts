@@ -34,7 +34,6 @@ export const initializeCronJobForTestNotification = () => {
 
         try {
             await admin.messaging().send(message);
-            console.log("Successfully sent message");
         } catch (error) {
             console.error("Error sending message:", error);
         }

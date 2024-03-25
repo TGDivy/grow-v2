@@ -156,7 +156,6 @@ export const updateFocusSessionHandler = async (
             }
         } else {
             // clear the timeout
-            console.log("Clearing timeout", userId, timeouts);
             await clearTimeout(timeouts[userId]);
         }
 

@@ -86,7 +86,6 @@ export const updateTodoHandler = async (
     req: Request<updateTodoInput["params"], {}, updateTodoInput["body"]>,
     res: Response,
 ) => {
-    console.log("updateTodoHandler");
     const userId = res.locals.user?.uid;
 
     if (!userId) {
