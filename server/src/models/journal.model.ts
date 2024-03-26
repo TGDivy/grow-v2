@@ -14,8 +14,8 @@ export interface JournalSessionInput {
     location?: string;
 
     rawText: string;
-    jsonString: string;
-    htmlString: string;
+    jsonString?: string;
+    htmlString?: string;
 
     exchanges?: JournalEntry[];
     moodBefore?: string | number;

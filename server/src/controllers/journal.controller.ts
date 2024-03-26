@@ -27,7 +27,10 @@ export const createJournalSessionHandler = async (
     try {
         const body = req.body;
 
-        const journalSession = await createJournalSession({ ...body, userId });
+        const startTime = new Date(body.startTime);
+        const endTime = new Date();
+
+        const journalSession = await createJournalSession({ ...body, userId, startTime, endTime });
 
         return res.send(journalSession);
     } catch (error) {
@@ -112,7 +115,10 @@ export const updateJournalSessionHandler = async (
             return res.status(403).send("Unauthorized");
         }
 
-        journalSession = await updateJournalSession(journalSessionId, { ...body });
+        const startTime = body.startTime ? new Date(body.startTime) : journalSession.startTime;
+        const endTime = body.endTime ? new Date(body.endTime) : journalSession.endTime;
+
+        journalSession = await updateJournalSession(journalSessionId, { ...body, startTime, endTime });
 
         if (!journalSession) {
             return res.sendStatus(404);
