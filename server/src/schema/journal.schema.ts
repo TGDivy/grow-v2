@@ -8,11 +8,12 @@ const journalEntry = object({
 
 const payload = {
     body: object({
-        userId: string(),
-        startTime: date(),
-        endTime: date().optional(),
+        startTime: string().datetime(),
+        endTime: string().datetime().optional(),
         location: string().optional(),
-        entry: string(),
+        rawText: string(),
+        jsonString: string().optional(),
+        htmlString: string().optional(),
         exchanges: array(journalEntry).optional(),
         moodBefore: number().min(1).max(10).optional(),
         moodAfter: number().min(1).max(10).optional(),
@@ -24,10 +25,12 @@ const payload = {
 
 const updatePayload = {
     body: object({
-        startTime: date().optional(),
-        endTime: date().optional(),
+        startTime: string().datetime().optional(),
+        endTime: string().datetime().optional(),
         location: string().optional(),
-        entry: string().optional(),
+        rawText: string().optional(),
+        jsonString: string().optional(),
+        htmlString: string().optional(),
         exchanges: array(journalEntry).optional(),
         moodBefore: number().min(1).max(10).optional(),
         moodAfter: number().min(1).max(10).optional(),

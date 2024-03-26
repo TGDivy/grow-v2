@@ -12,7 +12,11 @@ export interface JournalSessionInput {
     startTime: Date;
     endTime?: Date;
     location?: string;
-    entry: string;
+
+    rawText: { type: String; required: true };
+    jsonString: { type: String };
+    htmlString: { type: String };
+
     exchanges?: JournalEntry[];
     moodBefore?: string | number;
     moodAfter?: string | number;
@@ -32,7 +36,11 @@ const JournalSessionSchema = new mongoose.Schema(
         startTime: { type: Date, required: true },
         endTime: { type: Date },
         location: { type: String },
-        entry: { type: String, required: true },
+
+        rawText: { type: String, required: true },
+        jsonString: { type: String },
+        htmlString: { type: String },
+
         exchanges: [{ speaker: String, message: String, timestamp: Date }],
         moodBefore: { type: mongoose.Schema.Types.Mixed },
         moodAfter: { type: mongoose.Schema.Types.Mixed },

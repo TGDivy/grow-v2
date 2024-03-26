@@ -1,72 +1,23 @@
-import { Editor, EditorContent, FloatingMenu, useEditor } from "@tiptap/react";
-import { Button, Col, Row, Typography } from "antd";
+import { Editor, EditorContent, useEditor } from "@tiptap/react";
+import { Button, Col, message, Row, Typography } from "antd";
 import dayjs from "dayjs";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createJournalSession } from "src/api/journal.api";
+import FloatingMenuComponent from "src/components/journal/FloatingMenu";
 import { journalExtensions } from "src/components/journal/JournalExtensions";
+import useJournalSessionStore from "src/stores/journal_session_store";
 
-// Default template based on advice from great leaders about journalling
-// in basic html format (no headings, use blockquote if needed)
-// const defaultTemplates = [
-//   `<p>Today, I am thankful for …</p>
-//   <p></p>
-//   <p>What would make today great?</p>
-//   <p>Daily affirmations. I am …</p>
-//   <p>3 amazing things that happened today …</p>
-//   `,
-// ];
-
-const FloatingMenuComponent = ({ editor }: { editor: Editor }) => {
-  return (
-    <FloatingMenu
-      editor={editor}
-      tippyOptions={{
-        duration: 100,
-        offset: [0, 40],
-      }}
-    >
-      <Button.Group>
-        <Button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          className={
-            editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-          }
-          size="small"
-        >
-          h1
-        </Button>
-        <Button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={
-            editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-          }
-          size="small"
-        >
-          h2
-        </Button>
-        <Button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "is-active" : ""}
-          size="small"
-        >
-          bullet list
-        </Button>
-        {/* quote */}
-        <Button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "is-active" : ""}
-          size="small"
-        >
-          quote
-        </Button>
-      </Button.Group>
-    </FloatingMenu>
-  );
-};
+const defaultContent = `
+  <p> </p>
+  <p> </p>
+  <p> </p>
+  <p> </p>
+`;
 
 const JournalSessionPage = () => {
+  const [loading, setLoading] = useState(false);
+  const journalContent = localStorage.getItem("journalContent");
   const editor = useEditor({
     extensions: journalExtensions,
     editorProps: {
@@ -74,11 +25,54 @@ const JournalSessionPage = () => {
         class: "tiptapJournal",
       },
     },
+    content: journalContent ? JSON.parse(journalContent) : defaultContent,
+
+    onUpdate({ editor }) {
+      const json = editor.getJSON();
+      localStorage.setItem("journalContent", JSON.stringify(json));
+    },
   });
+  const addJournalSession = useJournalSessionStore(
+    (state) => state.addJournalSession
+  );
+  const navigate = useNavigate();
 
   if (!editor) {
     return null;
   }
+
+  const handleCreateJournalSession = async (editor: Editor) => {
+    // if words are less than 40, return
+    if (editor.storage.characterCount.words() < 40) {
+      message.error("Journal entry must be at least 40 words");
+      return;
+    }
+    if (!editor) return;
+    setLoading(true);
+    const json = editor.getJSON();
+    try {
+      // const projects = extractIds("project", json);
+      // const dueDates = extractIds("dueDate", json);
+
+      const journalSession = await createJournalSession({
+        rawText: editor.getText(),
+        jsonString: JSON.stringify(json),
+        htmlString: editor.getHTML(),
+        startTime: new Date(),
+      });
+      editor.commands.clearContent();
+      message.success("Created!");
+      addJournalSession(journalSession);
+      navigate(`/journals/${journalSession._id}`);
+      localStorage.removeItem("journalContent");
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      }
+      console.error(error);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -163,8 +157,23 @@ const JournalSessionPage = () => {
               <div style={{ flex: 1 }}>
                 <Slider min={0} max={10} dots step={1} defaultValue={0} />
               </div>
+              <Typography.Title level={2}>
+                <SmileOutlined />
+              </Typography.Title>
             </Flex>
           </Col> */}
+          <Col xs={24}>
+            <Button
+              type="primary"
+              style={{
+                width: "100%",
+              }}
+              loading={loading}
+              onClick={() => handleCreateJournalSession(editor)}
+            >
+              Save
+            </Button>
+          </Col>
         </Row>
       </div>
     </>

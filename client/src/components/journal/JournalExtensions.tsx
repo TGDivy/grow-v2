@@ -5,7 +5,8 @@ import { Mention } from "../rte/mention";
 import { projectsConfig } from "../rte/ProjectPlugin/projects.config";
 
 import Block from "@tiptap/extension-blockquote";
-import BulletList from "@tiptap/extension-bullet-list";
+import { BulletList } from "../rte/bullet_list";
+import { CodeBlock } from "@tiptap/extension-code-block";
 import Document from "@tiptap/extension-document";
 import HardBreak from "@tiptap/extension-hard-break";
 import Heading from "@tiptap/extension-heading";
@@ -26,10 +27,12 @@ import { History } from "@tiptap/extension-history";
 
 import CharacterCount from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import Typography from "@tiptap/extension-typography";
 
 export const journalExtensions: Extensions = [
   Block,
-  BulletList,
+  BulletList.configure({}),
+  CodeBlock,
   Document,
   HardBreak,
   Heading,
@@ -50,7 +53,8 @@ export const journalExtensions: Extensions = [
 
   Mention.configure(projectsConfig),
   DueDate.configure(dueDateConfig),
-  CharacterCount.configure({}),
+  CharacterCount,
+  Typography,
   Placeholder.configure({
     placeholder: "Enter your thoughts here …",
   }),
