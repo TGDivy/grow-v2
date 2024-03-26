@@ -189,3 +189,62 @@
     margin: 2rem 0;
   }
 }
+
+// Make it look like a journal with lines, cuter font that looks like handwriting, and a little padding
+.tiptapJournal {
+  outline: none;
+  font-family: "Dancing Script", cursive;
+  border-width: var(--ant-line-width);
+  border-style: var(--ant-line-type);
+  border-color: transparent;
+  color: var(--ant-color-text);
+
+  // border-left: 2px solid var(--ant-color-fill);
+  // padding-left: 1em;
+
+  height: "100%";
+  //           padding: "16px 16px",
+  //           maxWidth: "850px",
+  //           width: "100%",
+
+  p {
+    line-height: 2em;
+    background: linear-gradient(
+        0deg,
+        transparent 0%,
+        var(--ant-color-fill) 0%,
+        var(--ant-color-fill) 5%,
+        transparent 5%
+      )
+      repeat-y;
+    background-size: 100% 2em;
+    background-position: 0 1.9em; // Shift the start of the gradient
+    margin-bottom: 0.5em;
+  }
+
+  ul,
+  ol {
+    p {
+      margin-bottom: 4px;
+    }
+  }
+
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
+    footer {
+      font-size: 0.8em;
+      color: #adb5bd;
+      text-align: right;
+    }
+  }
+}
