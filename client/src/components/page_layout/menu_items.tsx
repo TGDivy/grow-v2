@@ -85,7 +85,7 @@ export const TopMenu = ({ onSelect, themeCollapsed }: BottomMenuProps) => {
       <Menu
         mode="inline"
         title="Main Menu"
-        selectedKeys={[selectedKeys[selectedKeys.length - 1]]}
+        selectedKeys={[...selectedKeys]}
         items={mainItems}
         style={{
           width: "100%",

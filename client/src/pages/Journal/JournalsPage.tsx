@@ -1,8 +1,19 @@
-import { Card, Col, Flex, Row, Statistic, Typography } from "antd";
-import { useBreakpoint, useToken } from "src/utils/antd_components";
+import {
+  Card,
+  Col,
+  Flex,
+  List,
+  message,
+  Row,
+  Statistic,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getJournalSessions } from "src/api/journal.api";
+import useJournalSessionStore from "src/stores/journal_session_store";
+import { useBreakpoint, useToken } from "src/utils/antd_components";
 
 const WeekCalendar = () => {
   const today = dayjs();
@@ -32,7 +43,7 @@ const WeekCalendar = () => {
     >
       {days.map((day) => (
         <Card
-          key={day.format("dddd")}
+          key={day.format("YYYY-MM-DD")}
           bordered={false}
           style={{
             backgroundColor: day.isSame(today, "day")
@@ -62,6 +73,27 @@ const WeekCalendar = () => {
 
 const JournalsPage = () => {
   const breaks = useBreakpoint();
+  const [loading, setLoading] = useState(false);
+  const [journals, setJournals] = useJournalSessionStore((state) => [
+    state.journals,
+    state.setJournalSessions,
+  ]);
+  useEffect(() => {
+    setLoading(true);
+    getJournalSessions()
+      .then(setJournals)
+      .catch(message.error)
+      .finally(() => setLoading(false));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // check if today's journal exists
+  const today = dayjs().format("YYYY-MM-DD");
+  const todayJournal = journals.find(
+    (j) => dayjs(j.startTime).format("YYYY-MM-DD") === today
+  );
+
   return (
     <>
       <div
@@ -85,10 +117,10 @@ const JournalsPage = () => {
           </Col>
           <Col md={24}>
             <Flex gap={16} vertical={!breaks.md}>
-              <Card bordered={false}>
+              <Card bordered={false} loading={loading}>
                 <Statistic
                   title="Total"
-                  value={0}
+                  value={journals.length}
                   suffix={
                     <Typography.Text type="secondary">
                       this week
@@ -97,31 +129,90 @@ const JournalsPage = () => {
                 />
               </Card>
               <Link
-                to="/journals/entry"
+                to={
+                  todayJournal
+                    ? `/journals/${todayJournal._id}`
+                    : "/journals/entry"
+                }
                 style={{
                   width: "100%",
                   flex: 2,
                   flexGrow: 2,
                 }}
               >
-                <Card bordered={false} hoverable>
-                  <Typography.Title level={5}>Write</Typography.Title>
-                  <Typography.Paragraph
-                    type="secondary"
-                    style={{
-                      marginBottom: 0,
-                    }}
-                    ellipsis={{
-                      rows: 2,
-                      expandable: true,
-                    }}
-                  >
-                    Express yourself with a journal entry. Write about your day,
-                    reflect on your thoughts, or jot down your ideas.
-                  </Typography.Paragraph>
+                <Card bordered={false} hoverable loading={loading}>
+                  {todayJournal ? (
+                    <>
+                      <Typography.Title level={5} type="success">
+                        Good Job!
+                      </Typography.Title>
+                      <Typography.Paragraph
+                        type="secondary"
+                        style={{
+                          marginBottom: 0,
+                        }}
+                        ellipsis={{
+                          rows: 2,
+                          expandable: true,
+                          onExpand: (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          },
+                        }}
+                      >
+                        You've already finished your journal entry for today.{" "}
+                        <br />
+                        Click here to view it.
+                        <br />
+                        {todayJournal.rawText}
+                      </Typography.Paragraph>
+                    </>
+                  ) : (
+                    <>
+                      <Typography.Title level={5}>Start</Typography.Title>
+                      <Typography.Paragraph
+                        type="secondary"
+                        style={{
+                          marginBottom: 0,
+                        }}
+                        ellipsis={{
+                          rows: 2,
+                          expandable: true,
+                        }}
+                      >
+                        Express yourself with a journal entry. Write about your
+                        day, reflect on your thoughts, or jot down your ideas.
+                      </Typography.Paragraph>
+                    </>
+                  )}
                 </Card>
               </Link>
             </Flex>
+          </Col>
+          <Col xs={24}>
+            {/* entries */}
+            <List loading={loading} itemLayout="horizontal">
+              {journals.map((journal) => (
+                <List.Item
+                  key={journal._id}
+                  actions={[<Link to={`/journals/${journal._id}`}>View</Link>]}
+                >
+                  <List.Item.Meta
+                    title={dayjs(journal.startTime).format("dddd, MMMM D")}
+                    description={
+                      <Typography.Paragraph
+                        ellipsis={{
+                          rows: 2,
+                          expandable: true,
+                        }}
+                      >
+                        {journal.rawText}
+                      </Typography.Paragraph>
+                    }
+                  />
+                </List.Item>
+              ))}
+            </List>
           </Col>
         </Row>
       </div>

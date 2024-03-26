@@ -31,7 +31,7 @@ const CustomizeRenderEmpty = () => {
   return (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={`You have no data yet 😅`}
+      description={`You have no data yet.`}
     ></Empty>
   );
 };
