@@ -218,7 +218,7 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
             zIndex: 100,
           }}
         >
-          <CreateTask projectId={project._id} />
+          <CreateTask projectId={project._id} key={project._id} />
         </div>
       )}
     </div>
