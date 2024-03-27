@@ -11,6 +11,7 @@ interface todoStoreType {
   addTodo: (todo: TodoDocument) => void;
   updateTodo: (todo: TodoDocument) => void;
   updateTodos: (todos: TodoDocument[]) => void;
+  deleteTodo: (id: string) => void;
 }
 
 const initialValues = {
@@ -54,6 +55,10 @@ const useTodoStore = create<todoStoreType>()(
 
           set({ todos: [...updatedTodos, ...todosToAdd] });
         },
+        deleteTodo: (id: string) =>
+          set((state) => ({
+            todos: state.todos.filter((todo) => todo._id !== id),
+          })),
       }),
       { name: "todoStore" }
     )

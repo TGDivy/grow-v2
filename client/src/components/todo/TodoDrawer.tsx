@@ -10,6 +10,7 @@ import {
   Drawer,
   Form,
   InputNumber,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -17,7 +18,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { updateTodo } from "src/api/todo.api";
+import { deleteTodo, updateTodo } from "src/api/todo.api";
 import useProjectStore from "src/stores/projects_store";
 import useTodoStore from "src/stores/todos.store";
 import { useBreakpoint } from "src/utils/antd_components";
@@ -42,7 +43,7 @@ const TodoDrawer = (props: Props) => {
     extensions,
     editorProps: {
       attributes: {
-        class: "tiptapReadOnly",
+        class: "tiptapJournal",
       },
     },
     content: JSON.parse(todo.jsonString || "{}") || {},
@@ -50,6 +51,7 @@ const TodoDrawer = (props: Props) => {
   });
 
   const updateTodoStore = useTodoStore((state) => state.updateTodo);
+  const deleteTodoStore = useTodoStore((state) => state.deleteTodo);
 
   const handleUpdateTodo = async (values: updateTodoInput["body"]) => {
     if (!editor) return;
@@ -79,6 +81,20 @@ const TodoDrawer = (props: Props) => {
       });
       message.success("Updated!");
       updateTodoStore(newTodo);
+      onClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      }
+      console.error(error);
+    }
+  };
+
+  const handleDeleteTodo = async () => {
+    try {
+      await deleteTodo(todo._id);
+      deleteTodoStore(todo._id);
+      message.success("Deleted Todo!");
       onClose();
     } catch (error) {
       if (error instanceof Error) {
@@ -135,7 +151,6 @@ const TodoDrawer = (props: Props) => {
             format="YYYY-MM-DD HH"
             style={{ width: "100%" }}
             getPopupContainer={(trigger) => trigger.parentElement!}
-            // yesterday
             disabledDate={(current) =>
               current && current < dayjs().subtract(1, "day")
             }
@@ -201,6 +216,11 @@ const TodoDrawer = (props: Props) => {
                 : "No Notes"}
             </Descriptions.Item>
           </Descriptions>
+        </Form.Item>
+        <Form.Item>
+          <Popconfirm title="Are you sure?" onConfirm={handleDeleteTodo}>
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Form.Item>
       </Form>
     </Drawer>

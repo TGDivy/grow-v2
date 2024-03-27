@@ -66,6 +66,7 @@ const TodosPage = () => {
                 todo={todo}
                 extensions={todoExtensions}
                 allowEdit
+                key={todo._id + todo.rawText}
               />
             </List.Item>
           )}
@@ -92,6 +93,7 @@ const TodosPage = () => {
                       xs: 1,
                       column: 1,
                     }}
+                    rowKey={(todo) => todo._id}
                     renderItem={(todo) => (
                       <List.Item>
                         <SimpleTodoCard

@@ -44,6 +44,11 @@ export const updateTodo = async (id: string, todo: updateTodoInput["body"]) => {
   return response.data;
 };
 
+export const deleteTodo = async (id: string) => {
+  const response = await todoAPI.delete<TodoDocument>(`/todo/${id}`);
+  return response.data;
+};
+
 export const toggleTodo = async (id: string) => {
   const response = await todoAPI.put<TodoDocument>(`/todo/${id}/toggle`);
   return response.data;

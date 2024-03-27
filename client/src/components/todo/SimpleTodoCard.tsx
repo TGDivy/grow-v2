@@ -289,7 +289,7 @@ const SimpleTodoCard = (props: Props) => {
           extensions={extensions}
         />
       )}
-      <Badge.Ribbon text={dueDateString} color={ribbonColor}>
+      <Badge.Ribbon text={dueDateString} color={ribbonColor} key={todo._id}>
         <Card
           bordered={false}
           onClick={() => {

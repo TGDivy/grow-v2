@@ -264,4 +264,32 @@
       font-size: 0.8rem;
     }
   }
+
+  .mention {
+    // background-color: var(--ant-blue-6);
+    // border: 1px solid var(--ant-blue-6);
+    // padding: 4px 4px;
+    // border-radius: 8px;
+    // margin: 0 4px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    // max-width: 100px;
+    // overflow: clip;
+    // text-overflow: ellipsis;
+    // white-space: nowrap;
+
+    // text-decoration: underline dashed 3px var(--ant-blue-6);
+    color: var(--ant-blue-6);
+
+    &:hover {
+      // background-color: var(--ant-blue-6);
+      // color: var(--ant-color-fill-base);
+      cursor: pointer;
+
+      // max-width: unset;
+
+      text-decoration: underline solid 3px var(--ant-blue-8);
+      color: var(--ant-blue-8);
+    }
+  }
 }
