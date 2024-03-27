@@ -94,6 +94,9 @@ const TodosPage = () => {
                       column: 1,
                     }}
                     rowKey={(todo) => todo._id}
+                    pagination={{
+                      pageSize: 5,
+                    }}
                     renderItem={(todo) => (
                       <List.Item>
                         <SimpleTodoCard

@@ -196,6 +196,9 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
                       xs: 1,
                       column: 1,
                     }}
+                    pagination={{
+                      pageSize: 5,
+                    }}
                     renderItem={(todo) => (
                       <List.Item>
                         <SimpleTodoCard
@@ -203,6 +206,7 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
                           extensions={todoExtensions}
                           allowEdit
                           vertical={!breaks.xl}
+                          key={todo._id + todo.rawText}
                         />
                       </List.Item>
                     )}
