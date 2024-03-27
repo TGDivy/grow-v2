@@ -139,7 +139,9 @@ const ProjectTodosCard = (props: ProjectTodosCardProps) => {
     >
       <div
         style={{
-          width: "100%",
+          width: "100vw",
+          maxWidth: "100%",
+
           height: "100%",
           overflow: "auto",
           display: "flex",
