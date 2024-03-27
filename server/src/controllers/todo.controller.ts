@@ -107,7 +107,9 @@ export const updateTodoHandler = async (
             return res.status(403).send("Unauthorized");
         }
 
-        todo = await updateTodo(todoId, { ...body });
+        const dueDate = body.dueDate ? new Date(body.dueDate) : undefined;
+
+        todo = await updateTodo(todoId, { ...body, dueDate });
 
         if (!todo) {
             return res.sendStatus(404);
