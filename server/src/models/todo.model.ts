@@ -12,7 +12,7 @@ export interface TodoInput {
     projects: string[];
     contexts: string[];
 
-    dueDate?: Date;
+    dueDate?: Date | null;
     completed?: boolean;
 
     notes?: string[];
