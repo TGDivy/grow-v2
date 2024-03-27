@@ -46,7 +46,7 @@ const TodoDrawer = (props: Props) => {
       },
     },
     content: JSON.parse(todo.jsonString || "{}") || {},
-    editable: false,
+    editable: true,
   });
 
   const updateTodoStore = useTodoStore((state) => state.updateTodo);
@@ -58,11 +58,13 @@ const TodoDrawer = (props: Props) => {
       const projects = extractIds("project", json).concat(
         values.projects || []
       );
+      const dueDates = extractIds("dueDate", json);
+
       // filter out duplicate projects
       values.projects = Array.from(new Set(projects));
       const newTodo = await updateTodo(todo._id, {
         ...todo,
-        dueDate: values.dueDate,
+        dueDate: dueDates.length > 0 ? new Date(dueDates[0]) : values.dueDate,
         projects: values.projects,
         priority: values.priority,
         timeEstimate: (values.timeEstimate || 0) * 60,

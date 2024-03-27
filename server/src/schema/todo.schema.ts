@@ -32,6 +32,7 @@ const updatePayload = {
         contexts: array(string()).optional(),
         dueDate: string()
             .transform((val) => new Date(val))
+            .nullable()
             .optional(),
         tags: array(string()).optional(),
         timeEstimate: number().optional(),
