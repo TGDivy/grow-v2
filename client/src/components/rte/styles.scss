@@ -193,37 +193,46 @@
 // Make it look like a journal with lines, cuter font that looks like handwriting, and a little padding
 .tiptapJournal {
   outline: none;
-  font-family: "Dancing Script", cursive;
+  outline: 0;
+  border-radius: 40px;
+  padding: 16px 32px;
   border-width: var(--ant-line-width);
   border-style: var(--ant-line-type);
   border-color: transparent;
+  background: var(--ant-color-fill-tertiary);
   color: var(--ant-color-text);
+  position: relative;
 
-  // border-left: 2px solid var(--ant-color-fill);
-  // padding-left: 1em;
+  max-height: 500px;
+  overflow-y: auto;
 
-  height: "100%";
+  // prevent text from being typed 60px from right edge
+  padding-right: 60px;
 
-  p {
-    line-height: 2em;
-    background: linear-gradient(
-        0deg,
-        transparent 0%,
-        var(--ant-color-fill) 0%,
-        var(--ant-color-fill) 5%,
-        transparent 5%
-      )
-      repeat-y;
-    background-size: 100% 2em;
-    background-position: 0 1.9em; // Shift the start of the gradient
-    margin-bottom: 0.5em;
+  &:focus,
+  &:active {
+    border-color: var(--ant-color-border);
   }
 
-  ul,
-  ol {
-    p {
-      margin-bottom: 4px;
-    }
+  p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  p:last-of-type {
+    margin: 0;
+  }
+
+  .mention {
+    background-color: var(--ant-color-primary-active);
+    // color: var(--ant-color-
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: white;
+    display: inline-block;
   }
 
   > * + * {
@@ -235,14 +244,13 @@
     padding: 0 1rem;
   }
 
-  blockquote {
-    padding-left: 1rem;
-    border-left: 2px solid rgba(#0d0d0d, 0.1);
-    footer {
-      font-size: 0.8em;
-      color: #adb5bd;
-      text-align: right;
-    }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
   }
 
   code {
@@ -265,31 +273,24 @@
     }
   }
 
-  .mention {
-    // background-color: var(--ant-blue-6);
-    // border: 1px solid var(--ant-blue-6);
-    // padding: 4px 4px;
-    // border-radius: 8px;
-    // margin: 0 4px;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-    // max-width: 100px;
-    // overflow: clip;
-    // text-overflow: ellipsis;
-    // white-space: nowrap;
-
-    // text-decoration: underline dashed 3px var(--ant-blue-6);
-    color: var(--ant-blue-6);
-
-    &:hover {
-      // background-color: var(--ant-blue-6);
-      // color: var(--ant-color-fill-base);
-      cursor: pointer;
-
-      // max-width: unset;
-
-      text-decoration: underline solid 3px var(--ant-blue-8);
-      color: var(--ant-blue-8);
-    }
+  img {
+    max-width: 100%;
+    height: auto;
   }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
+    margin: 2rem 0;
+  }
+}
+
+.systemResponse {
+  // font-family: "Segoe UI", "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  font-size: small;
 }

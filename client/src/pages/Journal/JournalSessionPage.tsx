@@ -1,12 +1,11 @@
-import { Editor, EditorContent, useEditor } from "@tiptap/react";
-import { Button, Col, message, Row, Typography } from "antd";
-import dayjs from "dayjs";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { SendOutlined } from "@ant-design/icons";
+import { createJournalSessionInput } from "@server/schema/journal.schema";
+import { EditorContent, useEditor } from "@tiptap/react";
+import { Button, Empty, message, Skeleton, Typography } from "antd";
+import { useEffect, useState } from "react";
 import { createJournalSession } from "src/api/journal.api";
-import FloatingMenuComponent from "src/components/journal/FloatingMenu";
 import { journalExtensions } from "src/components/journal/JournalExtensions";
-import useJournalSessionStore from "src/stores/journal_session_store";
+import { useToken } from "src/utils/antd_components";
 
 const defaultContent = `
   <p> </p>
@@ -15,9 +14,12 @@ const defaultContent = `
   <p> </p>
 `;
 
-const JournalSessionPage = () => {
-  const [loading, setLoading] = useState(false);
-  const journalContent = localStorage.getItem("journalContent");
+const Conversations = (props: {
+  defaultContent: string | JSON | undefined;
+}) => {
+  const { defaultContent } = props;
+  const { token } = useToken();
+
   const editor = useEditor({
     extensions: journalExtensions,
     editorProps: {
@@ -25,54 +27,85 @@ const JournalSessionPage = () => {
         class: "tiptapJournal",
       },
     },
-    content: journalContent ? JSON.parse(journalContent) : defaultContent,
+    content: defaultContent,
 
-    onUpdate({ editor }) {
+    onUpdate: ({ editor }) => {
       const json = editor.getJSON();
       localStorage.setItem("journalContent", JSON.stringify(json));
     },
   });
-  const addJournalSession = useJournalSessionStore(
-    (state) => state.addJournalSession
+
+  if (!editor) return null;
+
+  return (
+    <>
+      <EditorContent
+        editor={editor}
+        style={{
+          position: "relative",
+        }}
+      >
+        <Typography.Text
+          style={{
+            textAlign: "end",
+            position: "absolute",
+            bottom: "0",
+            right: "0",
+            marginRight: "40px",
+            color: token.colorTextDescription,
+            fontSize: token.fontSizeSM,
+          }}
+        >
+          {editor.storage.characterCount.words()} words
+        </Typography.Text>
+        <Button
+          type="primary"
+          style={{
+            position: "absolute",
+            bottom: "50%",
+            transform: "translateY(50%)",
+            right: "0",
+            zIndex: 1,
+            marginRight: "8px",
+          }}
+          shape="circle"
+          // loading={loading}
+          // onClick={() => handleCreateJournalSession(editor)}
+        >
+          <SendOutlined />
+        </Button>
+      </EditorContent>
+    </>
   );
-  const navigate = useNavigate();
+};
 
-  if (!editor) {
-    return null;
-  }
+const JournalSessionPage = () => {
+  const [loading, setLoading] = useState(false);
+  const journalContent = localStorage.getItem("journalContent");
+  const [exchanges, setExchanges] = useState<
+    createJournalSessionInput["body"]["exchanges"]
+  >([]);
+  const { token } = useToken();
 
-  const handleCreateJournalSession = async (editor: Editor) => {
-    // if words are less than 40, return
-    if (editor.storage.characterCount.words() < 40) {
-      message.error("Journal entry must be at least 40 words");
-      return;
-    }
-    if (!editor) return;
+  useEffect(() => {
     setLoading(true);
-    const json = editor.getJSON();
-    try {
-      // const projects = extractIds("project", json);
-      // const dueDates = extractIds("dueDate", json);
-
-      const journalSession = await createJournalSession({
-        rawText: editor.getText(),
-        jsonString: JSON.stringify(json),
-        htmlString: editor.getHTML(),
-        startTime: new Date(),
+    createJournalSession({
+      userCurrentDate: new Date(),
+      // forceRecreate: true,
+    })
+      .then((journalSession) => {
+        setExchanges(journalSession.exchanges);
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          message.error(error.message);
+        }
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      editor.commands.clearContent();
-      message.success("Created!");
-      addJournalSession(journalSession);
-      navigate(`/journals/${journalSession._id}`);
-      localStorage.removeItem("journalContent");
-    } catch (error) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      }
-      console.error(error);
-    }
-    setLoading(false);
-  };
+  }, []);
 
   return (
     <>
@@ -80,101 +113,73 @@ const JournalSessionPage = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          minHeight: "calc(100svh - 102px)",
-          alignItems: "center",
+          height: "calc(100svh - 102px)",
         }}
       >
-        <Row
-          gutter={[16, 16]}
+        <div
           style={{
-            maxWidth: "850px",
             width: "100%",
             height: "100%",
+            overflow: "auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Col xs={24}>
-            {/* Day in words \n Day in number \n Month in words  */}
-            <div
-              style={{
-                textAlign: "center",
-                width: "max-content",
-              }}
-            >
-              <Typography.Text
-                style={{
-                  textTransform: "uppercase",
-                }}
-              >
-                {dayjs().format("dddd")}
-              </Typography.Text>
-              <Typography.Title level={1}>
-                {dayjs().format("DD")}
-              </Typography.Title>
-              <Typography.Text
-                style={{
-                  textTransform: "uppercase",
-                }}
-              >
-                {dayjs().format("MMMM")}
-              </Typography.Text>
-            </div>
-          </Col>
-          <Col xs={24}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "400px",
-                overflow: "clip",
-                position: "relative",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  overflow: "auto",
-                }}
-              >
-                <EditorContent editor={editor} />
-              </div>
-              <FloatingMenuComponent editor={editor} />
-              <Typography.Text
-                style={{
-                  textAlign: "end",
-                }}
-              >
-                {editor.storage.characterCount.words()} words
-              </Typography.Text>
-            </div>
-          </Col>
-          {/* <Col md={24}>
-            <Flex gap={16} align="middle" justify="center">
-              <Typography.Title level={2}>
-                <MehOutlined />
-              </Typography.Title>
-
-              <div style={{ flex: 1 }}>
-                <Slider min={0} max={10} dots step={1} defaultValue={0} />
-              </div>
-              <Typography.Title level={2}>
-                <SmileOutlined />
-              </Typography.Title>
-            </Flex>
-          </Col> */}
-          <Col xs={24}>
-            <Button
-              type="primary"
-              style={{
-                width: "100%",
-              }}
-              loading={loading}
-              onClick={() => handleCreateJournalSession(editor)}
-            >
-              Save
-            </Button>
-          </Col>
-        </Row>
+          <div
+            style={{
+              maxWidth: "850px",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+            }}
+          >
+            <Skeleton loading={loading} active>
+              {exchanges && exchanges.length > 0 ? (
+                exchanges.map((exchange) => (
+                  <div
+                    style={{
+                      marginBottom: "20px",
+                      width: "80%",
+                      alignSelf:
+                        exchange?.speaker === "assistant"
+                          ? "flex-end"
+                          : "flex-start",
+                      maxWidth: "850px",
+                    }}
+                    className={`tiptapJournal ${
+                      exchange?.speaker === "assistant" ? "systemResponse" : ""
+                    }`}
+                    dangerouslySetInnerHTML={{
+                      __html: exchange.htmlString || exchange.rawText,
+                    }}
+                  ></div>
+                ))
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="No Conversations"
+                />
+              )}
+            </Skeleton>
+          </div>
+        </div>
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "850px",
+            alignSelf: "center",
+            boxShadow: `0px 0px 20px 10px ${token.colorBgLayout}`,
+            zIndex: 100,
+          }}
+        >
+          <Conversations
+            defaultContent={
+              journalContent ? JSON.parse(journalContent) : defaultContent
+            }
+          />
+        </div>
       </div>
     </>
   );

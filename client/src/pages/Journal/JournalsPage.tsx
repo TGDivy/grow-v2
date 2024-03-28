@@ -91,7 +91,7 @@ const JournalsPage = () => {
   // check if today's journal exists
   const today = dayjs().format("YYYY-MM-DD");
   const todayJournal = journals.find(
-    (j) => dayjs(j.startTime).format("YYYY-MM-DD") === today
+    (j) => dayjs(j.createdAt).format("YYYY-MM-DD") === today
   );
 
   return (
@@ -129,11 +129,7 @@ const JournalsPage = () => {
                 />
               </Card>
               <Link
-                to={
-                  todayJournal
-                    ? `/journals/${todayJournal._id}`
-                    : "/journals/entry"
-                }
+                to={"/journals/entry"}
                 style={{
                   width: "100%",
                   flex: 2,
@@ -164,7 +160,7 @@ const JournalsPage = () => {
                         <br />
                         Click here to view it.
                         <br />
-                        {todayJournal.rawText}
+                        {todayJournal.exchanges?.[0]?.rawText}
                       </Typography.Paragraph>
                     </>
                   ) : (
@@ -198,7 +194,7 @@ const JournalsPage = () => {
                   actions={[<Link to={`/journals/${journal._id}`}>View</Link>]}
                 >
                   <List.Item.Meta
-                    title={dayjs(journal.startTime).format("dddd, MMMM D")}
+                    title={dayjs(journal.createdAt).format("dddd, MMMM D")}
                     description={
                       <Typography.Paragraph
                         ellipsis={{
@@ -206,7 +202,11 @@ const JournalsPage = () => {
                           expandable: true,
                         }}
                       >
-                        {journal.rawText}
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: journal?.exchanges?.[0]?.htmlString || "",
+                          }}
+                        ></div>
                       </Typography.Paragraph>
                     }
                   />

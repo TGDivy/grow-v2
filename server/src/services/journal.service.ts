@@ -8,6 +8,10 @@ export const getJournalSession = async (id: string) => {
     return JournalSessionModel.findById(id);
 };
 
+export const getJournalSessionBetweenDates = async (userId: string, startDate: Date, endDate: Date) => {
+    return JournalSessionModel.find({ userId, createdAt: { $gte: startDate, $lte: endDate } });
+};
+
 export const getJournalSessions = async (userId: string) => {
     return JournalSessionModel.find({ userId });
 };

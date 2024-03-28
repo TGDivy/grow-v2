@@ -38,3 +38,7 @@ export const createPastFocusSession = async (input: PastSessionInput) => {
 export const getAllPastFocusSessions = async (userId: string) => {
     return await PastSessionModel.find({ userId }).lean();
 };
+
+export const getAllPastFocusSessionsBetweenDates = async (userId: string, startDate: Date, endDate: Date) => {
+    return await PastSessionModel.find({ userId, createdAt: { $gte: startDate, $lte: endDate } }).lean();
+};

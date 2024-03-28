@@ -3,26 +3,20 @@ import mongoose from "mongoose";
 
 export interface JournalEntry {
     speaker: string;
-    message: string;
     timestamp: Date;
+    rawText: string;
+    jsonString?: string;
+    htmlString?: string;
 }
 
 export interface JournalSessionInput {
     userId: UserRecord["uid"];
-    startTime: Date;
-    endTime?: Date;
+
     location?: string;
-
-    rawText: string;
-    jsonString?: string;
-    htmlString?: string;
-
     exchanges?: JournalEntry[];
-    moodBefore?: string | number;
-    moodAfter?: string | number;
-    prompts?: string[];
-    tags?: string[];
+
     summary?: string;
+    tags?: string[];
 }
 
 export interface JournalSessionDocument extends JournalSessionInput, mongoose.Document {
@@ -33,20 +27,21 @@ export interface JournalSessionDocument extends JournalSessionInput, mongoose.Do
 const JournalSessionSchema = new mongoose.Schema(
     {
         userId: { type: String, required: true },
-        startTime: { type: Date, required: true },
-        endTime: { type: Date },
         location: { type: String },
 
-        rawText: { type: String, required: true },
-        jsonString: { type: String },
-        htmlString: { type: String },
+        exchanges: [
+            {
+                speaker: { type: String, required: true },
+                timestamp: { type: Date, required: true },
+                rawText: { type: String, required: true },
+                jsonString: { type: String },
+                htmlString: { type: String },
+            },
+        ],
 
-        exchanges: [{ speaker: String, message: String, timestamp: Date }],
-        moodBefore: { type: mongoose.Schema.Types.Mixed },
-        moodAfter: { type: mongoose.Schema.Types.Mixed },
-        prompts: [{ type: String }],
         tags: [{ type: String }],
         summary: { type: String },
+
         createdAt: { type: Date, required: true, default: Date.now },
         updatedAt: { type: Date, required: true, default: Date.now },
     },
