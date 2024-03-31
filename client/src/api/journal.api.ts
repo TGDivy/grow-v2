@@ -37,6 +37,13 @@ export const getJournalSessions = async () => {
   return response.data;
 };
 
+export const getJournalSession = async (id: string) => {
+  const response = await journalAPI.get<JournalSessionDocument>(
+    `/journal/${id}`
+  );
+  return response.data;
+};
+
 export const createJournalSession = async (
   journal: createJournalSessionInput["body"]
 ) => {
@@ -61,13 +68,6 @@ export const updateJournalSession = async (
 export const finishJournalSession = async (id: string) => {
   const response = await journalAPI.put<JournalSessionDocument>(
     `/journal/${id}/finish`
-  );
-  return response.data;
-};
-
-export const toggleJournalSession = async (id: string) => {
-  const response = await journalAPI.put<JournalSessionDocument>(
-    `/journal/${id}/toggle`
   );
   return response.data;
 };

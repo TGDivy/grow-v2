@@ -145,7 +145,7 @@ Title for the Current Session:
 Provide a title for the current journaling session. This title should encapsulate the theme or main topic of the user's reflections. It should be engaging and descriptive to help the user remember the session.
 
 Prompt for DALLE-3:
-Provide a prompt to help DALLE-3 model generate a summary image based on the user's reflections. The prompt should be clear and concise, focusing on the main idea or emotion expressed by the user. It should guide the model to create an image that captures the essence of the journaling session. The artistic style should be similar to Ghibli movies.
+Provide a prompt to help DALLE-3 model to generate an image based representative of the user's reflections. It shoudl focus on the main idea or emotion expressed by the user. Some tips: Be Specific and Detailed, Describe Mood and Atmosphere, Use Descriptive Adjectives, Consider Perspective and Composition, Specify Lighting and Time of Day, and Include Relevant Objects or Elements. Keep the style like a ghibli movie, or a painting, or a photograph.
 
 Ensure that your messages are in JSON format.
 `;

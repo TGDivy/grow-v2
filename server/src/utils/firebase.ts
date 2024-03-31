@@ -1,11 +1,12 @@
 import admin from "firebase-admin";
-import { FIREBASE_CONFIG } from "../constants";
+import { FIREBASE_CONFIG, firebaseBucket } from "../constants";
 import { Message } from "firebase-admin/lib/messaging/messaging-api";
 import cron from "node-cron";
 
 export const initializeFirebase = () =>
     admin.initializeApp({
         credential: admin.credential.cert(FIREBASE_CONFIG),
+        storageBucket: firebaseBucket,
     });
 
 export const initializeCronJobForTestNotification = () => {

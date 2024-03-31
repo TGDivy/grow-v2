@@ -25,6 +25,8 @@ import {
 } from "../services/journal.service";
 import { logger } from "../utils/logger";
 import { getDelphiJournalSM, getDelphiJournalSummarySM } from "./helper/delphi";
+import { ImageGenerateParams } from "openai/resources";
+import admin from "firebase-admin";
 
 export const createJournalSessionHandler = async (
     req: Request<{}, {}, createJournalSessionInput["body"]>,
@@ -71,14 +73,6 @@ export const createJournalSessionHandler = async (
 
         logger.error(`Creating journal session for user ${userId} on ${userCurrentDate}`);
 
-        // const prompt = await getDelphiPrompt(userId);
-
-        // console.log(prompt.choices);
-
-        // const message = prompt.choices[0].message.content ?? DEFAULT_JOURNALLING_PROMPT;
-        // const converter = new showdown.Converter();
-        // const htmlMessage = converter.makeHtml(message);
-
         const journalSession = await createJournalSession({
             ...body,
             userId,
@@ -99,8 +93,6 @@ export const createJournalSessionHandler = async (
 };
 
 export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Response) => {
-    console.log("Delphi message handler");
-
     res.writeHead(200, {
         "Content-Type": "text/plain; charset=utf-8",
     });
@@ -169,10 +161,7 @@ export const finishJournalSessionHandler = async (
             return res.status(403).send("Unauthorized");
         }
 
-        console.log("Getting journal summary");
-
         const systemMessage = await getDelphiJournalSummarySM(journalSession._id.toString());
-        console.log(systemMessage);
         const config: ChatCompletionCreateParams = {
             messages: [
                 {
@@ -204,15 +193,55 @@ Provide the JSON object in format: {
 
         const [choice] = completion.choices;
         const { content } = choice.message;
-        console.log(content);
         const { title, summary, image_prompt } = JSON.parse(content ?? "{}");
 
-        console.log("Updating journal session", title, summary, image_prompt);
+        const configImage: ImageGenerateParams = {
+            model: "dall-e-3",
+            prompt: image_prompt,
+            size: "1792x1024",
+            quality: "hd",
+            style: "vivid",
+            n: 1,
+            user: userId,
+        };
+
+        const imageCompletion = await openai.images.generate(configImage);
+
+        const bucket = admin.storage().bucket();
+
+        const file = bucket.file(`journal-images/${journalSessionId}/summary-image.jpg`);
+
+        console.log(imageCompletion.data);
+
+        const image = imageCompletion.data[0];
+        let image_url = "";
+
+        if (image.url) {
+            // Download the image to the bucket
+            const response = await fetch(image.url);
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            await file.save(buffer, {
+                metadata: {
+                    contentType: "image/jpeg",
+                },
+            });
+        } else if (image.b64_json) {
+            const buffer = Buffer.from(image.b64_json, "base64");
+            await file.save(buffer, {
+                metadata: {
+                    contentType: "image/jpeg",
+                },
+            });
+        }
+
+        image_url = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
 
         journalSession = await updateJournalSession(journalSessionId, {
             summary,
             title,
             image_prompt,
+            image_url,
             completed: true,
         });
 

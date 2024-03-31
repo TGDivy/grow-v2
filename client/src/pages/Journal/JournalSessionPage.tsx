@@ -1,7 +1,6 @@
 import { JournalSessionDocument } from "@server/models/journal.model";
-import { Button, Card, message, Skeleton, Typography } from "antd";
+import { Button, message, Skeleton } from "antd";
 import { useEffect, useState } from "react";
-import Markdown from "react-markdown";
 import {
   createJournalSession,
   finishJournalSession,
@@ -9,6 +8,7 @@ import {
 } from "src/api/journal.api";
 import JournalEditor from "src/components/journal/JournalEditor";
 import JournalExchanges from "src/components/journal/JournalExchanges";
+import SummaryCard from "src/components/journal/SummaryCard";
 import useJournalSessionStore, {
   journalStoreType,
 } from "src/stores/journal_session_store";
@@ -158,29 +158,7 @@ const JournalSessionPage = () => {
               position: "relative",
             }}
           >
-            <Card
-              bordered={false}
-              style={{
-                marginBottom: "20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-              loading={loading}
-              styles={{
-                body: {
-                  maxWidth: "850px",
-                  width: "100%",
-                },
-              }}
-            >
-              <Typography.Title level={3}>
-                {journalSession?.title || "Journal Session"}
-              </Typography.Title>
-              {journalSession?.summary && (
-                <Markdown>{journalSession.summary}</Markdown>
-              )}
-            </Card>
+            <SummaryCard journalSession={journalSession} loading={loading} />
           </div>
           <div
             style={{
@@ -202,7 +180,7 @@ const JournalSessionPage = () => {
               onClick={onFinishJournalSession}
               disabled={journalExchanges.length <= 1}
             >
-              Finish Journal Session
+              {loading ? "Finishing Journal..." : "Finish Journal"}
             </Button>
           </div>
         </div>
