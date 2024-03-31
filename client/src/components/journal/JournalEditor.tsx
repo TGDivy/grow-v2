@@ -91,8 +91,8 @@ const JournalEditor = (props: Props) => {
 
   const onSubmitHandler = async () => {
     // if words are less than 40, return
-    if (editor.storage.characterCount.words() < 40) {
-      message.error("Journal entry must be at least 40 words");
+    if (editor.storage.characterCount.words() < 10) {
+      message.error("Journal entry must be at least 10 words");
       return;
     }
     if (!journalSession) {

@@ -136,7 +136,18 @@ ${exchanges
     })
     .join("\n")}
 
-Based on this session, provide a summary of the user's reflections and insights. This summary should capture the essence of the user's journaling session and provide a starting point for further conversation or reflection. You will have access to this summary in future interactions with the user. This summary will also be shown to the user as a record of their journaling session, so make sure it is clear and insightful.
+Based on this session, provide a summary of the user's reflections, a title for the current session, and a prompt to help DALLE-3 model to generate a summary image.
+
+User Reflections Summary:
+Try to keep the summary under 100 words. This summary should capture the essence of the user's journaling session and provide a starting point for further conversation or reflection. You will have access to this summary in future interactions with the user. This summary will also be shown to the user as a record of their journaling session, so make sure it is clear and insightful.
+
+Title for the Current Session:
+Provide a title for the current journaling session. This title should encapsulate the theme or main topic of the user's reflections. It should be engaging and descriptive to help the user remember the session.
+
+Prompt for DALLE-3:
+Provide a prompt to help DALLE-3 model generate a summary image based on the user's reflections. The prompt should be clear and concise, focusing on the main idea or emotion expressed by the user. It should guide the model to create an image that captures the essence of the journaling session. The artistic style should be similar to Ghibli movies.
+
+Ensure that your messages are in JSON format.
 `;
     return message;
 };

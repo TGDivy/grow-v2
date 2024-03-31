@@ -1,6 +1,7 @@
 import { JournalSessionDocument } from "@server/models/journal.model";
 import { Button, Card, message, Skeleton, Typography } from "antd";
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 import {
   createJournalSession,
   finishJournalSession,
@@ -165,6 +166,7 @@ const JournalSessionPage = () => {
                 flexDirection: "column",
                 alignItems: "center",
               }}
+              loading={loading}
               styles={{
                 body: {
                   maxWidth: "850px",
@@ -172,10 +174,12 @@ const JournalSessionPage = () => {
                 },
               }}
             >
-              <Typography.Title level={2}>Journal</Typography.Title>
-              <Typography.Text>
-                {journalSession?.summary || "Journal Summary"}
-              </Typography.Text>
+              <Typography.Title level={3}>
+                {journalSession?.title || "Journal Session"}
+              </Typography.Title>
+              {journalSession?.summary && (
+                <Markdown>{journalSession.summary}</Markdown>
+              )}
             </Card>
           </div>
           <div
@@ -187,37 +191,38 @@ const JournalSessionPage = () => {
           >
             <Skeleton loading={loading} active>
               <JournalExchanges exchanges={journalExchanges} />
-
-              <Button
-                block
-                style={{
-                  marginBottom: "20px",
-                }}
-                shape="round"
-                loading={loading}
-                onClick={onFinishJournalSession}
-                disabled={journalExchanges.length <= 1}
-              >
-                Finish Journal Session
-              </Button>
             </Skeleton>
+            <Button
+              block
+              style={{
+                marginBottom: "20px",
+              }}
+              shape="round"
+              loading={loading}
+              onClick={onFinishJournalSession}
+              disabled={journalExchanges.length <= 1}
+            >
+              Finish Journal Session
+            </Button>
           </div>
         </div>
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "850px",
-            alignSelf: "center",
-            boxShadow: `0px 0px 20px 10px ${token.colorBgLayout}`,
-            zIndex: 100,
-          }}
-        >
-          <JournalEditor
-            loading={loading}
-            setJournalSession={setJournalSession}
-            journalSession={journalSession}
-          />
-        </div>
+        {journalSession?.completed !== true && (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "850px",
+              alignSelf: "center",
+              boxShadow: `0px 0px 20px 10px ${token.colorBgLayout}`,
+              zIndex: 100,
+            }}
+          >
+            <JournalEditor
+              loading={loading}
+              setJournalSession={setJournalSession}
+              journalSession={journalSession}
+            />
+          </div>
+        )}
       </div>
     </>
   );

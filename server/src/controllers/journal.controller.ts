@@ -179,25 +179,42 @@ export const finishJournalSessionHandler = async (
                     role: "system",
                     content: systemMessage,
                 },
-                { role: "user", content: "" },
+                {
+                    role: "user",
+                    content: `
+Provide the JSON object in format: {
+    "title": "",
+    "summary": "",
+    "image_prompt": "",
+}
+`,
+                },
             ],
-            model: "gpt-3.5-turbo",
+            // model: "gpt-3.5-turbo",
+            model: "gpt-4-turbo-preview",
             temperature: 1,
             max_tokens: 256,
             top_p: 1,
             frequency_penalty: 0,
             presence_penalty: 0,
+            response_format: { type: "json_object" },
         };
 
         const completion = await openai.chat.completions.create(config);
 
-        console.log("Got journal summary", completion);
         const [choice] = completion.choices;
-        console.log(choice);
         const { content } = choice.message;
-        const summary = content ? content : "";
+        console.log(content);
+        const { title, summary, image_prompt } = JSON.parse(content ?? "{}");
 
-        journalSession = await updateJournalSession(journalSessionId, { summary });
+        console.log("Updating journal session", title, summary, image_prompt);
+
+        journalSession = await updateJournalSession(journalSessionId, {
+            summary,
+            title,
+            image_prompt,
+            completed: true,
+        });
 
         return res.send(journalSession);
     } catch (error) {

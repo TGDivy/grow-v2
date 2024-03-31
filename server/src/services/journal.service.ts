@@ -16,7 +16,7 @@ export const getJournalSessions = async (userId: string) => {
     return JournalSessionModel.find({ userId });
 };
 
-export const updateJournalSession = async (id: string, input: Partial<JournalSessionInput>) => {
+export const updateJournalSession = async (id: string, input: Partial<JournalSessionDocument>) => {
     const journalSession = await JournalSessionModel.findById(id);
     if (!journalSession) {
         throw new Error("Journal session not found");

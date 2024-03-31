@@ -137,7 +137,7 @@ const JournalsPage = () => {
                 }}
               >
                 <Card bordered={false} hoverable loading={loading}>
-                  {todayJournal ? (
+                  {todayJournal?.completed ? (
                     <>
                       <Typography.Title level={5} type="success">
                         Good Job!
@@ -160,7 +160,6 @@ const JournalsPage = () => {
                         <br />
                         Click here to view it.
                         <br />
-                        {todayJournal.exchanges?.[0]?.rawText}
                       </Typography.Paragraph>
                     </>
                   ) : (
@@ -186,7 +185,6 @@ const JournalsPage = () => {
             </Flex>
           </Col>
           <Col xs={24}>
-            {/* entries */}
             <List loading={loading} itemLayout="horizontal">
               {journals.map((journal) => (
                 <List.Item
@@ -202,11 +200,7 @@ const JournalsPage = () => {
                           expandable: true,
                         }}
                       >
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: journal?.exchanges?.[0]?.htmlString || "",
-                          }}
-                        ></div>
+                        {journal.summary}
                       </Typography.Paragraph>
                     }
                   />

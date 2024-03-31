@@ -15,13 +15,20 @@ export interface JournalSessionInput {
     location?: string;
     exchanges: JournalEntry[];
 
-    summary?: string;
     tags?: string[];
 }
 
 export interface JournalSessionDocument extends JournalSessionInput, mongoose.Document {
     createdAt: Date;
     updatedAt: Date;
+
+    title?: string;
+    summary?: string;
+
+    image_prompt?: string;
+    image_url?: string;
+
+    completed?: boolean;
 }
 
 const JournalSessionSchema = new mongoose.Schema(
@@ -40,7 +47,14 @@ const JournalSessionSchema = new mongoose.Schema(
         ],
 
         tags: [{ type: String }],
+
         summary: { type: String },
+        title: { type: String },
+
+        image_prompt: { type: String },
+        image_url: { type: String },
+
+        completed: { type: Boolean, required: true, default: false },
 
         createdAt: { type: Date, required: true, default: Date.now },
         updatedAt: { type: Date, required: true, default: Date.now },

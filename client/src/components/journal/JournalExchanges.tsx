@@ -19,11 +19,11 @@ const JournalExchanges = (props: Props) => {
         backgroundColor:
           exchange.speaker !== "user"
             ? token.colorInfoBg
-            : token.colorFillContent,
+            : token.colorFillTertiary,
         border: `2px solid ${
           exchange.speaker !== "user"
             ? token.colorInfoBorder
-            : token.colorBorder
+            : token.colorFillQuaternary
         }`,
       }}
       className={`tiptapJournal ${
