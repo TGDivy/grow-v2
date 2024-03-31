@@ -13,7 +13,7 @@ export interface JournalSessionInput {
     userId: UserRecord["uid"];
 
     location?: string;
-    exchanges?: JournalEntry[];
+    exchanges: JournalEntry[];
 
     summary?: string;
     tags?: string[];

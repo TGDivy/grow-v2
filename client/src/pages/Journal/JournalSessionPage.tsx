@@ -1,100 +1,97 @@
-import { SendOutlined } from "@ant-design/icons";
-import { createJournalSessionInput } from "@server/schema/journal.schema";
-import { EditorContent, useEditor } from "@tiptap/react";
-import { Button, Empty, message, Skeleton, Typography } from "antd";
+import { JournalSessionDocument } from "@server/models/journal.model";
+import { message, Skeleton } from "antd";
 import { useEffect, useState } from "react";
-import { createJournalSession } from "src/api/journal.api";
-import { journalExtensions } from "src/components/journal/JournalExtensions";
+import {
+  createJournalSession,
+  updateJournalSession,
+} from "src/api/journal.api";
+import JournalEditor from "src/components/journal/JournalEditor";
+import JournalExchanges from "src/components/journal/JournalExchanges";
+import useJournalSessionStore, {
+  journalStoreType,
+} from "src/stores/journal_session_store";
+import useUserStore from "src/stores/user_store";
 import { useToken } from "src/utils/antd_components";
+import { API_DOMAIN } from "src/utils/constants";
 
-const defaultContent = `
-  <p> </p>
-  <p> </p>
-  <p> </p>
-  <p> </p>
-`;
+const getInitialPromptAndUpdate = async (
+  journalSession: JournalSessionDocument,
+  setExchange: journalStoreType["setStreamingExchange"],
+  setJournalSession: (journalSession: JournalSessionDocument) => void
+) => {
+  const user = useUserStore.getState().user;
+  if (!user) return;
 
-const Conversations = (props: {
-  defaultContent: string | JSON | undefined;
-}) => {
-  const { defaultContent } = props;
-  const { token } = useToken();
-
-  const editor = useEditor({
-    extensions: journalExtensions,
-    editorProps: {
-      attributes: {
-        class: "tiptapJournal",
-      },
+  const bearerToken = `Bearer ${await user.getIdToken(false)}`;
+  const response = await fetch(API_DOMAIN + "journal/delphi/1", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: bearerToken,
     },
-    content: defaultContent,
-
-    onUpdate: ({ editor }) => {
-      const json = editor.getJSON();
-      localStorage.setItem("journalContent", JSON.stringify(json));
-    },
+    method: "GET",
   });
 
-  if (!editor) return null;
+  const reader = response?.body?.getReader();
 
-  return (
-    <>
-      <EditorContent
-        editor={editor}
-        style={{
-          position: "relative",
-        }}
-      >
-        <Typography.Text
-          style={{
-            textAlign: "end",
-            position: "absolute",
-            bottom: "0",
-            right: "0",
-            marginRight: "40px",
-            color: token.colorTextDescription,
-            fontSize: token.fontSizeSM,
-          }}
-        >
-          {editor.storage.characterCount.words()} words
-        </Typography.Text>
-        <Button
-          type="primary"
-          style={{
-            position: "absolute",
-            bottom: "50%",
-            transform: "translateY(50%)",
-            right: "0",
-            zIndex: 1,
-            marginRight: "8px",
-          }}
-          shape="circle"
-          // loading={loading}
-          // onClick={() => handleCreateJournalSession(editor)}
-        >
-          <SendOutlined />
-        </Button>
-      </EditorContent>
-    </>
-  );
+  let textSoFar = "";
+  while (reader) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    const text = new TextDecoder().decode(value);
+    textSoFar += text;
+    setExchange({
+      rawText: textSoFar,
+      speaker: "assistant",
+      timestamp: new Date(),
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    console.log(text);
+  }
+
+  const newJournalSession = await updateJournalSession(journalSession._id, {
+    exchanges: [
+      {
+        rawText: textSoFar,
+        speaker: "assistant",
+        timestamp: new Date(),
+      },
+    ],
+  });
+
+  setJournalSession(newJournalSession);
+  setExchange(undefined);
 };
 
 const JournalSessionPage = () => {
   const [loading, setLoading] = useState(false);
-  const journalContent = localStorage.getItem("journalContent");
-  const [exchanges, setExchanges] = useState<
-    createJournalSessionInput["body"]["exchanges"]
-  >([]);
+  const [journalSession, setJournalSession] = useJournalSessionStore(
+    (state) => [state.currentJournal, state.setCurrentJournal]
+  );
+  const [streamingExchange, setStreamingExchange] = useJournalSessionStore(
+    (state) => [state.streamingExchange, state.setStreamingExchange]
+  );
   const { token } = useToken();
 
   useEffect(() => {
     setLoading(true);
     createJournalSession({
       userCurrentDate: new Date(),
+      exchanges: [],
       // forceRecreate: true,
     })
-      .then((journalSession) => {
-        setExchanges(journalSession.exchanges);
+      .then(async (journalSession) => {
+        setJournalSession(journalSession);
+        if (journalSession.exchanges?.length === 0) {
+          setLoading(false);
+          await getInitialPromptAndUpdate(
+            journalSession,
+            setStreamingExchange,
+            setJournalSession
+          );
+        }
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -107,6 +104,11 @@ const JournalSessionPage = () => {
       });
   }, []);
 
+  const journalExchanges = (journalSession?.exchanges || []).concat(
+    streamingExchange ? [streamingExchange] : []
+  );
+
+  // const journalExchanges = streamingExchange ? [streamingExchange] : [];
   return (
     <>
       <div
@@ -124,44 +126,18 @@ const JournalSessionPage = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            position: "relative",
           }}
         >
           <div
             style={{
               maxWidth: "850px",
               width: "100%",
-              display: "flex",
-              flexDirection: "column",
               position: "relative",
             }}
           >
             <Skeleton loading={loading} active>
-              {exchanges && exchanges.length > 0 ? (
-                exchanges.map((exchange) => (
-                  <div
-                    style={{
-                      marginBottom: "20px",
-                      width: "80%",
-                      alignSelf:
-                        exchange?.speaker === "assistant"
-                          ? "flex-end"
-                          : "flex-start",
-                      maxWidth: "850px",
-                    }}
-                    className={`tiptapJournal ${
-                      exchange?.speaker === "assistant" ? "systemResponse" : ""
-                    }`}
-                    dangerouslySetInnerHTML={{
-                      __html: exchange.htmlString || exchange.rawText,
-                    }}
-                  ></div>
-                ))
-              ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="No Conversations"
-                />
-              )}
+              <JournalExchanges exchanges={journalExchanges} />
             </Skeleton>
           </div>
         </div>
@@ -174,10 +150,10 @@ const JournalSessionPage = () => {
             zIndex: 100,
           }}
         >
-          <Conversations
-            defaultContent={
-              journalContent ? JSON.parse(journalContent) : defaultContent
-            }
+          <JournalEditor
+            loading={loading}
+            setJournalSession={setJournalSession}
+            journalSession={journalSession}
           />
         </div>
       </div>

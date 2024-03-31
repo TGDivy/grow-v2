@@ -5,13 +5,15 @@ const journalEntry = object({
     rawText: string(),
     jsonString: string().optional(),
     htmlString: string().optional(),
-    timestamp: date(),
+    timestamp: string()
+        .datetime()
+        .transform((date) => new Date(date)),
 });
 
 const payload = {
     body: object({
         location: string().optional(),
-        exchanges: array(journalEntry).optional(),
+        exchanges: array(journalEntry),
         tags: array(string()).optional(),
         summary: string().optional(),
         userCurrentDate: string()
@@ -23,16 +25,8 @@ const payload = {
 
 const updatePayload = {
     body: object({
-        startTime: string().datetime().optional(),
-        endTime: string().datetime().optional(),
         location: string().optional(),
-        rawText: string().optional(),
-        jsonString: string().optional(),
-        htmlString: string().optional(),
         exchanges: array(journalEntry).optional(),
-        moodBefore: number().min(1).max(10).optional(),
-        moodAfter: number().min(1).max(10).optional(),
-        prompts: array(string()).optional(),
         tags: array(string()).optional(),
         summary: string().optional(),
     }),
@@ -45,6 +39,10 @@ const params = {
 };
 
 export const createJournalSessionSchema = object(payload);
+export const getDelphiMessageSchema = object({
+    params: object({}),
+});
+
 export const getJournalSessionSchema = object(params);
 export const getJournalSessionForTodaySchema = object({});
 export const getAllJournalSessionsSchema = object({});
@@ -53,6 +51,7 @@ export const deleteJournalSessionSchema = object(params);
 export const getJournalPrompt = object({});
 
 export type createJournalSessionInput = TypeOf<typeof createJournalSessionSchema>;
+export type getDelphiMessageInput = TypeOf<typeof getDelphiMessageSchema>;
 export type getJournalSessionInput = TypeOf<typeof getJournalSessionSchema>;
 export type getJournalSessionForTodayInput = TypeOf<typeof getJournalSessionForTodaySchema>;
 export type getAllJournalSessionsInput = TypeOf<typeof getAllJournalSessionsSchema>;

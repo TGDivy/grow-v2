@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import OpenAI from "openai";
+import { ChatCompletionCreateParamsStreaming } from "openai/resources/chat/completions";
+import showdown from "showdown";
+import { openai } from "../constants";
 import {
     createJournalSessionInput,
-    updateJournalSessionInput,
-    getJournalSessionInput,
     deleteJournalSessionInput,
+    getJournalSessionInput,
+    updateJournalSessionInput,
 } from "../schema/journal.schema";
 import {
     createJournalSession,
@@ -14,115 +18,15 @@ import {
     getJournalSessions,
     updateJournalSession,
 } from "../services/journal.service";
-import admin from "firebase-admin";
-import { getAllPastFocusSessionsBetweenDates } from "../services/focusSession.service";
-import { getTodo } from "../services/todo.service";
-import { getProjects } from "../services/project.service";
-import OpenAI from "openai";
-import { openai } from "../constants";
 import { logger } from "../utils/logger";
-import showdown from "showdown";
+import { getDelphiJournalSM } from "./helper/delphi";
 
 // helper function to get all user data
 const getDelphiPrompt = async (userId: string) => {
-    // User's Name from Firebase
-
-    const userName = await admin
-        .auth()
-        .getUser(userId)
-        .then((user) => {
-            return user.displayName;
-        });
-
-    if (userName === undefined) {
-        throw new Error("User not found");
-    }
-
-    const now = new Date();
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
-
-    // Active Projects
-    const activeProjects = await getProjects(userId, { completed: false });
-
-    // Today's Focus Sessions
-    const focusSessions = await getAllPastFocusSessionsBetweenDates(userId, today, now);
-    const timeWorkedToday = focusSessions.reduce((acc, session) => acc + session.duration, 0);
-
-    const tasksWorkedToday: {
-        [key: string]: {
-            rawText: string;
-            projectTitles: string[];
-            timeWorked: number; // in seconds
-            completed: boolean;
-        };
-    } = {};
-
-    for (const session of focusSessions) {
-        if (session.linkedEntities?.tasks !== undefined && session.linkedEntities.tasks.length > 0) {
-            const taskId = session.linkedEntities.tasks[0].toString();
-            const task = await getTodo(taskId);
-
-            if (task !== null) {
-                if (tasksWorkedToday[taskId] === undefined) {
-                    tasksWorkedToday[taskId] = {
-                        rawText: task.rawText,
-                        projectTitles: task.projects.map((projectId) => {
-                            const project = activeProjects.find(
-                                (project) => project._id.toString() === projectId.toString(),
-                            );
-                            return project?.title ?? "Inactive Project";
-                        }),
-                        timeWorked: 0,
-                        completed: task.completed ?? false,
-                    };
-                }
-                tasksWorkedToday[taskId].timeWorked += session.duration;
-            }
-        }
-    }
-
-    // Past 3 days Journal Entries
-    const threeDaysAgo = new Date(today);
-    threeDaysAgo.setDate(today.getDate() - 3);
-    const journalSessions = await getJournalSessionBetweenDates(userId, threeDaysAgo, today);
-
     const message: OpenAI.ChatCompletionMessageParam[] = [
         {
             role: "system",
-            content: `You are Delphi, a journaling companion within Odyssey, a life management app. Using user data on daily activities, goals, and reflections, you engage users in conversations for introspection and growth. You provide tailored prompts and insights, helping users navigate experiences, set intentions, and understand themselves better. Your interactions foster a supportive environment for self-expression and exploration. Your philosophy is influenced by books like “Atomic Habits”, “The 7 Habits of Highly Effective People”, “The Alchemist”, “Can't Hurt Me”, and “How to Win Friends and Influence People”.
-    
-        Below is the relevant user data for today:
-        User's Name: ${userName}
-        Today's Date: ${today.toLocaleDateString("en-US", { month: "long", day: "numeric", weekday: "long", year: "numeric" })}
-        Time Worked Today: ${timeWorkedToday / 60} minutes
-        Tasks Worked on Today: ${Object.values(tasksWorkedToday)
-            .map((task) => {
-                return `• ${task.rawText} for ${task.timeWorked / 60} minutes ${task.projectTitles.length > 0 ? `for project(s) ${task.projectTitles.join(", ")}` : ""} ${task.completed ? "✅" : "❌"}`;
-            })
-            .join("\n")}
-
-        Active Projects: ${activeProjects
-            .map((project) => {
-                return `${project.title}: ${project.description ?? "NA"}`;
-            })
-            .join("\n")}
-
-        User Goal Document Summary: NA
-        User Plan for the Day: NA
-        
-        User Journaling Summaries:
-        •	Yesterday's Summary: ${journalSessions.length > 0 ? journalSessions[0].summary : "NA"}
-        •	Day Before Yesterday's Summary: ${journalSessions.length > 1 ? journalSessions[1].summary : "NA"}
-        •	Two Days Ago Summary: ${journalSessions.length > 2 ? journalSessions[2].summary : "NA"}
-        •	Last Week's Summary: NA
-        •	Last Month's Summary: NA
-        •	Last quarter's Summary: NA
-
-        Note: NA means not available, and is when the user data for that field is missing. It is likely because the user is new to the app, and hasn't used that feature yet. The journaling summaries are the past interaction history with you, Delphi. Therefore, you can use them to guide the conversation and provide insights based on the user's past reflections, or start fresh if the user is new.
-
-        Ensure that your messages are in markdown format.
-    `,
+            content: await getDelphiJournalSM(userId),
         },
         { role: "user", content: "" },
     ];
@@ -187,18 +91,19 @@ export const createJournalSessionHandler = async (
 
         logger.error(`Creating journal session for user ${userId} on ${userCurrentDate}`);
 
-        const prompt = await getDelphiPrompt(userId);
+        // const prompt = await getDelphiPrompt(userId);
 
-        console.log(prompt.choices);
+        // console.log(prompt.choices);
 
-        const message = prompt.choices[0].message.content ?? DEFAULT_JOURNALLING_PROMPT;
-        const converter = new showdown.Converter();
-        const htmlMessage = converter.makeHtml(message);
+        // const message = prompt.choices[0].message.content ?? DEFAULT_JOURNALLING_PROMPT;
+        // const converter = new showdown.Converter();
+        // const htmlMessage = converter.makeHtml(message);
 
         const journalSession = await createJournalSession({
             ...body,
             userId,
-            exchanges: [{ speaker: "assistant", rawText: message, timestamp: new Date(), htmlString: htmlMessage }],
+            exchanges: [],
+            // exchanges: [{ speaker: "assistant", rawText: message, timestamp: new Date(), htmlString: htmlMessage }],
         });
 
         return res.send(journalSession);
@@ -211,6 +116,45 @@ export const createJournalSessionHandler = async (
         }
         return res.status(500).send("Something went wrong");
     }
+};
+
+export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Response) => {
+    console.log("Delphi message handler");
+
+    res.writeHead(200, {
+        "Content-Type": "text/plain; charset=utf-8",
+    });
+
+    const userId = res.locals.user?.uid;
+
+    if (!userId) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const config: ChatCompletionCreateParamsStreaming = {
+        stream: true, // This is the key to request stream from openai api
+        messages: [
+            {
+                role: "system",
+                content: await getDelphiJournalSM(userId),
+            },
+            { role: "user", content: "" },
+        ],
+        // model: "gpt-4-turbo-preview",
+        model: "3.5-turbo",
+    };
+
+    const completion = await openai.chat.completions.create(config);
+
+    // read chunk by chunk from api and send it to the client chunck by chunk
+    for await (const chunk of completion) {
+        const [choice] = chunk.choices;
+        const { content } = choice.delta;
+        const finalContent = content ? content : "";
+        res.write(finalContent);
+    }
+    res.write("\n");
+    res.end();
 };
 
 export const getJournalSessionHandler = async (
@@ -267,6 +211,10 @@ export const updateJournalSessionHandler = async (
 
         if (journalSession.userId !== userId) {
             return res.status(403).send("Unauthorized");
+        }
+
+        for (const exchange of body?.exchanges || []) {
+            exchange.timestamp = new Date(exchange.timestamp);
         }
 
         journalSession = await updateJournalSession(journalSessionId, { ...body });

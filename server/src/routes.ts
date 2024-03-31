@@ -47,6 +47,7 @@ import { createUserSchema, deleteUserSchema, getUserSchema, updateUserSchema } f
 import { createActiveSessionSchema } from "./schema/focusSession.schema";
 import {
     createJournalSessionHandler,
+    getDelphiMessageHandler,
     getJournalSessionHandler,
     getAllJournalSessionsHandler,
     updateJournalSessionHandler,
@@ -54,6 +55,7 @@ import {
 } from "./controllers/journal.controller";
 import {
     createJournalSessionSchema,
+    getDelphiMessageSchema,
     getJournalSessionSchema,
     updateJournalSessionSchema,
     deleteJournalSessionSchema,
@@ -99,6 +101,9 @@ const routes = (app: Express) => {
     app.post("/journal", [requireUser, validateResource(createJournalSessionSchema)], createJournalSessionHandler);
     app.get("/journal", [requireUser, validateResource(getAllJournalSessionsSchema)], getAllJournalSessionsHandler);
     app.get("/journal/:id", [requireUser, validateResource(getJournalSessionSchema)], getJournalSessionHandler);
+
+    app.get("/journal/delphi/1", [requireUser, validateResource(getDelphiMessageSchema)], getDelphiMessageHandler);
+
     app.put("/journal/:id", requireUser, validateResource(updateJournalSessionSchema), updateJournalSessionHandler);
     app.delete(
         "/journal/:id",
