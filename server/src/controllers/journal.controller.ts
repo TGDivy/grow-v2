@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import OpenAI from "openai";
-import { ChatCompletionCreateParamsStreaming } from "openai/resources/chat/completions";
+import {
+    ChatCompletionCreateParams,
+    ChatCompletionCreateParamsNonStreaming,
+    ChatCompletionCreateParamsStreaming,
+} from "openai/resources/chat/completions";
 import showdown from "showdown";
 import { openai } from "../constants";
 import {
     createJournalSessionInput,
     deleteJournalSessionInput,
+    finishJournalSessionInput,
     getJournalSessionInput,
     updateJournalSessionInput,
 } from "../schema/journal.schema";
@@ -19,32 +24,7 @@ import {
     updateJournalSession,
 } from "../services/journal.service";
 import { logger } from "../utils/logger";
-import { getDelphiJournalSM } from "./helper/delphi";
-
-// helper function to get all user data
-const getDelphiPrompt = async (userId: string) => {
-    const message: OpenAI.ChatCompletionMessageParam[] = [
-        {
-            role: "system",
-            content: await getDelphiJournalSM(userId),
-        },
-        { role: "user", content: "" },
-    ];
-
-    const completion = await openai.chat.completions.create({
-        messages: message,
-        model: "gpt-4-turbo-preview",
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-    });
-
-    return completion;
-};
-
-const DEFAULT_JOURNALLING_PROMPT = "How are you feeling today?";
+import { getDelphiJournalSM, getDelphiJournalSummarySM } from "./helper/delphi";
 
 export const createJournalSessionHandler = async (
     req: Request<{}, {}, createJournalSessionInput["body"]>,
@@ -142,6 +122,11 @@ export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Res
         ],
         // model: "gpt-4-turbo-preview",
         model: "3.5-turbo",
+        temperature: 1,
+        max_tokens: 256,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
     };
 
     const completion = await openai.chat.completions.create(config);
@@ -155,6 +140,75 @@ export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Res
     }
     res.write("\n");
     res.end();
+};
+
+export const finishJournalSessionHandler = async (
+    req: Request<finishJournalSessionInput["params"], {}, {}>,
+    res: Response,
+) => {
+    const userId = res.locals.user?.uid;
+
+    if (!userId) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const journalSessionId = req.params.id;
+
+    // Create a summary of the journal session
+    // Generate an image of the journal session
+    // Generate tags for the journal session
+
+    try {
+        let journalSession = await getJournalSession(journalSessionId);
+
+        if (!journalSession) {
+            return res.sendStatus(404);
+        }
+
+        if (journalSession.userId !== userId) {
+            return res.status(403).send("Unauthorized");
+        }
+
+        console.log("Getting journal summary");
+
+        const systemMessage = await getDelphiJournalSummarySM(journalSession._id.toString());
+        console.log(systemMessage);
+        const config: ChatCompletionCreateParams = {
+            messages: [
+                {
+                    role: "system",
+                    content: systemMessage,
+                },
+                { role: "user", content: "" },
+            ],
+            model: "gpt-3.5-turbo",
+            temperature: 1,
+            max_tokens: 256,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+        };
+
+        const completion = await openai.chat.completions.create(config);
+
+        console.log("Got journal summary", completion);
+        const [choice] = completion.choices;
+        console.log(choice);
+        const { content } = choice.message;
+        const summary = content ? content : "";
+
+        journalSession = await updateJournalSession(journalSessionId, { summary });
+
+        return res.send(journalSession);
+    } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            return res.status(400).send("Invalid id");
+        }
+        if (error instanceof Error) {
+            return res.status(500).send(error.message);
+        }
+        return res.status(500).send("Something went wrong");
+    }
 };
 
 export const getJournalSessionHandler = async (

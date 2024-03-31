@@ -52,6 +52,7 @@ import {
     getAllJournalSessionsHandler,
     updateJournalSessionHandler,
     deleteJournalSessionHandler,
+    finishJournalSessionHandler,
 } from "./controllers/journal.controller";
 import {
     createJournalSessionSchema,
@@ -60,6 +61,7 @@ import {
     updateJournalSessionSchema,
     deleteJournalSessionSchema,
     getAllJournalSessionsSchema,
+    finishJournalSessionSchema,
 } from "./schema/journal.schema";
 const routes = (app: Express) => {
     /**
@@ -101,6 +103,11 @@ const routes = (app: Express) => {
     app.post("/journal", [requireUser, validateResource(createJournalSessionSchema)], createJournalSessionHandler);
     app.get("/journal", [requireUser, validateResource(getAllJournalSessionsSchema)], getAllJournalSessionsHandler);
     app.get("/journal/:id", [requireUser, validateResource(getJournalSessionSchema)], getJournalSessionHandler);
+    app.put(
+        "/journal/:id/finish",
+        [requireUser, validateResource(finishJournalSessionSchema)],
+        finishJournalSessionHandler,
+    );
 
     app.get("/journal/delphi/1", [requireUser, validateResource(getDelphiMessageSchema)], getDelphiMessageHandler);
 

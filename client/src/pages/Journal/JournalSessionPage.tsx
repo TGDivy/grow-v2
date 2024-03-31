@@ -1,8 +1,9 @@
 import { JournalSessionDocument } from "@server/models/journal.model";
-import { message, Skeleton } from "antd";
+import { Button, Card, message, Skeleton, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   createJournalSession,
+  finishJournalSession,
   updateJournalSession,
 } from "src/api/journal.api";
 import JournalEditor from "src/components/journal/JournalEditor";
@@ -102,11 +103,31 @@ const JournalSessionPage = () => {
       .finally(() => {
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const journalExchanges = (journalSession?.exchanges || []).concat(
     streamingExchange ? [streamingExchange] : []
   );
+
+  const onFinishJournalSession = async () => {
+    if (!journalSession) {
+      message.error("Journal session not found");
+      return;
+    }
+    setLoading(true);
+    try {
+      const newJournalSession = await finishJournalSession(journalSession._id);
+      setJournalSession(newJournalSession);
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      }
+      console.error(error);
+    }
+
+    setLoading(false);
+  };
 
   // const journalExchanges = streamingExchange ? [streamingExchange] : [];
   return (
@@ -131,6 +152,34 @@ const JournalSessionPage = () => {
         >
           <div
             style={{
+              maxWidth: "1050px",
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            <Card
+              bordered={false}
+              style={{
+                marginBottom: "20px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+              styles={{
+                body: {
+                  maxWidth: "850px",
+                  width: "100%",
+                },
+              }}
+            >
+              <Typography.Title level={2}>Journal</Typography.Title>
+              <Typography.Text>
+                {journalSession?.summary || "Journal Summary"}
+              </Typography.Text>
+            </Card>
+          </div>
+          <div
+            style={{
               maxWidth: "850px",
               width: "100%",
               position: "relative",
@@ -138,6 +187,19 @@ const JournalSessionPage = () => {
           >
             <Skeleton loading={loading} active>
               <JournalExchanges exchanges={journalExchanges} />
+
+              <Button
+                block
+                style={{
+                  marginBottom: "20px",
+                }}
+                shape="round"
+                loading={loading}
+                onClick={onFinishJournalSession}
+                disabled={journalExchanges.length <= 1}
+              >
+                Finish Journal Session
+              </Button>
             </Skeleton>
           </div>
         </div>

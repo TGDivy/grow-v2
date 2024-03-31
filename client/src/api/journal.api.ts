@@ -58,6 +58,13 @@ export const updateJournalSession = async (
   return response.data;
 };
 
+export const finishJournalSession = async (id: string) => {
+  const response = await journalAPI.put<JournalSessionDocument>(
+    `/journal/${id}/finish`
+  );
+  return response.data;
+};
+
 export const toggleJournalSession = async (id: string) => {
   const response = await journalAPI.put<JournalSessionDocument>(
     `/journal/${id}/toggle`

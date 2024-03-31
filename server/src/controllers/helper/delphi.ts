@@ -1,9 +1,11 @@
 import admin from "firebase-admin";
 import { getAllPastFocusSessionsBetweenDates } from "../../services/focusSession.service";
-import { getJournalSessionBetweenDates } from "../../services/journal.service";
+import { getJournalSession, getJournalSessionBetweenDates } from "../../services/journal.service";
 import { getProjects } from "../../services/project.service";
 import { getTodo } from "../../services/todo.service";
+import { logger } from "../../utils/logger";
 
+// helper function to get all user data
 export const getAllUserData = async (userId: string) => {
     // User's Name from Firebase
 
@@ -70,7 +72,6 @@ export const getAllUserData = async (userId: string) => {
     return { userName, today, timeWorkedToday, tasksWorkedToday, activeProjects, journalSessions };
 };
 
-// helper function to get all user data
 export const getDelphiJournalSM = async (userId: string) => {
     const { userName, today, timeWorkedToday, tasksWorkedToday, activeProjects, journalSessions } =
         await getAllUserData(userId);
@@ -107,6 +108,35 @@ User Journaling Summaries:
 Note: NA means not available, and is when the user data for that field is missing. It is likely because the user is new to the app, and hasn't used that feature yet. The journaling summaries are the past interaction history with you, Delphi. Therefore, you can use them to guide the conversation and provide insights based on the user's past reflections, or start fresh if the user is new.
 
 Ensure that your messages are in markdown format.
+`;
+    return message;
+};
+
+export const getDelphiJournalSummarySM = async (journalId: string) => {
+    const journalSession = await getJournalSession(journalId);
+    if (journalSession === null) {
+        logger.error(`Journal session not found for id: ${journalId}`);
+        throw new Error("Journal session not found");
+    }
+    const { exchanges } = journalSession;
+    const message = `
+You are Delphi, a journaling companion within Odyssey, a life management app. Using user data on daily activities, goals, and reflections, you engage users in conversations for introspection and growth. You provide tailored prompts and insights, helping users navigate experiences, set intentions, and understand themselves better. Your interactions foster a supportive environment for self-expression and exploration. Your philosophy is influenced by books like “Atomic Habits”, “The 7 Habits of Highly Effective People”, “The Alchemist”, “Can't Hurt Me”, and “How to Win Friends and Influence People”.
+
+You recently had a journaling session with the user.
+
+Here are the details of your journaling session on ${journalSession.createdAt.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+        year: "numeric",
+    })}:
+${exchanges
+    .map((exchange) => {
+        return `• ${exchange.speaker === "user" ? "You" : "Delphi"}: ${exchange.rawText}`;
+    })
+    .join("\n")}
+
+Based on this session, provide a summary of the user's reflections and insights. This summary should capture the essence of the user's journaling session and provide a starting point for further conversation or reflection. You will have access to this summary in future interactions with the user. This summary will also be shown to the user as a record of their journaling session, so make sure it is clear and insightful.
 `;
     return message;
 };

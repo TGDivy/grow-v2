@@ -43,8 +43,8 @@ export const getDelphiMessageSchema = object({
     params: object({}),
 });
 
+export const finishJournalSessionSchema = object(params);
 export const getJournalSessionSchema = object(params);
-export const getJournalSessionForTodaySchema = object({});
 export const getAllJournalSessionsSchema = object({});
 export const updateJournalSessionSchema = object({ ...params, ...updatePayload });
 export const deleteJournalSessionSchema = object(params);
@@ -52,8 +52,8 @@ export const getJournalPrompt = object({});
 
 export type createJournalSessionInput = TypeOf<typeof createJournalSessionSchema>;
 export type getDelphiMessageInput = TypeOf<typeof getDelphiMessageSchema>;
+export type finishJournalSessionInput = TypeOf<typeof finishJournalSessionSchema>;
 export type getJournalSessionInput = TypeOf<typeof getJournalSessionSchema>;
-export type getJournalSessionForTodayInput = TypeOf<typeof getJournalSessionForTodaySchema>;
 export type getAllJournalSessionsInput = TypeOf<typeof getAllJournalSessionsSchema>;
 export type updateJournalSessionInput = TypeOf<typeof updateJournalSessionSchema>;
 export type deleteJournalSessionInput = TypeOf<typeof deleteJournalSessionSchema>;
