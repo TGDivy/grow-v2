@@ -283,6 +283,7 @@ const JournalsPage = () => {
                           flexDirection: "row",
                           overflow: "clip",
                         }}
+                        bordered={false}
                         styles={{
                           body: {
                             padding: 0,
