@@ -2,6 +2,7 @@ import {
   Card,
   Col,
   Flex,
+  Image,
   List,
   message,
   Row,
@@ -9,7 +10,8 @@ import {
   Typography,
 } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getJournalSessions } from "src/api/journal.api";
 import useJournalSessionStore from "src/stores/journal_session_store";
@@ -71,6 +73,48 @@ const WeekCalendar = () => {
   );
 };
 
+async function getDownloadUrl(path: string) {
+  const storage = getStorage();
+  const storageRef = ref(storage, path);
+
+  try {
+    const url = await getDownloadURL(storageRef);
+    return url;
+  } catch (error) {
+    console.error("Failed to get download URL:", error);
+    return "";
+  }
+}
+
+const ImageCover = ({ imageUrl }: { imageUrl: string }) => {
+  const [imageUrl_, setImageUrl] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    if (imageUrl) {
+      getDownloadUrl(imageUrl).then((url) => {
+        setImageUrl(url);
+      });
+    }
+  }, [imageUrl]);
+
+  if (!imageUrl_) {
+    return "";
+  }
+
+  return (
+    <Image
+      src={imageUrl_}
+      alt="Journal Session Image"
+      loading="lazy"
+      style={{
+        height: "150px",
+        maxWidth: "200px",
+        objectFit: "cover",
+      }}
+    />
+  );
+};
+
 const JournalsPage = () => {
   const breaks = useBreakpoint();
   const [loading, setLoading] = useState(false);
@@ -117,7 +161,7 @@ const JournalsPage = () => {
           </Col>
           <Col md={24}>
             <Flex gap={16} vertical={!breaks.md}>
-              <Card bordered={false} loading={loading}>
+              <Card bordered={false}>
                 <Statistic
                   title="Total"
                   value={journals.length}
@@ -185,28 +229,57 @@ const JournalsPage = () => {
             </Flex>
           </Col>
           <Col xs={24}>
-            <List loading={loading} itemLayout="horizontal">
-              {journals.map((journal) => (
-                <List.Item
-                  key={journal._id}
-                  actions={[<Link to={`/journals/${journal._id}`}>View</Link>]}
-                >
-                  <List.Item.Meta
-                    title={dayjs(journal.createdAt).format("dddd, MMMM D")}
-                    description={
-                      <Typography.Paragraph
-                        ellipsis={{
-                          rows: 2,
-                          expandable: true,
+            <List
+              loading={loading}
+              grid={{
+                gutter: 16,
+                column: 1,
+              }}
+              dataSource={journals}
+              renderItem={(journal) => {
+                return (
+                  <List.Item>
+                    <Link to={`/journals/${journal._id}`}>
+                      <Card
+                        style={{
+                          height: "150px",
+                          display: "flex",
+                          flexDirection: "row",
+                          overflow: "clip",
                         }}
+                        styles={{
+                          body: {
+                            padding: 0,
+                            overflow: "clip",
+                            display: "flex",
+                          },
+                          cover: {
+                            overflow: "clip",
+                          },
+                        }}
+                        hoverable
+                        cover={
+                          <ImageCover imageUrl={journal.image_url || ""} />
+                        }
                       >
-                        {journal.summary}
-                      </Typography.Paragraph>
-                    }
-                  />
-                </List.Item>
-              ))}
-            </List>
+                        <Card.Meta
+                          style={{
+                            padding: "20px",
+                          }}
+                          title={dayjs(journal.createdAt).format(
+                            "dddd, MMMM D"
+                          )}
+                          description={
+                            journal.title ||
+                            "No title. Click to view the entry."
+                          }
+                        />
+                      </Card>
+                    </Link>
+                  </List.Item>
+                );
+              }}
+            />
           </Col>
         </Row>
       </div>

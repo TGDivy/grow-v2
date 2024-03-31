@@ -156,6 +156,7 @@ const JournalSessionPage = () => {
               maxWidth: "1050px",
               width: "100%",
               position: "relative",
+              // display: journalExchanges.length <= 1 ? "none" : "block",
             }}
           >
             <SummaryCard journalSession={journalSession} loading={loading} />
@@ -174,6 +175,7 @@ const JournalSessionPage = () => {
               block
               style={{
                 marginBottom: "20px",
+                display: journalExchanges.length <= 1 ? "none" : "block",
               }}
               shape="round"
               loading={loading}

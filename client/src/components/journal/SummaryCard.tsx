@@ -43,37 +43,51 @@ const SummaryCard = (props: Props) => {
         style={{
           marginBottom: "20px",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
+          flexDirection: "column",
         }}
         loading={loading}
         styles={{
           body: {
             maxWidth: "890px",
+            width: "100%",
+            // padding: 12,
           },
           cover: {
             width: "100%",
           },
         }}
         cover={
-          <Image
-            src={imageUrl || ""}
-            alt="Journal Session Image"
-            loading="lazy"
-            style={{
-              maxHeight: "300px",
-              width: "100%",
-              objectFit: "cover",
-            }}
-          />
+          imageUrl && (
+            <Image
+              src={imageUrl}
+              alt="Journal Session Image"
+              loading="lazy"
+              style={{
+                maxHeight: "300px",
+                width: "100%",
+                objectFit: "cover",
+              }}
+            />
+          )
         }
       >
-        <Typography.Title level={4}>
-          {journalSession?.title || "Journal Session"}
-        </Typography.Title>
-        {journalSession?.summary && (
-          <Markdown>{journalSession.summary}</Markdown>
-        )}
+        <Card.Meta
+          title={
+            journalSession?.title || (
+              <>
+                Journal Session:{" "}
+                <Typography.Text type="secondary">
+                  {new Intl.DateTimeFormat("en-US", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(journalSession?.createdAt || 0))}
+                </Typography.Text>
+              </>
+            )
+          }
+          description={<Markdown>{journalSession?.summary}</Markdown>}
+        />
       </Card>
     </>
   );
