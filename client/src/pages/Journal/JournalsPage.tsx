@@ -1,3 +1,4 @@
+import { JournalSessionDocument } from "@server/models/journal.model";
 import {
   Card,
   Col,
@@ -17,7 +18,12 @@ import { getJournalSessions } from "src/api/journal.api";
 import useJournalSessionStore from "src/stores/journal_session_store";
 import { useBreakpoint, useToken } from "src/utils/antd_components";
 
-const WeekCalendar = () => {
+interface WeekCalendarProps {
+  journals: JournalSessionDocument[];
+}
+
+const WeekCalendar = (props: WeekCalendarProps) => {
+  const { journals } = props;
   const today = dayjs();
   const days = Array.from({ length: 15 }, (_, i) =>
     today.subtract(7, "day").add(i, "day")
@@ -43,32 +49,57 @@ const WeekCalendar = () => {
         scrollSnapType: "x mandatory",
       }}
     >
-      {days.map((day) => (
-        <Card
-          key={day.format("YYYY-MM-DD")}
-          bordered={false}
-          style={{
-            backgroundColor: day.isSame(today, "day")
-              ? token.colorSuccessBg
-              : token.colorFillQuaternary,
-            width: "60px",
-            flex: 1,
-            minWidth: "60px",
-            maxWidth: "60px",
-          }}
-          styles={{
-            body: {
-              padding: 12,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            },
-          }}
-        >
-          <Typography.Text>{day.format("ddd")}</Typography.Text>
-          <Typography.Text>{day.format("DD")}</Typography.Text>
-        </Card>
-      ))}
+      {days.map((day) => {
+        // check if journal exists for the day
+        const journal = journals.find(
+          (j) =>
+            dayjs(j.createdAt).format("YYYY-MM-DD") === day.format("YYYY-MM-DD")
+        );
+
+        return (
+          <Card
+            key={day.format("YYYY-MM-DD")}
+            bordered={false}
+            style={{
+              backgroundColor: day.isSame(today, "day")
+                ? token.colorSuccessBg
+                : token.colorFillQuaternary,
+              width: "60px",
+              flex: 1,
+              minWidth: "60px",
+              maxWidth: "60px",
+              position: "relative",
+            }}
+            styles={{
+              body: {
+                padding: 12,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              },
+            }}
+          >
+            <Typography.Text>{day.format("ddd")}</Typography.Text>
+            <Flex align="center">
+              {
+                // day is in the past or today
+                day.isBefore(today, "day") && (
+                  <Typography.Text
+                    style={{
+                      // color: token.colorText,
+                      // fontWeight: "bold",
+                      fontSize: 10,
+                    }}
+                  >
+                    {journal?.completed ? "✅" : "❌"}
+                  </Typography.Text>
+                )
+              }
+              <Typography.Text>{day.format("DD")}</Typography.Text>
+            </Flex>
+          </Card>
+        );
+      })}
     </div>
   );
 };
@@ -138,6 +169,10 @@ const JournalsPage = () => {
     (j) => dayjs(j.createdAt).format("YYYY-MM-DD") === today
   );
 
+  const sortedJournals = journals.sort((a, b) =>
+    dayjs(a.createdAt).isBefore(dayjs(b.createdAt)) ? 1 : -1
+  );
+
   return (
     <>
       <div
@@ -157,7 +192,7 @@ const JournalsPage = () => {
           }}
         >
           <Col md={24}>
-            <WeekCalendar />
+            <WeekCalendar journals={journals} />
           </Col>
           <Col md={24}>
             <Flex gap={16} vertical={!breaks.md}>
@@ -235,7 +270,8 @@ const JournalsPage = () => {
                 gutter: 16,
                 column: 1,
               }}
-              dataSource={journals}
+              dataSource={sortedJournals}
+              rowKey={(journal) => journal._id}
               renderItem={(journal) => {
                 return (
                   <List.Item>
