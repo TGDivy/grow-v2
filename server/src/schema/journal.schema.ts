@@ -1,4 +1,4 @@
-import { object, string, number, array, TypeOf, date, boolean } from "zod";
+import { object, string, number, array, TypeOf, date, boolean, enum as enum_ } from "zod";
 
 const journalEntry = object({
     speaker: string(),
@@ -23,6 +23,12 @@ const payload = {
     }),
 };
 
+const openAIMessage = object({
+    role: enum_(["user", "assistant", "system"]),
+    name: string().optional(),
+    content: string(),
+});
+
 const updatePayload = {
     body: object({
         location: string().optional(),
@@ -41,6 +47,9 @@ const params = {
 export const createJournalSessionSchema = object(payload);
 export const getDelphiMessageSchema = object({
     params: object({}),
+    body: object({
+        messages: array(openAIMessage),
+    }),
 });
 
 export const finishJournalSessionSchema = object(params);

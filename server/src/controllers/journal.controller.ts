@@ -12,6 +12,7 @@ import {
     createJournalSessionInput,
     deleteJournalSessionInput,
     finishJournalSessionInput,
+    getDelphiMessageInput,
     getJournalSessionInput,
     updateJournalSessionInput,
 } from "../schema/journal.schema";
@@ -71,13 +72,10 @@ export const createJournalSessionHandler = async (
             }
         }
 
-        logger.error(`Creating journal session for user ${userId} on ${userCurrentDate}`);
-
         const journalSession = await createJournalSession({
             ...body,
             userId,
             exchanges: [],
-            // exchanges: [{ speaker: "assistant", rawText: message, timestamp: new Date(), htmlString: htmlMessage }],
         });
 
         return res.send(journalSession);
@@ -92,7 +90,7 @@ export const createJournalSessionHandler = async (
     }
 };
 
-export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Response) => {
+export const postDelphiMessageHandler = async (req: Request<{}, {}, getDelphiMessageInput["body"]>, res: Response) => {
     res.writeHead(200, {
         "Content-Type": "text/plain; charset=utf-8",
     });
@@ -103,6 +101,8 @@ export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Res
         return res.status(401).send("Unauthorized");
     }
 
+    const { messages } = req.body;
+
     const config: ChatCompletionCreateParamsStreaming = {
         stream: true, // This is the key to request stream from openai api
         messages: [
@@ -110,11 +110,11 @@ export const getDelphiMessageHandler = async (req: Request<{}, {}, {}>, res: Res
                 role: "system",
                 content: await getDelphiJournalSM(userId),
             },
-            { role: "user", content: "" },
+            ...messages,
         ],
         model: "gpt-4-turbo-preview",
         temperature: 1,
-        max_tokens: 256,
+        max_tokens: 512,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,

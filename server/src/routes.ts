@@ -47,7 +47,7 @@ import { createUserSchema, deleteUserSchema, getUserSchema, updateUserSchema } f
 import { createActiveSessionSchema } from "./schema/focusSession.schema";
 import {
     createJournalSessionHandler,
-    getDelphiMessageHandler,
+    postDelphiMessageHandler,
     getJournalSessionHandler,
     getAllJournalSessionsHandler,
     updateJournalSessionHandler,
@@ -109,7 +109,7 @@ const routes = (app: Express) => {
         finishJournalSessionHandler,
     );
 
-    app.get("/journal/delphi/1", [requireUser, validateResource(getDelphiMessageSchema)], getDelphiMessageHandler);
+    app.post("/journal/delphi/1", [requireUser, validateResource(getDelphiMessageSchema)], postDelphiMessageHandler);
 
     app.put("/journal/:id", requireUser, validateResource(updateJournalSessionSchema), updateJournalSessionHandler);
     app.delete(

@@ -1,8 +1,8 @@
 import { JournalSessionDocument } from "@server/models/journal.model";
-import { Card, Image, Typography } from "antd";
+import { Card, Image } from "antd";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import React, { useEffect } from "react";
 import Markdown from "react-markdown";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 type Props = {
   journalSession: JournalSessionDocument | null;
@@ -45,6 +45,7 @@ const SummaryCard = (props: Props) => {
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
+          backgroundColor: journalSession?.title ? undefined : "transparent",
         }}
         loading={loading}
         styles={{
@@ -74,17 +75,10 @@ const SummaryCard = (props: Props) => {
       >
         <Card.Meta
           title={
-            journalSession?.title || (
-              <>
-                Journal Session:{" "}
-                <Typography.Text type="secondary">
-                  {new Intl.DateTimeFormat("en-US", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  }).format(new Date(journalSession?.createdAt || 0))}
-                </Typography.Text>
-              </>
-            )
+            journalSession?.title ||
+            new Intl.DateTimeFormat("en-US", {
+              dateStyle: "long",
+            }).format(new Date(journalSession?.createdAt || 0))
           }
           description={<Markdown>{journalSession?.summary}</Markdown>}
         />
