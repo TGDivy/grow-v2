@@ -193,6 +193,16 @@ Provide the JSON object in format: {
         const { content } = choice.message;
         const { title, summary, image_prompt } = JSON.parse(content ?? "{}");
 
+        if (!title || !summary || !image_prompt) {
+            return res.status(400).send("Invalid JSON object");
+        }
+
+        journalSession = await updateJournalSession(journalSessionId, {
+            summary,
+            title,
+            image_prompt,
+        });
+
         const configImage: ImageGenerateParams = {
             model: "dall-e-3",
             prompt: image_prompt,

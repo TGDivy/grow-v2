@@ -14,6 +14,7 @@ export const journalAPI = axios.create({
   headers: {
     "Content-type": "application/json",
   },
+  timeout: 100000,
 });
 
 journalAPI.interceptors.request.use(async (config) => {
