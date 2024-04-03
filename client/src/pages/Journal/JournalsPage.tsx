@@ -290,6 +290,9 @@ const JournalsPage = () => {
               size="small"
               accordion
               defaultActiveKey={[`${dayjs().week()}`]}
+              style={{
+                padding: 0,
+              }}
             >
               {Object.entries(groupedJournals)
                 .sort(([a], [b]) => (parseInt(a) > parseInt(b) ? -1 : 1))
@@ -305,6 +308,9 @@ const JournalsPage = () => {
                         : `Week ${weekNumber}`
                     }
                     key={weekNumber}
+                    style={{
+                      padding: 0,
+                    }}
                   >
                     <List
                       loading={loading}
