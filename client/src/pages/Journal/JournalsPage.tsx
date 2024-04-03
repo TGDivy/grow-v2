@@ -2,6 +2,7 @@ import { JournalSessionDocument } from "@server/models/journal.model";
 import {
   Card,
   Col,
+  Collapse,
   Flex,
   Image,
   List,
@@ -11,12 +12,14 @@ import {
   Typography,
 } from "antd";
 import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getJournalSessions } from "src/api/journal.api";
 import useJournalSessionStore from "src/stores/journal_session_store";
 import { useBreakpoint, useToken } from "src/utils/antd_components";
+dayjs.extend(weekOfYear);
 
 interface WeekCalendarProps {
   journals: JournalSessionDocument[];
@@ -140,6 +143,7 @@ const ImageCover = ({ imageUrl }: { imageUrl: string }) => {
       style={{
         height: "150px",
         maxWidth: "200px",
+        width: "100%",
         objectFit: "cover",
       }}
     />
@@ -153,6 +157,7 @@ const JournalsPage = () => {
     state.journals,
     state.setJournalSessions,
   ]);
+
   useEffect(() => {
     setLoading(true);
     getJournalSessions()
@@ -171,6 +176,21 @@ const JournalsPage = () => {
 
   const sortedJournals = journals.sort((a, b) =>
     dayjs(a.createdAt).isBefore(dayjs(b.createdAt)) ? 1 : -1
+  );
+
+  const groupedJournals = sortedJournals.reduce(
+    (grouped: { [key: string]: typeof sortedJournals }, journal) => {
+      const yearMonthWeek =
+        // dayjs(journal.createdAt).format("YYYY-MM") +
+        // "-W" +
+        dayjs(journal.createdAt).week();
+      if (!grouped[yearMonthWeek]) {
+        grouped[yearMonthWeek] = [];
+      }
+      grouped[yearMonthWeek].push(journal);
+      return grouped;
+    },
+    {}
   );
 
   return (
@@ -264,59 +284,86 @@ const JournalsPage = () => {
             </Flex>
           </Col>
           <Col xs={24}>
-            <List
-              loading={loading}
-              grid={{
-                gutter: 16,
-                column: 1,
-              }}
-              dataSource={sortedJournals}
-              rowKey={(journal) => journal._id}
-              renderItem={(journal) => {
-                return (
-                  <List.Item>
-                    <Link to={`/journals/${journal._id}`}>
-                      <Card
-                        style={{
-                          height: "150px",
-                          display: "flex",
-                          flexDirection: "row",
-                          overflow: "clip",
-                        }}
-                        bordered={false}
-                        styles={{
-                          body: {
-                            padding: 0,
-                            overflow: "clip",
-                            display: "flex",
-                          },
-                          cover: {
-                            overflow: "clip",
-                          },
-                        }}
-                        hoverable
-                        cover={
-                          <ImageCover imageUrl={journal.image_url || ""} />
-                        }
-                      >
-                        <Card.Meta
-                          style={{
-                            padding: "20px",
-                          }}
-                          title={dayjs(journal.createdAt).format(
-                            "dddd, MMMM D"
-                          )}
-                          description={
-                            journal.title ||
-                            "No title. Click to view the entry."
-                          }
-                        />
-                      </Card>
-                    </Link>
-                  </List.Item>
-                );
-              }}
-            />
+            <Collapse
+              ghost
+              bordered={false}
+              size="small"
+              accordion
+              defaultActiveKey={[`${dayjs().week()}`]}
+            >
+              {Object.entries(groupedJournals)
+                .sort(([a], [b]) => (parseInt(a) > parseInt(b) ? -1 : 1))
+                .map(([weekNumber, journals]) => (
+                  <Collapse.Panel
+                    // Refer to current week as "This Week"
+                    // Otherwise, use the week number.
+                    header={
+                      weekNumber === `${dayjs().week()}`
+                        ? "This Week"
+                        : weekNumber === `${dayjs().week() - 1}`
+                        ? "Last Week" // Refer to last week as "Last Week"
+                        : `Week ${weekNumber}`
+                    }
+                    key={weekNumber}
+                  >
+                    <List
+                      loading={loading}
+                      grid={{
+                        gutter: 16,
+                        column: 1,
+                      }}
+                      dataSource={journals}
+                      rowKey={(journal) => journal._id}
+                      renderItem={(journal) => {
+                        return (
+                          <List.Item>
+                            <Link to={`/journals/${journal._id}`}>
+                              <Card
+                                style={{
+                                  height: "150px",
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  overflow: "clip",
+                                }}
+                                bordered={false}
+                                styles={{
+                                  body: {
+                                    padding: 0,
+                                    overflow: "clip",
+                                    display: "flex",
+                                  },
+                                  cover: {
+                                    overflow: "clip",
+                                  },
+                                }}
+                                hoverable
+                                cover={
+                                  <ImageCover
+                                    imageUrl={journal.image_url || ""}
+                                  />
+                                }
+                              >
+                                <Card.Meta
+                                  style={{
+                                    padding: "20px",
+                                  }}
+                                  title={dayjs(journal.createdAt).format(
+                                    "dddd, MMMM D"
+                                  )}
+                                  description={
+                                    journal.title ||
+                                    "No title. Click to view the entry."
+                                  }
+                                />
+                              </Card>
+                            </Link>
+                          </List.Item>
+                        );
+                      }}
+                    />
+                  </Collapse.Panel>
+                ))}
+            </Collapse>
           </Col>
         </Row>
       </div>
