@@ -1,9 +1,18 @@
 import { JournalSessionDocument } from "@server/models/journal.model";
-import { Row, Col, Card, Descriptions, Checkbox, Space } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Descriptions,
+  Checkbox,
+  Space,
+  Button,
+  message,
+} from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getJournalSession } from "src/api/journal.api";
+import { finishJournalSession, getJournalSession } from "src/api/journal.api";
 import JournalExchanges from "src/components/journal/JournalExchanges";
 import SummaryCard from "src/components/journal/SummaryCard";
 
@@ -21,6 +30,25 @@ const JournalPage = () => {
       setLoading(false);
     });
   }, [journalId]);
+
+  const onFinishJournalSession = async () => {
+    if (!journalSession) {
+      message.error("Journal session not found");
+      return;
+    }
+    setLoading(true);
+    try {
+      const newJournalSession = await finishJournalSession(journalSession._id);
+      setJournalSession(newJournalSession);
+    } catch (error) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      }
+      console.error(error);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
@@ -72,6 +100,23 @@ const JournalPage = () => {
                 </Descriptions.Item>
               </Descriptions>
             </Card>
+
+            {journalSession?.completed === false &&
+              journalSession.exchanges.length > 1 && (
+                <Button
+                  style={{
+                    display: "block",
+                  }}
+                  block
+                  danger
+                  shape="round"
+                  loading={loading}
+                  onClick={onFinishJournalSession}
+                  // disabled={journalSession?.exchanges?.length <= 1}
+                >
+                  Mark as Completed
+                </Button>
+              )}
           </Col>
           <Col xl={14} lg={14} md={24} sm={24}>
             <JournalExchanges exchanges={journalSession?.exchanges || []} />
